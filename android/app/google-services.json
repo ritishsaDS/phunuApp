@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "502370632165",
+    "project_id": "womens-84bce",
+    "storage_bucket": "womens-84bce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502370632165:android:c86991a6b9afc9ecfe6f0c",
+        "android_client_info": {
+          "package_name": "com.example.vietnamese"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502370632165-n8v8kd0h1l51oqpa8e42efo6dutjhl0g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vietnamese",
+            "certificate_hash": "6f3645d70488af35fa8c24e9bb490f88ff0fdfe1"
+          }
+        },
+        {
+          "client_id": "502370632165-kh0q76dig3d9ukgddhn76pjiedjf668q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw2YcA3Ve6LZVqbT5iqHQWPzddsHOQzWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502370632165-kh0q76dig3d9ukgddhn76pjiedjf668q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
