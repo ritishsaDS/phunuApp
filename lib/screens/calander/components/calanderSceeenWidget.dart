@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:lunar_calendar/lunar_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipedetector/swipedetector.dart';
 import 'package:vietnamese/common/Api.dart';
@@ -21,6 +23,7 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
   DateTime _selectedDateTime;
   List<Calendar> _sequentialDates;
   var next;
+  var start;
   int midYear;
   CalendarViews _currentView = CalendarViews.dates;
   final List<String> _weekDays = [
@@ -52,17 +55,29 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
   bool isLoading = false;
   var notesdate;
   var usernotes;
+  var listOfDates;
+  var value;
   @override
   void initState() {
     super.initState();
+    getdot();
+    getnotescountbymonth();
     getnextdate();
     getNotesdate();
+    getnotescount(
+        _selectedDateTime == null ? DateTime.now() : _selectedDateTime);
     final date = DateTime.now();
     _currentDateTime = DateTime(date.year, date.month);
     _selectedDateTime = DateTime(date.year, date.month, date.day);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() => _getCalendar());
     });
+  }
+
+  String printLunarDate(DateTime solar) {
+    List<int> lunar = CalendarConverter.solarToLunar(
+        solar.year, solar.month, solar.day, Timezone.Japanese);
+    return DateFormat.Md('ja').format(DateTime(lunar[2], lunar[1], lunar[0]));
   }
 
   @override
@@ -73,83 +88,92 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: Column(
+        child: Scaffold(
+            body: Column(children: [
+      SizedBox(
+        height: 20,
+      ),
+      Center(
+        child: Container(
+          margin: EdgeInsets.all(16),
+          height: getProportionateScreenHeight(400),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12.withOpacity(0.1),
+                blurRadius: 12.0,
+                spreadRadius: 3.0,
+                offset: Offset(0, 15),
+              )
+            ],
+          ),
+          child: (_currentView == CalendarViews.dates)
+              ? _datesView()
+              : (_currentView == CalendarViews.months)
+                  ? _showMonthsList()
+                  : _yearsView(midYear ?? _currentDateTime.year),
+        ),
+      ),
+      Expanded(
+        //: getProportionateScreenHeight(250),
+
+        child: Stack(
           children: [
-            SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: Container(
-                margin: EdgeInsets.all(16),
-                height: getProportionateScreenHeight(400),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12.withOpacity(0.1),
-                      blurRadius: 12.0,
-                      spreadRadius: 3.0,
-                      offset: Offset(0, 15),
-                    )
-                  ],
-                ),
-                child: (_currentView == CalendarViews.dates)
-                    ? _datesView()
-                    : (_currentView == CalendarViews.months)
-                        ? _showMonthsList()
-                        : _yearsView(midYear ?? _currentDateTime.year),
-              ),
-            ),
             Container(
-              height: getProportionateScreenHeight(250),
-              child: ListView(
-                children: notesdatewidget(),
-              ),
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: kPrimaryColor,
+                      ),
+                    )
+                  : ListView(
+                      children: notesdatewidget(),
+                    ),
             )
           ],
         ),
       ),
-    );
+    ])));
   }
 
-  List<Widget> notesdatewidget() {
-    List<Widget> productList = new List();
-    for (int i = 0; i < nextfromserver.length; i++) {
-      productList.add(Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(20),
-        ),
-        child: Container(
-            margin: EdgeInsets.only(top: 10),
-            height: getProportionateScreenHeight(100),
-            width: SizeConfig.screenWidth,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border.all(color: kPrimaryColor),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  nextfromserver[i]['date'].toString().replaceAll("-", "/"),
-                  style: _textStyle.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  nextfromserver[i]['note'],
-                  style: _textStyle,
-                ),
-              ],
-            )),
-      ));
-    }
-    return productList;
-  }
+  // List<Widget> notesdatewidget() {
+  //   List<Widget> productList = new List();
+  //   for (int i = 0; i < nextfromserver.length; i++) {
+  //     productList.add(Padding(
+  //       padding: EdgeInsets.symmetric(
+  //         horizontal: getProportionateScreenWidth(20),
+  //       ),
+  //       child: Container(
+  //           margin: EdgeInsets.only(top: 10),
+  //           height: getProportionateScreenHeight(100),
+  //           width: SizeConfig.screenWidth,
+  //           alignment: Alignment.center,
+  //           decoration: BoxDecoration(
+  //             border: Border.all(color: kPrimaryColor),
+  //             borderRadius: BorderRadius.circular(16),
+  //           ),
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               Text(
+  //                 nextfromserver[i]['date'].toString().replaceAll("-", "/"),
+  //                 style: _textStyle.copyWith(
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //               Text(
+  //                 nextfromserver[i]['note'],
+  //                 style: _textStyle,
+  //               ),
+  //             ],
+  //           )),
+  //     ));
+  //   }
+  //   return productList;
+  // }
 
   // dates view
   Widget _datesView() {
@@ -268,6 +292,27 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
     );
   }
 
+  getdot() {
+    var now = DateTime.now();
+
+    // Getting the total number of days of the month
+    var totalDays = daysInMonth(now);
+
+    // Stroing all the dates till the last date
+    // since we have found the last date using generate
+    listOfDates =
+        new List<String>.generate(totalDays, (i) => "2020/06/${i + 1}");
+    print(listOfDates);
+  }
+
+// this returns the last date of the month using DateTime
+  int daysInMonth(DateTime date) {
+    var firstDayThisMonth = new DateTime(date.year, date.month, date.day);
+    var firstDayNextMonth = new DateTime(firstDayThisMonth.year,
+        firstDayThisMonth.month + 1, firstDayThisMonth.day);
+    return firstDayNextMonth.difference(firstDayThisMonth).inDays;
+  }
+
   // calendar header
   Widget _weekDayTitle(int index) {
     return Text(
@@ -280,7 +325,7 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
   // calendar element
   Widget _calendarDates(Calendar calendarDate) {
     return InkWell(
-        onTap: () {
+        onTap: () async {
           if (_selectedDateTime != calendarDate.date) {
             if (calendarDate.nextMonth) {
               _getNextMonth();
@@ -288,25 +333,51 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
               _getPrevMonth();
             }
             setState(() => _selectedDateTime = calendarDate.date);
-            print(DateTime.parse(next));
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
+            setState(() async {
+              preferences.setString(
+                  "selecteddate", _selectedDateTime.toString());
+              print(preferences.getString("selecteddate"));
+              getnotescount(_selectedDateTime);
+              isLoading = true;
+            });
+            //print(DateTime.parse(next));
           }
         },
-        child: calendarDate.date.day != DateTime.parse(next).day
-            ? Center(
-                child: Text(
-                '${calendarDate.date.day}',
-                style: TextStyle(
-                  color: (calendarDate.thisMonth)
-                      ? (calendarDate.date.weekday == DateTime.sunday)
-                          ? Colors.black
-                          : Colors.black
-                      : (calendarDate.date.weekday == DateTime.sunday)
-                          ? Colors.black.withOpacity(0.5)
-                          : Colors.black.withOpacity(0.5),
+        child: calendarDate.date.day != DateTime.parse(next).day &&
+                calendarDate.date.day != DateTime.parse(start).day
+            ? SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      '${calendarDate.date.day}',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: (calendarDate.thisMonth)
+                            ? (calendarDate.date.weekday == DateTime.sunday)
+                                ? Colors.black
+                                : Colors.black
+                            : (calendarDate.date.weekday == DateTime.sunday)
+                                ? Colors.black.withOpacity(0.5)
+                                : Colors.black.withOpacity(0.5),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${printLunarDate(DateTime.parse(calendarDate.date.toString()))}',
+                        style: TextStyle().copyWith(fontSize: 8.0),
+                      ),
+                    ),
+                    Text(".")
+                  ],
                 ),
-              ))
+              )
             : calendarDate.date.month < DateTime.parse(next).month ||
-                    calendarDate.date.month > DateTime.parse(next).month
+                    calendarDate.date.month > DateTime.parse(next).month &&
+                        calendarDate.date.day != DateTime.parse(start).day
                 ? Container(
                     child: Center(
                       child: Text(
@@ -314,19 +385,42 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
                       ),
                     ),
                   )
-                : Container(
-                    decoration: BoxDecoration(
-                      color: Colors.pinkAccent,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text("${DateTime.parse(next).day}",
-                          style: TextStyle(color: Colors.white)),
-                    ),
-                  ));
+                : DateTime.parse(start).day != calendarDate.date.day
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: Colors.pinkAccent,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text("${DateTime.parse(next).day}",
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      )
+                    : calendarDate.date.month < DateTime.parse(next).month ||
+                            calendarDate.date.month > DateTime.parse(next).month
+                        ? Container(child:   Text(DateTime.parse(start).day.toString()),)
+                        : Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Container(
+                                  height: 2,
+                                  color: Colors.pink,
+                                ),
+                                Text(DateTime.parse(start).day.toString()),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${printLunarDate(DateTime.parse(start.toString()))}',
+                                    style: TextStyle().copyWith(fontSize: 7.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ));
   }
 
   // date selector
@@ -346,15 +440,30 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
           ),
         ),
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-              child: Text(
-            '${calendarDate.date.day.toString()}',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-          )),
-        ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    '${calendarDate.date.day.toString()}',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${printLunarDate(DateTime.parse(calendarDate.date.toString()))}',
+                      style: TextStyle(fontSize: 8.0, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            )),
       ),
     );
   }
@@ -375,9 +484,21 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
-          child: Text(
-            "${calendarDate.next.toString().substring(8)}",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          child: Column(
+            children: [
+              Text(
+                "${calendarDate.next.toString().substring(8)}",
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  '${printLunarDate(DateTime.parse(calendarDate.next.toString().substring(8)))}',
+                  style: TextStyle().copyWith(fontSize: 8.0),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -517,6 +638,13 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
   void getnextdate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     next = prefs.getString("nextdate");
+    start = prefs.getString("startdate");
+    print("sndlljnsdl" + start);
+    if (prefs.getString("selecteddate") == null) {
+    } else {
+      _selectedDateTime = DateTime.parse(prefs.getString("selecteddate"));
+    }
+
     //print(next.toString().substring(8));
   }
 
@@ -537,9 +665,176 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
       if (response.statusCode == 200) {
         final responseJson = json.decode(response.body);
 
-        nextfromserver = responseJson['data'];
+        nextfromserver = responseJson;
 
         print(nextfromserver);
+
+        /// notesdate = nextfromserver['date'];
+        // usernotes = nextfromserver["note"];
+        // print(nextfromserver[0]["note"]);
+        setState(() {
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  List<Widget> notesdatewidget() {
+    List<Widget> productList = new List();
+    for (int i = 0; i < countfromserver.length; i++) {
+      print(
+        "knlwnl" + countfromserver[i]['date'].toString().replaceAll("-", "/"),
+      );
+      productList.add(Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: getProportionateScreenWidth(20),
+        ),
+        child: value != []
+            ? Container(
+                margin: EdgeInsets.only(top: 10),
+                height: getProportionateScreenHeight(100),
+                width: SizeConfig.screenWidth,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  border: Border.all(color: kPrimaryColor),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      countfromserver[i]['date']
+                          .toString()
+                          .replaceAll("-", "/"),
+                      style: _textStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      countfromserver[i]['note'],
+                      style: _textStyle,
+                    ),
+                  ],
+                ))
+            : Container(
+                height: getProportionateScreenHeight(100),
+                width: SizeConfig.screenWidth,
+                child: Text("No Notes Found"),
+              ),
+      ));
+    }
+    return productList;
+  }
+
+  dynamic countfromserver = new List();
+  Future<void> getnotescount(date) async {
+    isLoading = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    print(token);
+    try {
+      final response = await http.post(
+        getnotescountapi,
+        body: {"date": date.toString().substring(0, 10)},
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        countfromserver = responseJson['data'];
+        // count = responseJson['notes_count'];
+        // count = noteslength;
+        //  print(count);
+        print(countfromserver.length);
+        if (countfromserver.length == 0) {
+          setState(() {
+            value = "[]";
+            showToast("No Notes Found!!!");
+            //return Text("data");
+            print(value + "jbj");
+          });
+        } else {
+          print("object");
+        }
+
+        /// notesdate = nextfromserver['date'];
+        // usernotes = nextfromserver["note"];
+        // print(nextfromserver[0]["note"]);
+        setState(() {
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  dynamic notes = new List();
+  Future<void> getnotescountbymonth() async {
+    isLoading = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    print(token);
+    try {
+      final response = await http.post(
+        notecountbymonth,
+        // body: {"date": date.toString().substring(0, 10)},
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        notes = responseJson['data'];
+        // count = responseJson['notes_count'];
+        // count = noteslength;
+        //  print(count);
+        for (int i = 0; i < listOfDates.length; i++) {
+          var usdKey = notes.keys.firstWhere((k) => notes[k] == listOfDates[i],
+              orElse: () => null);
+        }
+
+        // print("Notes" + notes.toString().replaceAll("-", "/"));
+        for (int j = 0; j < notes.length; j++) {
+          print(notes.toString().replaceAll("-", "/")[j]);
+          for (int i = 0; i < listOfDates.length; i++) {
+            if (listOfDates[i] ==
+                notes.keys.toString().replaceAll("-", "/")[j]) {
+              print("listOfDates[i]");
+              print(listOfDates[i]);
+            } else {
+              print(notes.keys[i]);
+            }
+          }
+        }
 
         /// notesdate = nextfromserver['date'];
         // usernotes = nextfromserver["note"];

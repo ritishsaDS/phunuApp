@@ -9,7 +9,7 @@ import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/bottom.dart';
 import 'package:http/http.dart' as http;
-import 'package:vietnamese/components/common_navigation.dart';
+import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/Login/login.dart';
 import 'package:vietnamese/screens/notes/alerts/period_ended.dart';
 import 'package:vietnamese/screens/settings/PinAndRegister/pin_register_screen.dart';
@@ -34,6 +34,7 @@ class _SettingScreenState extends State<SettingScreen> {
   String startdate = "28";
   String enddate = "20";
   String formattedDate;
+  var login;
   @override
   void initState() {
     getSettings();
@@ -41,6 +42,7 @@ class _SettingScreenState extends State<SettingScreen> {
     var formatter = new DateFormat('dd-MM-yyyy');
     formattedDate = formatter.format(now);
     print(formattedDate);
+    getdetail();
     super.initState();
   }
 
@@ -117,18 +119,25 @@ class _SettingScreenState extends State<SettingScreen> {
                           GenralListTile(
                               title: 'Back up And Restore', onTap: null),
                           GenralListTile(
-                            title: 'Pin And Register',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PinRegisterScreen(),
-                              ),
-                            ),
-                          ),
+                              title: 'Pin And Register',
+                              onTap: () {
+                                if (login == null) {
+                                  showAlertDialog(context);
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PinRegisterScreen(),
+                                      ));
+                                }
+                              }),
                           GenralListTile(title: 'Report Bug', onTap: null),
                           GenralListTile(
                               title: 'Suggest Features', onTap: null),
-                          GenralListTile(title: 'Share', onTap: null),
+                          GenralListTile(
+                            title: 'Share',
+                          ),
                           GenralListTile(
                               title: 'Update Settings',
                               onTap: () {
@@ -143,7 +152,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => LoginScreen()));
+                                        builder: (context) =>
+                                            DashboardScreen()));
                               }),
                           GenralListTile(
                             title: 'Privacy Policy',
@@ -154,17 +164,23 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             ),
                           ),
-                          GenralListTile(
-                              title: 'Logout',
-                              onTap: () async {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.setString("email", null);
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginScreen()));
-                              }),
+                          login == null
+                              ? Container()
+                              : GenralListTile(
+                                  title: login == null ? 'Login' : "Logout",
+                                  onTap: () async {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    print(prefs.getString("email"));
+                                    setState(() {
+                                      prefs.remove("email");
+                                      getdetail();
+                                    });
+                                    // Navigator.pushReplacement(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => LoginScreen()));
+                                  }),
                         ],
                       ),
               ),
@@ -224,8 +240,8 @@ class _SettingScreenState extends State<SettingScreen> {
         'Authorization': 'Bearer $token',
       }, body: {
         "is_pregnency": "yes",
-        "period_length": perioddate,
-        "menstural_period": mensturllength
+        "period_length": startdate,
+        "menstural_period": enddate
       });
       print(response.statusCode.toString());
       print(perioddate.toString());
@@ -234,7 +250,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
         settingfromserver = responseJson;
         print(settingfromserver);
-
+        showToast("Settings  Updated Succesfully");
+        Navigator.pop(context);
         setState(() {
           isError = false;
           isLoading = false;
@@ -255,5 +272,70 @@ class _SettingScreenState extends State<SettingScreen> {
         isLoading = false;
       });
     }
+  }
+
+  Future<void> getdetail() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      login = preferences.getString("email");
+    });
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(
+            15.0,
+          ),
+          color: kPrimaryColor),
+      child: FlatButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text(
+          "Cancel",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      contentPadding: EdgeInsets.all(0),
+      //  backgroundColor: kPrimaryColor,
+
+      content: Container(
+        height: SizeConfig.screenHeight / 5,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              child: Center(
+                child: Text(
+                  "You Have to Login First",
+                  style: TextStyle(
+                      color: kPrimaryColor, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

@@ -19,7 +19,11 @@ dependencies:
   http:
   flutter_rating_bar:
   flutter_pin_code_fields: ^1.1.0
-  weight_slider: 
+  vertical_weight_slider :  
+  lunar_calendar: ^1.0.1
+  table_calendar: ^2.3.2
+  device_info: ^2.0.2
+  rate_my_app: ^1.0.0+2 
   swipedetector: 1.2.0
   fluttertoast:
   shared_preferences: 
@@ -29,7 +33,7 @@ dependencies:
   email_validator: ^1.0.4
   flutter_launcher_icons: "^0.8.0"
   page_transition: 
-  intl: 
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:

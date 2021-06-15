@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
+import 'package:vietnamese/models/addnotes.dart';
 import 'package:vietnamese/models/mood.dart';
 
 class LanguageSelection extends StatefulWidget {
@@ -87,15 +88,24 @@ class MyDialogContent extends StatefulWidget {
 class _MyDialogContentState extends State<MyDialogContent> {
   List<CustomRowModel> sampleData = new List<CustomRowModel>();
   var arr = [];
+  List<Mood> mood = [];
   @override
   void initState() {
     super.initState();
-    sampleData.add(CustomRowModel(title: "Well", selected: false, id: 1));
-    sampleData.add(CustomRowModel(title: "Neutral", selected: false, id: 2));
-    sampleData.add(CustomRowModel(title: "Slight Bad", selected: false, id: 3));
-    sampleData.add(CustomRowModel(title: "Angry", selected: false, id: 4));
-    sampleData.add(CustomRowModel(title: "Bad", selected: false, id: 5));
-    sampleData.add(CustomRowModel(title: "Worried", selected: false, id: 6));
+    sampleData.add(CustomRowModel(title: "Khó chịu", selected: false, id: 1));
+    sampleData.add(CustomRowModel(title: "Buồn", selected: false, id: 2));
+    sampleData.add(CustomRowModel(title: "Buồn chán", selected: false, id: 3));
+    sampleData.add(CustomRowModel(title: "Cô đơn", selected: false, id: 4));
+    sampleData
+        .add(CustomRowModel(title: "Dễ xúc động", selected: false, id: 5));
+    sampleData.add(CustomRowModel(title: "Mệt đừ", selected: false, id: 6));
+    sampleData
+        .add(CustomRowModel(title: "Muốn gây chuyện", selected: false, id: 7));
+    sampleData.add(CustomRowModel(title: "Nóng nảy", selected: false, id: 8));
+    sampleData.add(CustomRowModel(title: "Tự tin", selected: false, id: 9));
+    sampleData.add(CustomRowModel(title: "Yêu đời", selected: false, id: 10));
+    sampleData
+        .add(CustomRowModel(title: "Bình thường", selected: false, id: 11));
   }
 
   @override
@@ -110,7 +120,7 @@ class _MyDialogContentState extends State<MyDialogContent> {
         elevation: 25.0,
         backgroundColor: Colors.white,
         child: Container(
-          height: SizeConfig.screenHeight / 2,
+          height: SizeConfig.screenHeight / 1.2,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -129,6 +139,7 @@ class _MyDialogContentState extends State<MyDialogContent> {
                         sampleData[index].selected = true;
 
                         arr += [sampleData[index].id];
+                       mood.add(Mood(id: sampleData[index].id.toString()));
                         print(arr);
                       });
                     },
@@ -147,7 +158,7 @@ class _MyDialogContentState extends State<MyDialogContent> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pop(context, arr);
+                    Navigator.pop(context, mood);
                   },
                   color: kPrimaryColor,
                   textColor: Colors.white,
@@ -182,7 +193,7 @@ class _MyDialogContentState extends State<MyDialogContent> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'I Feel...',
+            'Mình cảm thấy..',
             style: title,
           ),
           IconButton(

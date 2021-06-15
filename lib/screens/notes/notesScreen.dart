@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:velocity_x/velocity_x.dart';
+import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/bottom.dart';
 import 'package:vietnamese/components/common_navigation.dart';
+import 'package:vietnamese/screens/Login/login.dart';
 import 'package:vietnamese/screens/notes/alerts/period_started.dart';
 import 'package:vietnamese/screens/notes/components/notes_text_field.dart';
 import 'package:vietnamese/screens/notes/components/two_item_container.dart';
@@ -12,6 +17,7 @@ import 'package:vietnamese/screens/notes/components/two_textField.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/models/addnotes.dart';
 import 'package:vietnamese/common/notesapirepo.dart';
+import 'package:vietnamese/screens/signup/signUp.dart';
 import 'alerts/mood.dart';
 import 'alerts/period_ended.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,9 +31,14 @@ class NotesScreen extends StatefulWidget {
 
 class _NotesScreenState extends State<NotesScreen> {
   final addusernotesrepo = AddNotesRepo();
+  TextEditingController textEditingControllerweight;
   bool isLoading = false;
   DateTime date;
   String note;
+  final key = GlobalKey<FormState>();
+  var user_type;
+  var login_count;
+  var deviceid;
   String notes;
   String tx_wieght;
   var moods;
@@ -44,6 +55,7 @@ class _NotesScreenState extends State<NotesScreen> {
   String masturbated;
   String weight;
   DateTime selectedDate = DateTime.now();
+  DateTime selectedDateforstart = DateTime.now();
   String height;
   List<Mood> mood;
   bool valuemedicine = false;
@@ -74,6 +86,7 @@ class _NotesScreenState extends State<NotesScreen> {
     var now = new DateTime.now();
     var formatter = new DateFormat('yyyy-MM-dd');
     today = formatter.format(now);
+    getdetail();
     super.initState();
   }
 
@@ -129,7 +142,7 @@ class _NotesScreenState extends State<NotesScreen> {
               // ),
               GestureDetector(
                 onTap: () {
-                  getdate();
+                  showstartDialog(context);
                 },
                 child: TwoItemContainer(
                   title: "Period Started Today",
@@ -138,7 +151,7 @@ class _NotesScreenState extends State<NotesScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  enddate();
+                  showendDialog(context);
                 },
                 child: TwoItemContainer(
                   title: "Period Ended Today",
@@ -234,7 +247,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Took Medicine",
+                        "Uống thuốc",
                         style: TextStyle(
                           color: kPrimaryColor,
                           fontWeight: FontWeight.bold,
@@ -282,7 +295,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "InterCourse",
+                        "Giao hợp",
                         style: TextStyle(
                           color: kPrimaryColor,
                           fontWeight: FontWeight.bold,
@@ -330,7 +343,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Masturbrate",
+                        "Tự sướng",
                         style: TextStyle(
                           color: kPrimaryColor,
                           fontWeight: FontWeight.bold,
@@ -371,79 +384,48 @@ class _NotesScreenState extends State<NotesScreen> {
                   moods = await showDialog(
                       context: context,
                       builder: (BuildContext context) => MyDialogContent());
-                  print(moods);
+                 // print(moods[1]);
                 },
                 child: TwoItemContainer(
-                  title: "MOOD",
+                  title: "Mình cảm thấy",
                   itemType: ItemType.icon,
                 ),
               ),
 
-              Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: getProportionateScreenWidth(10)),
-                width: SizeConfig.screenWidth,
-                height: getProportionateScreenHeight(60),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height: getProportionateScreenHeight(50),
-                      width: SizeConfig.screenWidth * 0.45,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          isDense: true,
-                          focusColor: kPrimaryLightColor,
-                          hoverColor: kPrimaryLightColor,
-                          hintStyle: TextStyle(color: kTextColor),
-                          hintText: "Weight",
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 42, vertical: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: kPrimaryColor),
-                            gapPadding: 10,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: kPrimaryColor),
-                            gapPadding: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: kPrimaryColor),
-                            gapPadding: 10,
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            tx_wieght = value;
-                          });
-                        },
-                        // onChangedValue: widget.height,
-                      ),
-                    ),
-                    SizedBox(
-                      height: getProportionateScreenHeight(50),
-                      width: SizeConfig.screenWidth * 0.45,
-                      child: TextField(
+              Form(
+                key: key,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: getProportionateScreenWidth(10)),
+                  width: SizeConfig.screenWidth,
+                  height: getProportionateScreenHeight(60),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        height: getProportionateScreenHeight(50),
+                        width: SizeConfig.screenWidth * 0.45,
+                        child: TextFormField(
+                          controller: textEditingControllerweight,
                           keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          buildCounter: (BuildContext context,
+                                  {int currentLength,
+                                  int maxLength,
+                                  bool isFocused}) =>
+                              null,
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
                             isDense: true,
                             focusColor: kPrimaryLightColor,
                             hoverColor: kPrimaryLightColor,
-                            
                             hintStyle: TextStyle(color: kTextColor),
-                            hintText: "Height",
+                            hintText: "Weight",
+
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
-                                horizontal: 42, vertical: 20),
+                                horizontal: 42, vertical: 5),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(color: kPrimaryColor),
@@ -459,17 +441,73 @@ class _NotesScreenState extends State<NotesScreen> {
                               borderSide: BorderSide(color: kPrimaryColor),
                               gapPadding: 10,
                             ),
+                            // errorText: validatePassword(double.parse(tx_wieght)),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              tx_wieght = value;
+                            });
+                          },
+                          validator: (val) {
+                            if (double.parse(val) < 30 ||
+                                double.parse(val) > 100) {
+                              return "Enter Range 30-100";
+                            } else {
+                              return null;
+                            }
+                          },
+                          // onChangedValue: widget.height,
+                        ),
+                      ),
+                      SizedBox(
+                        height: getProportionateScreenHeight(50),
+                        width: SizeConfig.screenWidth * 0.45,
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          buildCounter: (BuildContext context,
+                                  {int currentLength,
+                                  int maxLength,
+                                  bool isFocused}) =>
+                              null,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            isDense: true,
+                            focusColor: kPrimaryLightColor,
+                            hoverColor: kPrimaryLightColor,
+                            hintStyle: TextStyle(color: kTextColor),
+                            hintText: "Height",
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 42, vertical: 5),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: kPrimaryColor),
+                              gapPadding: 0,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: kPrimaryColor),
+                              gapPadding: 0,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: kPrimaryColor),
+                              gapPadding: 0,
+                            ),
                           ),
                           onChanged: (value) {
                             setState(() {
                               tx_height = value;
                               print(tx_height);
                             });
-                          }
+                          },
+
                           // onChangedValue: widget.height,
-                          ),
-                    ),
-                  ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(
@@ -481,37 +519,51 @@ class _NotesScreenState extends State<NotesScreen> {
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: kPrimaryColor, width: 0.5),
                     borderRadius: BorderRadius.circular(10)),
-                onPressed: () {
-                  for (int i = 0; i < moods.length; i++) {
-                    print(moods[i]);
+                onPressed: () async {
+                  if (key.currentState.validate() && moods.length != null) {
+                    print(moods);
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setString("weight", tx_wieght);
+
+                    var data = AddUserNotes(
+                        date: DateTime.parse(today.toString().substring(0, 10)),
+                        note: notes,
+                        periodStartedDate: startPerioddate,
+                        periodEndedDate: periodenddate,
+                        flow: star.toString(),
+                        tookMedicine: valuemedicine.toString(),
+                        intercourse: valueinter.toString(),
+                        masturbated: valuemasturbrated.toString(),
+                        weight: tx_wieght,
+                        height: tx_height,
+                        mood: moods);
+
+                    setState(() {
+                      isLoading = true;
+                    });
+                    addnotesList.add(data);
+                    if (user_type == "guest") {
+                      if (login_count <= 3) {
+                        showregisterdialog(context);
+                      } else {
+                        postnotes(addnotesList);
+                      }
+                    } else {
+                      postnotes(addnotesList);
+                    }
+                  } else {
+                    showToast("message");
                   }
-                  var data = AddUserNotes(
-                      date: DateTime.parse(today.toString().substring(0, 10)),
-                      note: notes,
-                      periodStartedDate: startPerioddate,
-                      periodEndedDate: periodenddate,
-                      flow: star.toString(),
-                      tookMedicine: valuemedicine.toString(),
-                      intercourse: valueinter.toString(),
-                      masturbated: valuemasturbrated.toString(),
-                      weight: tx_wieght,
-                      height: tx_height,
-                      mood: [
-                        Mood(id: moods[0].toString()),
-                        // Mood(id: moods[1].toString()),
-                        // Mood(id: moods[2].toString()),
-                      ]);
-                  addnotesList.add(data);
-                  postnotes(addnotesList);
                 },
                 child: isLoading
                     ? CircularProgressIndicator(
                         valueColor:
-                            new AlwaysStoppedAnimation<Color>(Colors.white),
+                            new AlwaysStoppedAnimation<Color>(Colors.pink),
                       )
                     : Text(
                         "Save Notes",
-                        style: TextStyle(color: kPrimaryColor),
+                        style: TextStyle(color: Colors.pink),
                       ),
               )
             ],
@@ -519,6 +571,13 @@ class _NotesScreenState extends State<NotesScreen> {
         ),
       ),
     );
+  }
+
+  String validatePassword(double value) {
+    if (!(value > 30.0) && value < 100.0) {
+      return "Password should contain more than 5 characters";
+    }
+    return null;
   }
 
   postnotes(List<AddUserNotes> addnotes) async {
@@ -533,9 +592,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
     addusernotesrepo.addusernotes(token, addnotes).then((value) => {
           if (value)
-            {
-              showToast("Notes Added Successfully!"),
-            }
+            {showToast("Notes Added Successfully!"), Navigator.pop(context)}
         });
     setState(() {
       isLoading = false;
@@ -582,6 +639,48 @@ class _NotesScreenState extends State<NotesScreen> {
     );
   }
 
+  showregisterdialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("Register"),
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+      },
+    );
+    Widget deny = FlatButton(
+      child: Text("Continue,without Login"),
+      onPressed: () {
+        print(notes);
+        getlogindemo();
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      content: Container(
+          height: SizeConfig.screenHeight / 10,
+          child: Column(
+            children: [
+              Text("For Add Notes You have to login "),
+            ],
+          )),
+      actions: [
+        okButton,
+        deny,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   InputDecoration inputDecoration() {
     OutlineInputBorder outlineInputBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
@@ -607,7 +706,7 @@ class _NotesScreenState extends State<NotesScreen> {
   getdate() async {
     startPerioddate = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: selectedDateforstart,
       firstDate: DateTime(2021, 4),
       lastDate: DateTime(2022, 5),
       builder: (BuildContext context, Widget child) {
@@ -622,10 +721,10 @@ class _NotesScreenState extends State<NotesScreen> {
         );
       },
     );
-    if (startPerioddate != null && startPerioddate != selectedDate)
+    if (startPerioddate != null && startPerioddate != selectedDateforstart)
       setState(() {
-        selectedDate = startPerioddate;
-        print(selectedDate);
+        selectedDateforstart = startPerioddate;
+        print(selectedDateforstart);
       });
   }
 
@@ -654,6 +753,78 @@ class _NotesScreenState extends State<NotesScreen> {
       });
   }
 
+  showendDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("Yes"),
+      onPressed: () {
+        print(notes);
+
+        Navigator.pop(context);
+      },
+    );
+    Widget close = FlatButton(
+      child: Text("No"),
+      onPressed: () {
+        print(notes);
+
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Your Periods Ended Today?"),
+      actions: [okButton, close],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showstartDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("Yes"),
+      onPressed: () {
+        print(notes);
+
+        Navigator.pop(context);
+      },
+    );
+
+    Widget closeButton = FlatButton(
+      child: Text("No"),
+      onPressed: () {
+        print(notes);
+
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Your Periods Started Today"),
+      actions: [
+        okButton,
+        closeButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   notesdate() async {
     final DateTime pickedDate = await showDatePicker(
       context: context,
@@ -678,5 +849,68 @@ class _NotesScreenState extends State<NotesScreen> {
         //  selectedDate = DateTime.parse(today);
         print(today.toString());
       });
+  }
+
+  Future<void> getdetail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      user_type = prefs.getString("user_type");
+      login_count = prefs.getInt("login_count");
+      print(login_count);
+      deviceid = prefs.getString("deviceid");
+      if (prefs.getString("weight") == null) {
+      } else {
+        textEditingControllerweight =
+            TextEditingController(text: prefs.getString("weight"));
+        tx_wieght = prefs.getString("weight");
+      }
+    });
+  }
+
+  dynamic login = new List();
+  Future<void> getlogindemo() async {
+    print(deviceid);
+    try {
+      final response = await http.post(logindemo, body: {
+        "device_id": deviceid,
+        // "password": passwordString,
+      });
+      print("bjkb" + response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+        print(responseJson);
+        login = responseJson;
+        print(login['data']['login_count']);
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setInt("login_count", login['data']['login_count']);
+        login_count = preferences.getInt("login_count");
+        print(login_count);
+        //print(loginwithserver);
+
+        Navigator.pop(context);
+        postnotes(addnotesList);
+
+        // showToast("");
+        // savedata();
+        setState(() {
+          //  isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+        showToast("Mismatch Credentials");
+        setState(() {
+          // isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        // isError = true;
+        isLoading = false;
+      });
+    }
   }
 }

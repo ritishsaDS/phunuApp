@@ -1,5 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vietnamese/common/Api.dart';
+import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/logo.dart';
 import 'package:vietnamese/screens/Dashboard/dashboard.dart';
@@ -12,9 +18,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool isLoading = false;
+  bool isError = false;
   @override
   void initState() {
-    _mockCheckForSession();
+   // _getId();
+    // _mockCheckForSession();
+
     // TODO: implement initState
     super.initState();
   }
@@ -43,7 +53,15 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var email = prefs.getString('email');
 
-    runApp(MaterialApp(home: email == null ? LoginScreen() : DashboardScreen()));
+    runApp(
+        MaterialApp(home: email == null ? LoginScreen() : DashboardScreen()));
     return true;
   }
+
+  
+
+  
+  //print("osnanl" + usernameString);
+  // bool isvalid = EmailValidator.validate(usernameString);
+
 }

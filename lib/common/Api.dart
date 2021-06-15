@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 const domainURL = 'http://girl-period.uplosse.com/api/';
 String login = domainURL + "login";
+String regsiter = domainURL + "register";
 String GetArticles = domainURL + "get-articles";
 String getpolicies = domainURL + "privacy-policy";
 String addnotes = domainURL + "add-user-notes";
@@ -13,3 +14,7 @@ String nexperiod = domainURL + "get-next-period-date";
 String updatesetings = domainURL + "setting/update";
 String checklogin = domainURL + "check-login";
 String getnotes = domainURL + "get-user-notes";
+String getnotescountapi = domainURL + "get-user-notes-count";
+String firstlogin = domainURL + "login-for-first";
+String logindemo = domainURL + "login-demo-model";
+String notecountbymonth = domainURL + "get-all-notes-by-months";

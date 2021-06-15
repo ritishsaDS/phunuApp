@@ -7,6 +7,7 @@ import 'package:vietnamese/screens/calander/calander_screen.dart';
 import 'package:vietnamese/screens/notes/notesScreen.dart';
 import 'package:vietnamese/screens/settings/settings.dart';
 import 'dart:convert';
+
 class CardSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class TopRow extends StatefulWidget {
 }
 
 class _TopRowState extends State<TopRow> {
-   DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now();
   var formatter;
   String formattedDate;
   @override
@@ -44,18 +45,17 @@ class _TopRowState extends State<TopRow> {
     formatter = new DateFormat('yyyy-MM-dd');
     formattedDate = formatter.format(now);
     print(formattedDate);
-    print(json.encode( 
-  {
- "registration_ids" :"tokens" ,
- "collapse_key" : "type_a",
- "notification" : {
-     "body" : "Body of Your Notification",
-     "title": "Title of Your Notification"
- }
-
-}));
+    print(json.encode({
+      "registration_ids": "tokens",
+      "collapse_key": "type_a",
+      "notification": {
+        "body": "Body of Your Notification",
+        "title": "Title of Your Notification"
+      }
+    }));
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -66,10 +66,8 @@ class _TopRowState extends State<TopRow> {
             title: 'Calender',
             iconUrl: 'assets/icons/calender.png',
             onTap: () {
-             Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CalanderScreen()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CalanderScreen()));
             }),
         CardButton(
           title: 'Notes',
@@ -84,7 +82,8 @@ class _TopRowState extends State<TopRow> {
       ],
     );
   }
-   getdate() {
+
+  getdate() {
     showDatePicker(
       context: context,
       initialDate: selectedDate,
@@ -93,7 +92,7 @@ class _TopRowState extends State<TopRow> {
       builder: (BuildContext context, Widget child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor:Color(0xFFDE439A),
+            primaryColor: Color(0xFFDE439A),
             accentColor: Color(0xFFDE439A),
             colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
             buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
@@ -103,7 +102,6 @@ class _TopRowState extends State<TopRow> {
       },
     );
   }
-
 }
 
 class BottomRow extends StatelessWidget {

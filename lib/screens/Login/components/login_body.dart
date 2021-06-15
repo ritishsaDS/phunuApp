@@ -152,50 +152,50 @@ class _LoginBodyState extends State<LoginBody> {
                         HeightBox(
                           getProportionateScreenHeight(20),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //   child: Text(
-                        //     "PIN",
-                        //     style: TextStyle(color: Colors.black),
-                        //   ),
-                        // ),
-                        // Container(
-                        //   child: TextFormField(
-                        //     enabled: isLoading ? false : true,
-                        //     onChanged: (text) {
-                        //       passwordString = text;
-                        //     },
-                        //     decoration: InputDecoration(
-                        //       filled: true,
-                        //       fillColor: Colors.white,
-                        //       enabledBorder: OutlineInputBorder(
-                        //         borderSide: BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //         borderRadius: BorderRadius.circular(10.0),
-                        //       ),
-                        //       disabledBorder: OutlineInputBorder(
-                        //         borderSide: BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //         borderRadius: BorderRadius.circular(10.0),
-                        //       ),
-                        //       focusedBorder: OutlineInputBorder(
-                        //         borderSide: BorderSide(color: Colors.white),
-                        //         borderRadius: BorderRadius.circular(10.0),
-                        //       ),
-                        //     ),
-                        //     keyboardType: TextInputType.number,
-                        //     cursorColor: kPrimaryLightColor,
-                        //     validator: (val) {
-                        //       if (val.length == 0) {
-                        //         return "Password cannot be empty";
-                        //       } else {
-                        //         return null;
-                        //       }
-                        //     },
-                        //   ),
-                        // ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "PIN",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        Container(
+                          child: TextFormField(
+                            enabled: isLoading ? false : true,
+                            onChanged: (text) {
+                              passwordString = text;
+                            },
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            keyboardType: TextInputType.number,
+                            cursorColor: kPrimaryLightColor,
+                            validator: (val) {
+                              if (val.length == 0) {
+                                return "Password cannot be empty";
+                              } else {
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -372,9 +372,9 @@ class _LoginBodyState extends State<LoginBody> {
         });
       } else {
         try {
-          final response = await http.post(checklogin, body: {
+          final response = await http.post(login, body: {
             "email": usernameString,
-            // "password": passwordString,
+            "password": passwordString,
           });
           print("bjkb" + response.statusCode.toString());
           if (response.statusCode == 200) {
@@ -383,14 +383,9 @@ class _LoginBodyState extends State<LoginBody> {
             loginwithserver = responseJson;
             // print(loginwithserver['data']['email']);
             print(loginwithserver);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PinField(
-                        email: usernameString,
-                        message: loginwithserver['message'])));
+
             // showToast("");
-            // savedata();
+            savedata();
             setState(() {
               isError = false;
               isLoading = false;
@@ -419,8 +414,9 @@ class _LoginBodyState extends State<LoginBody> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setString("email", loginwithserver['data']['email']);
-    prefs.setInt("password", loginwithserver['data']['password']);
+    //prefs.setInt("password", loginwithserver['data']['password']);
     prefs.setString("token", loginwithserver['access_token']);
+     prefs.setString("user_type", loginwithserver['data']['user_type']);
     //prefs.setString('email', emailController.text);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => DashboardScreen()));

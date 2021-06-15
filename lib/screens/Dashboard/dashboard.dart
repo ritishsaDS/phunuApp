@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -26,14 +28,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isLoading = false;
   String token;
   bool isError;
-  var getnext;
-  var periodno;
+  var getnext = "       ";
+  var periodno = "3";
   DateTime selectedDate = DateTime.now();
 
   DateTime end;
   @override
   void initState() {
-    getalert();
+    _getId();
+
     var now = new DateTime.now();
     formatter = new DateFormat('yyyy-MM-dd');
     formattedDate = formatter.format(now);
@@ -44,6 +47,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
           body: Stack(
@@ -52,7 +56,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: isLoading
                 ? Column(children: [
                     CommonAppBar(),
-                    DashboardTitle(day: ""),
+                    DashboardDate(),
+                    //  DashboardTitle(),
                     DashboardDate(),
                     CardSection(),
                   ])
@@ -184,8 +189,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
     );
   }
-  
- 
+
   getdate() async {
     final DateTime pickedDate = await showDatePicker(
       context: context,
@@ -212,7 +216,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         print(selectedDate);
         // getenddate();
       });
-   
   }
 
   getenddate() async {
@@ -242,16 +245,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   dynamic settingfromserver = new List();
   Future<void> sendperioddate(date) async {
-    isLoading = true;
+   // isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
-    print(token);
+    print("ddffd" + token);
     try {
       final response = await http.post(senperiodtoserver, headers: {
         'Authorization': 'Bearer $token',
       }, body: {
         "start_period_date": date.toString(),
-        "end_period_date": "2021-06-06",
+        "end_period_date": "2021-07-06",
       });
       print(response.statusCode.toString());
       if (response.statusCode == 200) {
@@ -260,8 +263,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         settingfromserver = responseJson;
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("alert", "true");
+        prefs.setString("startdate", date.toString());
         Navigator.pop(context);
-        print(settingfromserver);
+        // print("lvnsdlm l" + settingfromserver);
         getNextperiod();
         setState(() {
           isError = false;
@@ -285,6 +289,132 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  _getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    if (Platform.isIOS) {
+      // import 'dart:io'
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      print(iosDeviceInfo.identifierForVendor);
+      await signin(iosDeviceInfo.identifierForVendor);
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      print(androidDeviceInfo.androidId);
+      await signin(androidDeviceInfo.androidId);
+      return androidDeviceInfo.androidId; // unique ID on Android
+    }
+  }
+
+  dynamic firstloginlist = new List();
+  dynamic loginwithserver = new List();
+  signin(deviceid) async {
+    print(deviceid);
+    try {
+      final response = await http.post(firstlogin, body: {
+        "device_id": deviceid,
+        "pin": "1234",
+      });
+      //print("bjkb" + response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        firstloginlist = responseJson;
+        // print(loginwithserver['data']['email']);
+        print(firstloginlist);
+        loginasguest(deviceid);
+        // showToast("");
+        // savedata();
+        setState(() {
+          isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+        showToast("Mismatch Credentials");
+        setState(() {
+          isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> loginasguest(deviceid) async {
+    try {
+      final response = await http.post(login, body: {
+        "device_id": deviceid,
+        "password": "1234",
+      });
+      //print("bjkb" + response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        loginwithserver = responseJson;
+        // print(loginwithserver['data']['email']);
+        print(loginwithserver);
+        // loginasguest(deviceid);
+        // showToast("");
+        savedata(deviceid);
+        gettoken();
+        getalert();
+        setState(() {
+          isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+        showToast("Mismatch Credentials");
+        setState(() {
+          isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> savedata(deviceid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (loginwithserver['data']['login_count'] == null) {
+      prefs.setString("user_type", loginwithserver['data']['user_type']);
+
+      //  prefs.setInt("login_count", loginwithserver['data']['login_count']);
+      prefs.setString("deviceid", deviceid);
+      // prefs.setInt("password", loginwithserver['data']['password']);
+      prefs.setString("token", loginwithserver['access_token']);
+    } else if (loginwithserver['data']['email'] == null) {
+      prefs.setString("user_type", loginwithserver['data']['user_type']);
+
+      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+      prefs.setString("deviceid", deviceid);
+      // prefs.setInt("password", loginwithserver['data']['password']);
+      prefs.setString("token", loginwithserver['access_token']);
+    } else {
+      prefs.setString("email", loginwithserver['data']['email']);
+      prefs.setString("user_type", loginwithserver['data']['user_type']);
+
+      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+      prefs.setString("deviceid", deviceid);
+      // prefs.setInt("password", loginwithserver['data']['password']);
+      prefs.setString("token", loginwithserver['access_token']);
+      //prefs.setString('email', emailController.text);
+      //Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
+    }
+  }
+
   dynamic nextfromserver = new List();
   Future<void> getNextperiod() async {
     isLoading = true;
@@ -303,6 +433,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         final responseJson = json.decode(response.body);
 
         nextfromserver = responseJson;
+        print(nextfromserver);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         if (prefs.getString("nextdate") == null) {
           prefs.setString(
@@ -346,8 +477,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     print("toays dayt" + formattedDate.toString().substring(8, 10));
     print(
         "${DateTime.parse(formattedDate).difference(DateTime.parse(select)).inDays}");
-    periodno =
-        DateTime.parse(formattedDate).difference(DateTime.parse(select)).inDays;
+    periodno = (DateTime.parse(formattedDate)
+            .difference(DateTime.parse(select))
+            .inDays)
+        .toString();
+  }
+
+  Future<void> gettoken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
   }
 }
 
@@ -384,7 +522,7 @@ class BodyContent extends StatelessWidget {
                       color: kPrimaryColor, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  date,
+                  date == null ? "" : date,
                   style: TextStyle(
                     color: kPrimaryColor,
                     fontWeight: FontWeight.w600,

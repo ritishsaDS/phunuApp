@@ -29,7 +29,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
   bool isError = false;
   bool isLoading = false;
 
-  int _radioValue = 0;
+  int _radioValue;
   String age = "Under 18";
 
   void _handleRadioValueChange(int value) {
@@ -545,7 +545,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
 
     setState(() {
       email = prefs.getString("email");
-      pin = prefs.getString("password");
+      // pin = prefs.getString("password");
       if (prefs.getString("province") == null) {
         setState(() {
           province = "";
