@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vietnamese/components/icons.dart';
 import 'package:vietnamese/screens/calander/calander_screen.dart';
+import 'package:vietnamese/screens/lunar.dart';
 import 'package:vietnamese/screens/notes/notesScreen.dart';
 
 import '../common/constants.dart';
@@ -103,7 +104,7 @@ class _BottomTabsState extends State<BottomTabs> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CalanderScreen(),
+                                  builder: (context) => Lunar(),
                                 ));
                           }
                         },

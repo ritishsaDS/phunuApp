@@ -384,7 +384,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   moods = await showDialog(
                       context: context,
                       builder: (BuildContext context) => MyDialogContent());
-                 // print(moods[1]);
+                  // print(moods[1]);
                 },
                 child: TwoItemContainer(
                   title: "Mình cảm thấy",
@@ -774,7 +774,38 @@ class _NotesScreenState extends State<NotesScreen> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Your Periods Ended Today?"),
+      title: Text(" Periods Ended "),
+      content: Container(
+        height: getProportionateScreenHeight(40),
+        padding: EdgeInsets.symmetric(
+          horizontal: getProportionateScreenWidth(10),
+        ),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(26),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${selectedDate.toString().replaceAll("-", "/").substring(0, 10)}",
+
+              /// style: date,
+            ),
+            GestureDetector(
+                child: Image.asset(
+                  "assets/icons/calender.png",
+                  height: 15,
+                  width: 20,
+                ),
+                onTap: () {
+                  enddate();
+                  // getendperioddate();
+                })
+          ],
+        ),
+      ),
       actions: [okButton, close],
     );
 
@@ -809,7 +840,37 @@ class _NotesScreenState extends State<NotesScreen> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Your Periods Started Today"),
+      title: Text(" Periods Started "),
+      content: Container(
+        height: getProportionateScreenHeight(40),
+        padding: EdgeInsets.symmetric(
+          horizontal: getProportionateScreenWidth(10),
+        ),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(26),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${selectedDateforstart.toString().replaceAll("-", "/").substring(0, 10)}",
+
+              /// style: date,
+            ),
+            GestureDetector(
+                child: Image.asset(
+                  "assets/icons/calender.png",
+                  height: 15,
+                  width: 20,
+                ),
+                onTap: () {
+                  // getendperioddate();
+                })
+          ],
+        ),
+      ),
       actions: [
         okButton,
         closeButton,

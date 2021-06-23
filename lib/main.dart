@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/Login/login.dart';
+import 'package:vietnamese/screens/lunar.dart';
 import 'package:vietnamese/screens/signup/signUp.dart';
 import 'common/constants.dart';
 import 'common/theme.dart';
@@ -129,8 +130,8 @@ class _MyAppState extends State<MyApp> {
           print('setstate');
         });
       } else {
-        print("bjkb" + response.statusCode.toString());
-        showToast("Mismatch Credentials");
+        print("bssddsdjkb" + response.statusCode.toString());
+      //  showToast("Mismatch Credentials");
         setState(() {
           isError = true;
           isLoading = false;

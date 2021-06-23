@@ -57,6 +57,8 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
   var usernotes;
   var listOfDates;
   var value;
+  dynamic notes = new List();
+
   @override
   void initState() {
     super.initState();
@@ -345,8 +347,7 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
             //print(DateTime.parse(next));
           }
         },
-        child: calendarDate.date.day != DateTime.parse(next).day &&
-                calendarDate.date.day != DateTime.parse(start).day
+        child: calendarDate.date.day != DateTime.parse(next).day
             ? SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -371,21 +372,48 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
                         style: TextStyle().copyWith(fontSize: 8.0),
                       ),
                     ),
-                    Text(".")
+                    notes != null && notes.toString().length > 0
+                        ? Container(
+                            height: 20,
+                            child: ListView.builder(
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                    margin: EdgeInsets.only(top: 5),
+                                    height: 5,
+                                    width: 5,
+                                    decoration: new BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ));
+                              },
+                              itemCount: 2,
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          )
+                        : SizedBox()
                   ],
                 ),
               )
             : calendarDate.date.month < DateTime.parse(next).month ||
-                    calendarDate.date.month > DateTime.parse(next).month &&
-                        calendarDate.date.day != DateTime.parse(start).day
+                    calendarDate.date.month > DateTime.parse(next).month
                 ? Container(
-                    child: Center(
-                      child: Text(
-                        "${DateTime.parse(next).day}",
-                      ),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            "${DateTime.parse(next).day}",
+                            style: TextStyle().copyWith(fontSize: 7.0),
+                          ),
+                        ),
+                        Text(
+                          '${printLunarDate(DateTime.parse(next.toString()))}',
+                          style: TextStyle().copyWith(fontSize: 7.0),
+                        )
+                      ],
                     ),
                   )
-                : DateTime.parse(start).day != calendarDate.date.day
+                : DateTime.parse(start).day != calendarDate.date.day &&
+                        DateTime.parse(start).month == calendarDate.date.month
                     ? Container(
                         decoration: BoxDecoration(
                           color: Colors.pinkAccent,
@@ -396,31 +424,34 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
                         ),
                         child: Center(
                           child: Text("${DateTime.parse(next).day}",
-                              style: TextStyle(color: Colors.white)),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 8)),
                         ),
                       )
-                    : calendarDate.date.month < DateTime.parse(next).month ||
-                            calendarDate.date.month > DateTime.parse(next).month
-                        ? Container(child:   Text(DateTime.parse(start).day.toString()),)
-                        : Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Container(
-                                  height: 2,
-                                  color: Colors.pink,
-                                ),
-                                Text(DateTime.parse(start).day.toString()),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '${printLunarDate(DateTime.parse(start.toString()))}',
-                                    style: TextStyle().copyWith(fontSize: 7.0),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ));
+                    : Container(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: Colors.pink,
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                DateTime.parse(next).day.toString(),
+                                style: TextStyle(
+                                    fontSize: 10, color: Colors.white),
+                              ),
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                    '${printLunarDate(DateTime.parse(next.toString()))}',
+                                    style: TextStyle(
+                                        fontSize: 9, color: Colors.white)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ));
   }
 
   // date selector
@@ -639,6 +670,13 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     next = prefs.getString("nextdate");
     start = prefs.getString("startdate");
+    var one;
+    var two;
+    var three;
+    one = DateTime.parse(start).day + 1;
+    two = one + 1;
+    one = two + 1;
+    //print(one+two+three);
     print("sndlljnsdl" + start);
     if (prefs.getString("selecteddate") == null) {
     } else {
@@ -724,7 +762,7 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
                       ),
                     ),
                     Text(
-                      countfromserver[i]['note'],
+                    countfromserver[i]['note']==null?"":   countfromserver[i]['note'],
                       style: _textStyle,
                     ),
                   ],
@@ -795,31 +833,46 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
     }
   }
 
-  dynamic notes = new List();
   Future<void> getnotescountbymonth() async {
     isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
     print(token);
     try {
-      final response = await http.post(
-        notecountbymonth,
-        // body: {"date": date.toString().substring(0, 10)},
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await http.post(notecountbymonth,
+          // body: {"date": date.toString().substring(0, 10)},
+          headers: {
+            'Authorization': 'Bearer $token',
+          }, body: {
+        "first_day": "2021-06-01",
+        "last_day": "2021-06-30"
+      });
       print(response.statusCode.toString());
       if (response.statusCode == 200) {
         final responseJson = json.decode(response.body);
 
         notes = responseJson['data'];
+        print("note" + notes.toString());
         // count = responseJson['notes_count'];
         // count = noteslength;
         //  print(count);
+        responseJson['data'].forEach((k, v) {
+          Calendar calendardate;
+          for (int i = 1;
+              i <= int.parse(calendardate.date.month.toString());
+              i++) {
+            var day = k.toString().split('-').last;
+            if (int.parse(day) == i) {
+              print("data" + day.toString());
+            }
+          }
+          print("k" + k.toString() + "v" + v.toString());
+        });
         for (int i = 0; i < listOfDates.length; i++) {
-          var usdKey = notes.keys.firstWhere((k) => notes[k] == listOfDates[i],
-              orElse: () => null);
+          var usdKey = notes.keys.firstWhere(
+            (k) => (notes[k]),
+          );
+          print("fdssdvfdsfdddfff" + notes[1].toString());
         }
 
         // print("Notes" + notes.toString().replaceAll("-", "/"));

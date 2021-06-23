@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -31,9 +32,11 @@ class _SettingScreenState extends State<SettingScreen> {
   bool isError;
   var mensturllength;
   var perioddate;
+  bool switchVal = false;
   String startdate = "28";
   String enddate = "20";
   String formattedDate;
+  Widget _widget;
   var login;
   @override
   void initState() {
@@ -113,11 +116,113 @@ class _SettingScreenState extends State<SettingScreen> {
                               });
                             },
                           ),
-                          PregnentTile(
-                              is_pregnency: settingfromserver["data"]
-                                  ['is_pregnency']),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              bottom: getProportionateScreenHeight(10),
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: getProportionateScreenWidth(10),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: getProportionateScreenWidth(20),
+                                  vertical: getProportionateScreenHeight(11)),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: kPrimaryColor),
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'I\'m Pregnant!',
+                                        style: TextStyle(
+                                          color: kPrimaryColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Switch(
+                                          value: switchVal,
+                                          inactiveThumbColor:
+                                              kPrimaryLightColor,
+                                          onChanged: (val) {
+                                            setState(() {
+                                              switchVal = val;
+                                            });
+                                          }),
+                                    ],
+                                  ),
+                                  switchVal == true
+                                      ? Container(
+                                          height:
+                                              getProportionateScreenHeight(100),
+                                          alignment: Alignment.centerLeft,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                getProportionateScreenWidth(25),
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Start of pregnancy',
+                                                //style: subTitle,
+                                              ),
+                                              Container(
+                                                height:
+                                                    getProportionateScreenHeight(
+                                                        40),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      getProportionateScreenWidth(
+                                                          10),
+                                                ),
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: kPrimaryColor),
+                                                  borderRadius:
+                                                      BorderRadius.circular(26),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "${formattedDate.replaceAll("-", "/").replaceAll("00:00:00.000", "")}",
+
+                                                      /// style: date,
+                                                    ),
+                                                    AlertIcon(
+                                                        iconPath:
+                                                            "assets/icons/calender.png",
+                                                        onTap: () {
+                                                          getdate();
+                                                        })
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(),
+                                ],
+                              ),
+                            ),
+                          ),
                           GenralListTile(
-                              title: 'Back up And Restore', onTap: null),
+                              title: 'Back up And Restore',
+                              onTap: () {
+                                backup();
+                              }),
                           GenralListTile(
                               title: 'Pin And Register',
                               onTap: () {
@@ -137,6 +242,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               title: 'Suggest Features', onTap: null),
                           GenralListTile(
                             title: 'Share',
+                            onTap: share,
                           ),
                           GenralListTile(
                               title: 'Update Settings',
@@ -239,7 +345,7 @@ class _SettingScreenState extends State<SettingScreen> {
       final response = await http.post(updatesetings, headers: {
         'Authorization': 'Bearer $token',
       }, body: {
-        "is_pregnency": "yes",
+        "is_pregnency": switchVal.toString(),
         "period_length": startdate,
         "menstural_period": enddate
       });
@@ -337,5 +443,82 @@ class _SettingScreenState extends State<SettingScreen> {
         return alert;
       },
     );
+  }
+
+  getdate() async {
+    final DateTime pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2021, 4),
+      lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color(0xFFDE439A),
+            accentColor: Color(0xFFDE439A),
+            colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child,
+        );
+      },
+    );
+    if (pickedDate != null && pickedDate != formattedDate)
+      setState(() {
+        formattedDate = pickedDate.toString();
+        print(formattedDate);
+      });
+  }
+
+  Future<void> share() async {
+    await FlutterShare.share(
+        title: 'Example share',
+        text: 'Example share text',
+        linkUrl: 'https://flutter.dev/',
+        chooserTitle: 'Example Chooser Title');
+  }
+
+  dynamic backuplist = List();
+  Future<void> backup() async {
+    isLoading = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    print(token);
+    try {
+      final response = await http.post(
+        backupapi,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(response.statusCode.toString());
+      print(perioddate.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        backuplist = responseJson;
+        print(backuplist);
+        showToast("Bakcup  Updated Succesfully");
+        Navigator.pop(context);
+        setState(() {
+          isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+
+        setState(() {
+          isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("uhdfuhdfuh");
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
   }
 }

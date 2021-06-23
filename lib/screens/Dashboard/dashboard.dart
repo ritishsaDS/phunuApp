@@ -29,6 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String token;
   bool isError;
   var getnext = "       ";
+  var getfertile = "       ";
   var periodno = "3";
   DateTime selectedDate = DateTime.now();
 
@@ -76,7 +77,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HeightBox(getProportionateScreenHeight(10)),
                       BodyContent(
                         title: 'Fertile Window Starts',
-                        date: '11/21',
+                        date:  getfertile
+                            .toString()
+                            .replaceAll("-", "/")
+                            .substring(5),
                       ),
 
                       // DashboardDate(),
@@ -245,16 +249,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   dynamic settingfromserver = new List();
   Future<void> sendperioddate(date) async {
-   // isLoading = true;
+    // isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
     print("ddffd" + token);
     try {
-      final response = await http.post(senperiodtoserver, headers: {
+      final response = await http.post(getperiodsdate, headers: {
         'Authorization': 'Bearer $token',
       }, body: {
-        "start_period_date": date.toString(),
-        "end_period_date": "2021-07-06",
+        "start_date": date.toString(),
+       
       });
       print(response.statusCode.toString());
       if (response.statusCode == 200) {
@@ -438,11 +442,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
         if (prefs.getString("nextdate") == null) {
           prefs.setString(
               "nextdate", nextfromserver['data']['next_period_date']);
+          prefs.setString(
+              "fertilewindow", settingfromserver['fertile_window_starts']);
           getnext = prefs.getString("nextdate");
+          getfertile = prefs.getString("fertilewindow");
+
           print(getnext);
           getDay();
         } else {
           getnext = prefs.getString("nextdate");
+           getfertile = prefs.getString("fertilewindow");
           getDay();
         }
 

@@ -8,6 +8,8 @@ import 'package:vietnamese/screens/notes/notesScreen.dart';
 import 'package:vietnamese/screens/settings/settings.dart';
 import 'dart:convert';
 
+import '../../lunar.dart';
+
 class CardSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -67,7 +69,7 @@ class _TopRowState extends State<TopRow> {
             iconUrl: 'assets/icons/calender.png',
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CalanderScreen()));
+                  MaterialPageRoute(builder: (context) => Lunar()));
             }),
         CardButton(
           title: 'Notes',

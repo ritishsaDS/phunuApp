@@ -18,3 +18,6 @@ String getnotescountapi = domainURL + "get-user-notes-count";
 String firstlogin = domainURL + "login-for-first";
 String logindemo = domainURL + "login-demo-model";
 String notecountbymonth = domainURL + "get-all-notes-by-months";
+String getperiodsdate = domainURL + "get-period-date";
+String getendperioddate = domainURL + "period-ended-yet";
+String backupapi = domainURL + "take-back-up";
