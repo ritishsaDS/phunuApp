@@ -2,26 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:vietnamese/common/Api.dart';
+import 'package:vietnamese/common/constants.dart';
+import 'package:vietnamese/common/notesapirepo.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/bottom.dart';
-import 'package:vietnamese/components/common_navigation.dart';
-import 'package:vietnamese/screens/Login/login.dart';
-import 'package:vietnamese/screens/notes/alerts/period_started.dart';
-import 'package:vietnamese/screens/notes/components/notes_text_field.dart';
-import 'package:vietnamese/screens/notes/components/two_item_container.dart';
-import 'package:vietnamese/screens/notes/components/two_textField.dart';
-import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/models/addnotes.dart';
-import 'package:vietnamese/common/notesapirepo.dart';
+import 'package:vietnamese/screens/notes/components/two_item_container.dart';
 import 'package:vietnamese/screens/signup/signUp.dart';
-import 'alerts/mood.dart';
-import 'alerts/period_ended.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'components/header.dart';
+
 import 'moodcustomclass.dart';
 
 class NotesScreen extends StatefulWidget {
@@ -469,6 +462,17 @@ class _NotesScreenState extends State<NotesScreen> {
                                   int maxLength,
                                   bool isFocused}) =>
                               null,
+                          validator: (value) {
+                            var converted = int.parse(value);
+                            if (value == null) {
+                              return 'Please enter the temperature';
+                            } else if (converted < 35) {
+                              return 'Please enter between 35c to 45c';
+                            } else if (converted > 45) {
+                              return 'Please enter between 35c to 45c';
+                            }
+                            return '';
+                          },
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
@@ -476,7 +480,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             focusColor: kPrimaryLightColor,
                             hoverColor: kPrimaryLightColor,
                             hintStyle: TextStyle(color: kTextColor),
-                            hintText: "Height",
+                            hintText: "Temperature 35c - 45c",
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 42, vertical: 5),
@@ -521,7 +525,6 @@ class _NotesScreenState extends State<NotesScreen> {
                     borderRadius: BorderRadius.circular(10)),
                 onPressed: () async {
                   if (key.currentState.validate() && moods.length != null) {
-                    print(moods);
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     prefs.setString("weight", tx_wieght);
@@ -553,7 +556,7 @@ class _NotesScreenState extends State<NotesScreen> {
                       postnotes(addnotesList);
                     }
                   } else {
-                    showToast("message");
+                    showToast("Error");
                   }
                 },
                 child: isLoading

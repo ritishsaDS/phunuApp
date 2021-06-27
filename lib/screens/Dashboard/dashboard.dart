@@ -125,7 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
-          if (selectedDate == null) {
+          if (selectedDate == null || selectedDate =="") {
             return Text("Plese Select Date first");
           } else {
             sendperioddate(selectedDate);
@@ -134,92 +134,99 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
       ),
     );
-
+   var date;
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      contentPadding: EdgeInsets.all(0),
-      //  backgroundColor: kPrimaryColor,
 
-      content: Container(
-        height: SizeConfig.screenHeight / 5,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              child: Center(
-                child: Text(
-                  "Please Select Your Date",
-                  style: TextStyle(
-                      color: kPrimaryColor, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            GestureDetector(
-              child: Container(
-                  margin: EdgeInsets.all(15),
-                  padding: EdgeInsets.all(10),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: kPrimaryColor),
-                    borderRadius: BorderRadius.circular(
-                      15.0,
-                    ),
-                  ),
-                  child: Center(
-                      child: Text(
-                    "Period Just Start \n Click Here",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: kPrimaryColor),
-                  ))),
-              onTap: () {
-                getdate();
-              },
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        okButton,
-      ],
-    );
 
     // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              contentPadding: EdgeInsets.all(0),
+              //  backgroundColor: kPrimaryColor,
+
+              content: Container(
+                height: SizeConfig.screenHeight / 5,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      child: Center(
+                        child: Text(
+                          "Please Select Your Date",
+                          style: TextStyle(
+                              color: kPrimaryColor, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      child: Container(
+                          margin: EdgeInsets.all(15),
+                          padding: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: kPrimaryColor),
+                            borderRadius: BorderRadius.circular(
+                              15.0,
+                            ),
+                          ),
+                          child: Center(
+                              child: Text(
+                                date!=null && date!=""?DateFormat("dd/MM/yyyy").format(date):"Period Just Start \n Click Here",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: kPrimaryColor),
+                              ))),
+                      onTap: () async {
+                        final DateTime pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: DateTime(2021, 4),
+                          lastDate: DateTime(2022, 5),
+                          builder: (BuildContext context, Widget child) {
+                            return Theme(
+                              data: ThemeData.light().copyWith(
+                                primaryColor: Color(0xFFDE439A),
+                                accentColor: Color(0xFFDE439A),
+                                colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
+                                buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                              ),
+                              child: child,
+                            );
+                          },
+                        );
+                        if (pickedDate != null && pickedDate != selectedDate)
+
+                            selectedDate = pickedDate;
+                            date = selectedDate;
+                            SharedPreferences preferences = await SharedPreferences.getInstance();
+                            preferences.setString("selected", selectedDate.toString());
+                            print(selectedDate);
+                            // getenddate();
+                          setState(()
+                          {
+
+                          });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                okButton,
+              ],
+            );
+          });
       },
     );
   }
 
   getdate() async {
-    final DateTime pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2021, 4),
-      lastDate: DateTime(2022, 5),
-      builder: (BuildContext context, Widget child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: Color(0xFFDE439A),
-            accentColor: Color(0xFFDE439A),
-            colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
-            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-          ),
-          child: child,
-        );
-      },
-    );
-    if (pickedDate != null && pickedDate != selectedDate)
-      setState(() async {
-        selectedDate = pickedDate;
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setString("selected", selectedDate.toString());
-        print(selectedDate);
-        // getenddate();
-      });
+
   }
 
   getenddate() async {
@@ -446,8 +453,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               "fertilewindow", settingfromserver['fertile_window_starts']);
           getnext = prefs.getString("nextdate");
           getfertile = prefs.getString("fertilewindow");
-
-          print(getnext);
           getDay();
         } else {
           getnext = prefs.getString("nextdate");

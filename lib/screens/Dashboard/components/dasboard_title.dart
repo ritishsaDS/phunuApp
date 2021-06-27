@@ -222,6 +222,23 @@ class _HeaderState extends State<Header> {
         },
       ),
     );
+    Widget NoBUtton = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(
+            15.0,
+          ),
+          color: kPrimaryColor),
+      child: FlatButton(
+        child: Text(
+          "No",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
@@ -229,9 +246,7 @@ class _HeaderState extends State<Header> {
       //  backgroundColor: kPrimaryColor,
 
       title: Text("Your Period ended"),
-      actions: [
-        okButton,
-      ],
+      actions: [okButton, NoBUtton],
     );
 
     // show the dialog
@@ -242,7 +257,8 @@ class _HeaderState extends State<Header> {
       },
     );
   }
-showstartDialog(BuildContext context) {
+
+  showstartDialog(BuildContext context) {
     // set up the button
     Widget okButton = Container(
       decoration: BoxDecoration(
@@ -324,7 +340,6 @@ showstartDialog(BuildContext context) {
         'Authorization': 'Bearer $token',
       }, body: {
         "start_date": DateTime.now(),
-       
       });
       print(response.statusCode.toString());
       if (response.statusCode == 200) {
@@ -358,7 +373,8 @@ showstartDialog(BuildContext context) {
       });
     }
   }
-Future<void> getendperiod() async {
+
+  Future<void> getendperiod() async {
     Navigator.pop(context);
     // isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();

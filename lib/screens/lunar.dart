@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:lunar_calendar/lunar_calendar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:lunar_calendar/lunar_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
@@ -211,44 +211,59 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
 
   Widget _buildEventsMarker(DateTime date, List events) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: _calendarController.isSelected(date)
-            ? Colors.brown[500]
-            : _calendarController.isToday(date)
-                ? Colors.brown[300]
-                : Colors.blue[400],
-      ),
-      width: 16.0,
-      height: 16.0,
-      child: Center(
-        child: Text(
-          '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
+        duration: const Duration(milliseconds: 300),
+        width: 16.0,
+        height: 16.0,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 6),
+          child: Container(
+            height: 20,
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                    margin: EdgeInsets.only(top: 5, left: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    height: 5,
+                    width: 5,
+                    decoration: new BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ));
+              },
+              itemCount: events.length > 3 ? 3 : events.length,
+              scrollDirection: Axis.horizontal,
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _buildHolidaysMarker() {
-    return Icon(
-      Icons.line_style,
-      size: 20.0,
+    return Container(
+      height: 5,
       color: Colors.pink,
+    );
+  }
+
+  Widget _buildHolidays2Marker() {
+    return Container(
+      height: 2,
+      color: Colors.yellow,
     );
   }
 
   Widget calendar() {
     var tableCalendar = TableCalendar(
       holidays: _holidays,
+      availableCalendarFormats: const {
+        CalendarFormat.month: '',
+        CalendarFormat.week: '',
+      },
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      availableGestures: AvailableGestures.all,
       calendarStyle: CalendarStyle(
         canEventMarkersOverflow: true,
         markersColor: Colors.white,
-        weekdayStyle: TextStyle(color: Colors.white),
+        weekdayStyle: TextStyle(color: Colors.red),
         todayColor: Colors.white54,
         todayStyle: TextStyle(
             color: Colors.redAccent, fontSize: 15, fontWeight: FontWeight.bold),
@@ -256,7 +271,12 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
         outsideWeekendStyle: TextStyle(color: Colors.white60),
         outsideStyle: TextStyle(color: Colors.white60),
         weekendStyle: TextStyle(color: Colors.white),
-        renderDaysOfWeek: false,
+        renderDaysOfWeek: true,
+      ),
+      daysOfWeekStyle: DaysOfWeekStyle(
+        weekdayStyle:
+            TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        weekendStyle: TextStyle().copyWith(color: Colors.grey),
       ),
 
       /// onDaySelected:_onDaySelected(DateTime.now()),
@@ -269,6 +289,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
         selectedDayBuilder: (context, date, _) {
           count++;
           getmethod(date);
+          //_fetchEvents();
 
           return FadeTransition(
             opacity: Tween(begin: 0.0, end: 1.0).animate(_animationController),
@@ -284,36 +305,34 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
           if (events.isNotEmpty) {
             children.add(
               Positioned(
-                right: 1,
-                bottom: 1,
+                bottom: 2,
+                left: 0,
+                right: 0,
                 child: _buildEventsMarker(date, events),
               ),
             );
           }
 
           if (holidays.isNotEmpty) {
-            print(holidays[0]);
-            children.add(
-              Positioned(
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  height: 2,
-                  color: Colors.pink,
-                ),
-              ),
-            );
+            print(holidays);
+            children.add(Positioned(
+                top: 5, left: 0, right: 0, child: _buildHolidaysMarker()));
           }
 
           return children;
         },
       ),
       headerStyle: HeaderStyle(
+        formatButtonVisible: false,
+        decoration: BoxDecoration(
+            color: Colors.pink, borderRadius: BorderRadius.circular(10.0)),
         centerHeaderTitle: true,
         leftChevronIcon:
-            Icon(Icons.arrow_back_ios, size: 15, color: Colors.pink),
+            Icon(Icons.arrow_back_ios, size: 15, color: Colors.white),
         rightChevronIcon:
-            Icon(Icons.arrow_forward_ios, size: 15, color: Colors.pink),
-        titleTextStyle: TextStyle(color: Colors.pink, fontSize: 16),
+            Icon(Icons.arrow_forward_ios, size: 15, color: Colors.white),
+        titleTextStyle: TextStyle(
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
     return Container(
@@ -345,30 +364,33 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Theme.of(context).primaryColor,
-      body: ListView(
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          BottomTabs(1, true),
-          calendar(),
-          Container(
-            height: getProportionateScreenHeight(250),
-            child: Stack(
-              children: [
-                Container(
-                  child: isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: kPrimaryColor,
-                          ),
-                        )
-                      : ListView(
-                          children: notesdatewidget(),
-                        ),
-                )
-              ],
+      body: SafeArea(
+        child: Column(
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            BottomTabs(1, true),
+            calendar(),
+            Expanded(
+              child: Container(
+                child: Stack(
+                  children: [
+                    Container(
+                      child: isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: kPrimaryColor,
+                              ),
+                            )
+                          : ListView(
+                              children: notesdatewidget(),
+                            ),
+                    )
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -402,13 +424,14 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   }
 
   void getmethod(date) {
-    setState(() {
-      getnotescount(date);
-    });
+    getnotescount(date);
   }
 
-  dynamic countfromserver = new List();
+  dynamic listdata = new List();
+
   Future<void> getnotescount(date) async {
+    dynamic countfromserver = new List();
+
     // isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
@@ -426,18 +449,9 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
         final responseJson = json.decode(response.body);
 
         countfromserver = responseJson['data'];
-        // count = responseJson['notes_count'];
-        // count = noteslength;
-        //  print(count);
-        print(countfromserver);
-        if (countfromserver.length == 0) {
-          value = "[]";
-          showToast("No Notes Found!!!");
-          //return Text("data");
-          print(value + "jbj");
-        } else {
-          print("object");
-        }
+        setState(() {
+          listdata = countfromserver;
+        });
 
         /// notesdate = nextfromserver['date'];
         // usernotes = nextfromserver["note"];
@@ -453,9 +467,9 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
 
   List<Widget> notesdatewidget() {
     List<Widget> productList = new List();
-    for (int i = 0; i < countfromserver.length; i++) {
+    for (int i = 0; i < listdata.length; i++) {
       print(
-        "knlwnl" + countfromserver[i]['date'].toString().replaceAll("-", "/"),
+        "knlwnl" + listdata[i]['date'].toString().replaceAll("-", "/"),
       );
       productList.add(Padding(
         padding: EdgeInsets.symmetric(
@@ -476,17 +490,17 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      countfromserver[i]['date']
-                          .toString()
-                          .replaceAll("-", "/"),
+                      DateTime.parse(listdata[i]['date']).day.toString() +
+                          "/" +
+                          DateTime.parse(listdata[i]['date']).month.toString() +
+                          "/" +
+                          DateTime.parse(listdata[i]['date']).year.toString(),
                       style: _textStyle.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      countfromserver[i]['note'] == null
-                          ? ""
-                          : countfromserver[i]['note'],
+                      listdata[i]['note'] == null ? "" : listdata[i]['note'],
                       style: _textStyle,
                     ),
                   ],
@@ -501,5 +515,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     return productList;
   }
 
- 
+  showAlert() {
+    return showToast("No Notes Found!!!");
+  }
 }
