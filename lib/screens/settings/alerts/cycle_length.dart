@@ -122,7 +122,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
                   padding: EdgeInsets.zero,
                   onPressed: () {
                     setState(() {
-                      if (text == 5) {
+                      if (text == 16) {
                       } else {
                         text = text - 1;
                         print(text);
@@ -219,6 +219,11 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
                         average = val;
 
                         print(average);
+                        if (average == false) {
+                          setState(() {
+                            irregularcycle = false;
+                          });
+                        }
                       });
                     },
                   ),
@@ -248,9 +253,15 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       setState(() {
-                        irregularcycle = val;
+                        if (average == true) {
+                          irregularcycle = val;
 
-                        print(irregularcycle);
+                          print(irregularcycle);
+                        } else if (average == false) {
+                          setState(() {
+                            irregularcycle = false;
+                          });
+                        } else {}
                       });
                     },
                   ),
@@ -271,8 +282,10 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
                   onTap: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
+
                     prefs.setBool("irregularcycle", irregularcycle);
                     prefs.setBool("average", average);
+                    prefs.setString("cyclelength", text.toString());
                     Navigator.of(context).pop(text.toString());
                   }),
             ],
@@ -285,16 +298,17 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
 
   Future<void> getswitchvlue() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    if (preferences.getBool("average") == null&& preferences.getBool("irregularcycle")) {
+    if (preferences.getBool("average") == null &&
+        preferences.getBool("irregularcycle")) {
       average = false;
       print("dsklm");
     } else {
       print("dssaasklm");
 
-     setState(() {
+      setState(() {
         average = preferences.getBool("average");
-      irregularcycle = preferences.getBool("irregularcycle");
-     });
+        irregularcycle = preferences.getBool("irregularcycle");
+      });
     }
   }
 }

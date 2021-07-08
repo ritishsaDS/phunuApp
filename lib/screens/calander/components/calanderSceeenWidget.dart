@@ -765,149 +765,155 @@ class _CalanderScreenWidgetState extends State<CalanderScreenWidget> {
                     countfromserver[i]['note']==null?"":   countfromserver[i]['note'],
                       style: _textStyle,
                     ),
-                  ],
-                ))
-            : Container(
-                height: getProportionateScreenHeight(100),
-                width: SizeConfig.screenWidth,
-                child: Text("No Notes Found"),
-              ),
-      ));
-    }
-    return productList;
-  }
+                  ]
+                                      ))
+                                  : Container(
+                                      height: getProportionateScreenHeight(100),
+                                      width: SizeConfig.screenWidth,
+                                      child: Text("No Notes Found"),
+                                    ),
+                            ));
+                          }
+                          return productList;
+                        }
+                      
+                        dynamic countfromserver = new List();
+                        dynamic moodsever=new List();
+                        Future<void> getnotescount(date) async {
+                          isLoading = true;
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          token = prefs.getString("token");
+                          print(token);
+                          try {
+                            final response = await http.post(
+                              getnotescountapi,
+                              body: {"date": date.toString().substring(0, 10)},
+                              headers: {
+                                'Authorization': 'Bearer $token',
+                              },
+                            );
+                            print(response.statusCode.toString());
+                            if (response.statusCode == 200) {
+                              final responseJson = json.decode(response.body);
+                      
+                              countfromserver = responseJson['data'];
+                              moodsever=responseJson['data']['mood'];
+                              // count = responseJson['notes_count'];
+                              // count = noteslength;
+                              //  print(count);
+                              print(countfromserver.length);
+                              if (countfromserver.length == 0) {
+                                setState(() {
+                                  value = "[]";
+                                  showToast("No Notes Found!!!");
+                                  //return Text("data");
+                                  print(value + "jbj");
+                                });
+                              } else {
+                                print("object");
+                              }
+                      
+                              /// notesdate = nextfromserver['date'];
+                              // usernotes = nextfromserver["note"];
+                              // print(nextfromserver[0]["note"]);
+                              setState(() {
+                                isLoading = false;
+                                print('setstate');
+                              });
+                            } else {
+                              print("bjkb" + response.statusCode.toString());
+                      
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          } catch (e) {
+                            print(e);
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        }
+                      
+                        Future<void> getnotescountbymonth() async {
+                          isLoading = true;
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          token = prefs.getString("token");
+                          print(token);
+                          try {
+                            final response = await http.post(notecountbymonth,
+                                // body: {"date": date.toString().substring(0, 10)},
+                                headers: {
+                                  'Authorization': 'Bearer $token',
+                                }, body: {
+                              "first_day": "2021-06-01",
+                              "last_day": "2021-06-30"
+                            });
+                            print(response.statusCode.toString());
+                            if (response.statusCode == 200) {
+                              final responseJson = json.decode(response.body);
+                      
+                              notes = responseJson['data'];
+                              print("note" + notes.toString());
+                              // count = responseJson['notes_count'];
+                              // count = noteslength;
+                              //  print(count);
+                              responseJson['data'].forEach((k, v) {
+                                Calendar calendardate;
+                                for (int i = 1;
+                                    i <= int.parse(calendardate.date.month.toString());
+                                    i++) {
+                                  var day = k.toString().split('-').last;
+                                  if (int.parse(day) == i) {
+                                    print("data" + day.toString());
+                                  }
+                                }
+                                print("k" + k.toString() + "v" + v.toString());
+                              });
+                              for (int i = 0; i < listOfDates.length; i++) {
+                                var usdKey = notes.keys.firstWhere(
+                                  (k) => (notes[k]),
+                                );
+                                print("fdssdvfdsfdddfff" + notes[1].toString());
+                              }
+                      
+                              // print("Notes" + notes.toString().replaceAll("-", "/"));
+                              for (int j = 0; j < notes.length; j++) {
+                                print(notes.toString().replaceAll("-", "/")[j]);
+                                for (int i = 0; i < listOfDates.length; i++) {
+                                  if (listOfDates[i] ==
+                                      notes.keys.toString().replaceAll("-", "/")[j]) {
+                                    print("listOfDates[i]");
+                                    print(listOfDates[i]);
+                                  } else {
+                                    print(notes.keys[i]);
+                                  }
+                                }
+                              }
+                      
+                              /// notesdate = nextfromserver['date'];
+                              // usernotes = nextfromserver["note"];
+                              // print(nextfromserver[0]["note"]);
+                              setState(() {
+                                isLoading = false;
+                                print('setstate');
+                              });
+                            } else {
+                              print("bjkb" + response.statusCode.toString());
+                      
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          } catch (e) {
+                            print(e);
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        }
+                      
+                    
+                         
+                        }
 
-  dynamic countfromserver = new List();
-  Future<void> getnotescount(date) async {
-    isLoading = true;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    print(token);
-    try {
-      final response = await http.post(
-        getnotescountapi,
-        body: {"date": date.toString().substring(0, 10)},
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-      print(response.statusCode.toString());
-      if (response.statusCode == 200) {
-        final responseJson = json.decode(response.body);
-
-        countfromserver = responseJson['data'];
-        // count = responseJson['notes_count'];
-        // count = noteslength;
-        //  print(count);
-        print(countfromserver.length);
-        if (countfromserver.length == 0) {
-          setState(() {
-            value = "[]";
-            showToast("No Notes Found!!!");
-            //return Text("data");
-            print(value + "jbj");
-          });
-        } else {
-          print("object");
-        }
-
-        /// notesdate = nextfromserver['date'];
-        // usernotes = nextfromserver["note"];
-        // print(nextfromserver[0]["note"]);
-        setState(() {
-          isLoading = false;
-          print('setstate');
-        });
-      } else {
-        print("bjkb" + response.statusCode.toString());
-
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print(e);
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> getnotescountbymonth() async {
-    isLoading = true;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    print(token);
-    try {
-      final response = await http.post(notecountbymonth,
-          // body: {"date": date.toString().substring(0, 10)},
-          headers: {
-            'Authorization': 'Bearer $token',
-          }, body: {
-        "first_day": "2021-06-01",
-        "last_day": "2021-06-30"
-      });
-      print(response.statusCode.toString());
-      if (response.statusCode == 200) {
-        final responseJson = json.decode(response.body);
-
-        notes = responseJson['data'];
-        print("note" + notes.toString());
-        // count = responseJson['notes_count'];
-        // count = noteslength;
-        //  print(count);
-        responseJson['data'].forEach((k, v) {
-          Calendar calendardate;
-          for (int i = 1;
-              i <= int.parse(calendardate.date.month.toString());
-              i++) {
-            var day = k.toString().split('-').last;
-            if (int.parse(day) == i) {
-              print("data" + day.toString());
-            }
-          }
-          print("k" + k.toString() + "v" + v.toString());
-        });
-        for (int i = 0; i < listOfDates.length; i++) {
-          var usdKey = notes.keys.firstWhere(
-            (k) => (notes[k]),
-          );
-          print("fdssdvfdsfdddfff" + notes[1].toString());
-        }
-
-        // print("Notes" + notes.toString().replaceAll("-", "/"));
-        for (int j = 0; j < notes.length; j++) {
-          print(notes.toString().replaceAll("-", "/")[j]);
-          for (int i = 0; i < listOfDates.length; i++) {
-            if (listOfDates[i] ==
-                notes.keys.toString().replaceAll("-", "/")[j]) {
-              print("listOfDates[i]");
-              print(listOfDates[i]);
-            } else {
-              print(notes.keys[i]);
-            }
-          }
-        }
-
-        /// notesdate = nextfromserver['date'];
-        // usernotes = nextfromserver["note"];
-        // print(nextfromserver[0]["note"]);
-        setState(() {
-          isLoading = false;
-          print('setstate');
-        });
-      } else {
-        print("bjkb" + response.statusCode.toString());
-
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print(e);
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-}

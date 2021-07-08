@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/common_button.dart';
@@ -11,12 +12,17 @@ class PeriodStartedAlert extends StatefulWidget {
 
 class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
   String formattedDate;
+  DateTime periodStartedDate;
+  DateTime periodenddate;
+  DateTime selectedDate = DateTime.now();
   @override
   void initState() {
+    getdetail();
     var now = new DateTime.now();
     var formatter = new DateFormat('MM/dd/yyyy');
     formattedDate = formatter.format(now);
     print(formattedDate);
+
     super.initState();
   }
 
@@ -40,7 +46,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
       insetPadding: EdgeInsets.symmetric(
         horizontal: getProportionateScreenWidth(20),
       ),
-      backgroundColor: Colors.transparent,
+      //backgroundColor: Colors.transparent,
       child: Container(
         width: SizeConfig.screenWidth,
         height: getProportionateScreenHeight(190),
@@ -127,13 +133,14 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$formattedDate',
+                  '${formattedDate.toString().replaceAll("-", "/").substring(0, 10)}',
                   style: date,
                 ),
                 AlertIcon(
-                  iconPath: 'assets/icons/calender.png',
-                  onTap: null,
-                ),
+                    iconPath: 'assets/icons/calender.png',
+                    onTap: () {
+                      enddate();
+                    }),
               ],
             ),
           ),
@@ -153,11 +160,53 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
           ),
           CommonButton(
             title: 'Confirm',
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () async {
+              print(formattedDate);
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setString("startdate", formattedDate);
+              Navigator.of(context).pop(formattedDate.toString());
+            },
           ),
         ],
       ),
     );
+  }
+
+  enddate() async {
+    periodenddate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.parse(formattedDate),
+      firstDate: DateTime(2021, 4),
+      lastDate: DateTime(2021, 10),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color(0xFFDE439A),
+            accentColor: Color(0xFFDE439A),
+            colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child,
+        );
+      },
+    );
+    if (periodenddate != null && periodenddate != selectedDate)
+      setState(() {
+        selectedDate = periodenddate;
+        formattedDate = selectedDate.toString();
+        print(selectedDate);
+      });
+  }
+
+  Future<void> getdetail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString("selecteddate") == null) {
+      formattedDate = DateTime.now().toString();
+    } else {
+      setState(() {
+        formattedDate = prefs.getString("selecteddate");
+      });
+    }
   }
 }
 

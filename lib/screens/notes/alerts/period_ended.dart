@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/common_button.dart';
@@ -11,11 +12,16 @@ class PeriodEndedAlert extends StatefulWidget {
 
 class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
   String formattedDate;
+  DateTime periodStartedDate;
+  DateTime periodenddate;
+  DateTime selectedDate = DateTime.now();
   @override
   void initState() {
+    getdetail();
     var now = new DateTime.now();
     var formatter = new DateFormat('MM/dd/yyyy');
     formattedDate = formatter.format(now);
+    //getdetail();
     print(formattedDate);
     super.initState();
   }
@@ -127,12 +133,14 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$formattedDate',
+                  '${formattedDate.toString().replaceAll("-", "/").substring(0, 10)}',
                   style: date,
                 ),
                 AlertIcon(
                   iconPath: 'assets/icons/calender.png',
-                  onTap: null,
+                  onTap: () {
+                    enddate();
+                  },
                 ),
               ],
             ),
@@ -158,6 +166,42 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
         ],
       ),
     );
+  }
+
+  enddate() async {
+    periodenddate = await showDatePicker(
+      context: context,
+      initialDate:DateTime.parse(formattedDate) ,
+      firstDate: DateTime(2021, 4),
+      lastDate: DateTime(2021, 11),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color(0xFFDE439A),
+            accentColor: Color(0xFFDE439A),
+            colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child,
+        );
+      },
+    );
+    if (periodenddate != null && periodenddate != selectedDate)
+      setState(() {
+        selectedDate = periodenddate;
+        formattedDate = selectedDate.toString();
+        print(selectedDate);
+      });
+  }
+
+  Future<void> getdetail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString("selecteddate") == null) {
+    } else {
+      setState(() {
+        formattedDate = prefs.getString("selecteddate");
+      });
+    }
   }
 }
 

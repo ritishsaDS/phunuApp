@@ -15,7 +15,7 @@ dependencies:
   cupertino_icons:
   velocity_x: 
   font_awesome_flutter: 
-  flutter_cupertino_date_picker: ^1.0.26+2
+  flutter_cupertino_date_picker: 
   http:
   flutter_rating_bar:
   flutter_pin_code_fields: ^1.1.0
@@ -23,8 +23,13 @@ dependencies:
   lunar_calendar: ^1.0.1
   table_calendar: 
   device_info: ^2.0.2
-  rate_my_app: ^1.0.0+2 
+  rate_my_app: 
+  flutter_local_notifications: ^5.0.0
   swipedetector: 1.2.0
+  firebase_core: ^1.2.0
+  firebase_messaging: ^10.0.0
+  overlay_support: ^1.2.1
+
   fluttertoast:
   shared_preferences:
   flutter_share: ^2.0.0 

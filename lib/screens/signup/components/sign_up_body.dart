@@ -9,10 +9,7 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
-import 'package:vietnamese/common/textField.dart';
 import 'package:vietnamese/components/logo.dart';
-import 'package:vietnamese/components/socialButton.dart';
-import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/Login/login.dart';
 import 'package:vietnamese/screens/notes/notesScreen.dart';
 
@@ -34,7 +31,6 @@ class _SignUpBodyState extends State<SignUpBody> {
   String email = '';
   bool isLoading = false;
   GoogleSignInAccount _userObj;
-  bool _isLoggedIn = false;
   //GoogleSignInAccount _userObj;
   bool isLoggedIn = false;
   var profileData;

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -31,12 +33,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
   var getnext = "       ";
   var getfertile = "       ";
   var periodno = "3";
+  var fcmtoken;
+  FirebaseMessaging messaging;
   DateTime selectedDate = DateTime.now();
 
   DateTime end;
   @override
   void initState() {
-    _getId();
+    Firebase.initializeApp().whenComplete(() {
+      print("completed");
+      setState(() {});
+      messaging = FirebaseMessaging.instance;
+      messaging.getToken().then((value) {
+        print("fcm" + value);
+        fcmtoken = value;
+        _getId();
+      });
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      //  print(event.notification.body);
+    });
 
     var now = new DateTime.now();
     formatter = new DateFormat('yyyy-MM-dd');
@@ -77,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HeightBox(getProportionateScreenHeight(10)),
                       BodyContent(
                         title: 'Fertile Window Starts',
-                        date:  getfertile
+                        date: getfertile
                             .toString()
                             .replaceAll("-", "/")
                             .substring(5),
@@ -125,8 +142,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
-          if (selectedDate == null || selectedDate =="") {
-            return Text("Plese Select Date first");
+          if (selectedDate == null || selectedDate == "") {
+            return Text(
+                "Để dùng app Phụ Nữ Việt, xin cho biết lần trước có kinh là khoảng ngày nào");
           } else {
             sendperioddate(selectedDate);
           }
@@ -134,169 +152,129 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
       ),
     );
-   var date;
+    var date;
     // set up the AlertDialog
-
 
     // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              contentPadding: EdgeInsets.all(0),
-              //  backgroundColor: kPrimaryColor,
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.all(0),
+            //  backgroundColor: kPrimaryColor,
 
-              content: Container(
-                height: SizeConfig.screenHeight / 5,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text(
-                          "Please Select Your Date",
-                          style: TextStyle(
-                              color: kPrimaryColor, fontWeight: FontWeight.bold),
-                        ),
+            content: Container(
+              height: SizeConfig.screenHeight / 5,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Center(
+                      child: Text(
+                        "Để dùng app Phụ Nữ Việt, xin cho biết lần trước có kinh là khoảng ngày nào",
+                        style: TextStyle(
+                            color: kPrimaryColor, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    GestureDetector(
-                      child: Container(
-                          margin: EdgeInsets.all(15),
-                          padding: EdgeInsets.all(10),
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: kPrimaryColor),
-                            borderRadius: BorderRadius.circular(
-                              15.0,
-                            ),
+                  ),
+                  GestureDetector(
+                    child: Container(
+                        margin: EdgeInsets.all(15),
+                        padding: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: kPrimaryColor),
+                          borderRadius: BorderRadius.circular(
+                            15.0,
                           ),
-                          child: Center(
-                              child: Text(
-                                date!=null && date!=""?DateFormat("dd/MM/yyyy").format(date):"Period Just Start \n Click Here",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: kPrimaryColor),
-                              ))),
-                      onTap: () async {
-                        final DateTime pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate,
-                          firstDate: DateTime(2021, 4),
-                          lastDate: DateTime(2022, 5),
-                          builder: (BuildContext context, Widget child) {
-                            return Theme(
-                              data: ThemeData.light().copyWith(
-                                primaryColor: Color(0xFFDE439A),
-                                accentColor: Color(0xFFDE439A),
-                                colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
-                                buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-                              ),
-                              child: child,
-                            );
-                          },
-                        );
-                        if (pickedDate != null && pickedDate != selectedDate)
-
-                            selectedDate = pickedDate;
-                            date = selectedDate;
-                            SharedPreferences preferences = await SharedPreferences.getInstance();
-                            preferences.setString("selected", selectedDate.toString());
-                            print(selectedDate);
-                            // getenddate();
-                          setState(()
-                          {
-
-                          });
-                      },
-                    ),
-                  ],
-                ),
+                        ),
+                        child: Center(
+                            child: Text(
+                          date != null && date != ""
+                              ? DateFormat("dd/MM/yyyy").format(date)
+                              : "Period Just Start \n Click Here",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: kPrimaryColor),
+                        ))),
+                    onTap: () async {
+                      final DateTime pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: DateTime(2021, 4),
+                        lastDate: DateTime(2022, 5),
+                        builder: (BuildContext context, Widget child) {
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              primaryColor: Color(0xFFDE439A),
+                              accentColor: Color(0xFFDE439A),
+                              colorScheme:
+                                  ColorScheme.light(primary: Color(0xFFDE439A)),
+                              buttonTheme: ButtonThemeData(
+                                  textTheme: ButtonTextTheme.primary),
+                            ),
+                            child: child,
+                          );
+                        },
+                      );
+                      if (pickedDate != null && pickedDate != selectedDate)
+                        selectedDate = pickedDate;
+                      date = selectedDate;
+                      SharedPreferences preferences =
+                          await SharedPreferences.getInstance();
+                      preferences.setString(
+                          "selected", selectedDate.toString());
+                      print(selectedDate);
+                      // getenddate();
+                      setState(() {});
+                    },
+                  ),
+                ],
               ),
-              actions: [
-                okButton,
-              ],
-            );
-          });
+            ),
+            actions: [
+              okButton,
+            ],
+          );
+        });
       },
     );
   }
 
-  getdate() async {
-
-  }
-
-  getenddate() async {
-    final DateTime enddate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2021, 4),
-      lastDate: DateTime(2022, 5),
-      builder: (BuildContext context, Widget child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: Color(0xFFDE439A),
-            accentColor: Color(0xFFDE439A),
-            colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
-            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-          ),
-          child: child,
-        );
-      },
-    );
-    if (enddate != null && enddate != selectedDate)
-      setState(() async {
-        end = enddate;
-        print(end);
-      });
-  }
-
-  dynamic settingfromserver = new List();
-  Future<void> sendperioddate(date) async {
-    // isLoading = true;
+  Future<void> savedata(deviceid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    print("ddffd" + token);
-    try {
-      final response = await http.post(getperiodsdate, headers: {
-        'Authorization': 'Bearer $token',
-      }, body: {
-        "start_date": date.toString(),
-       
-      });
-      print(response.statusCode.toString());
-      if (response.statusCode == 200) {
-        final responseJson = json.decode(response.body);
+    if (loginwithserver['data']['login_count'] == null) {
+      prefs.setString("user_type", loginwithserver['data']['user_type']);
 
-        settingfromserver = responseJson;
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("alert", "true");
-        prefs.setString("startdate", date.toString());
-        Navigator.pop(context);
-        // print("lvnsdlm l" + settingfromserver);
-        getNextperiod();
-        setState(() {
-          isError = false;
-          isLoading = true;
-          print('setstate');
-        });
-      } else {
-        print("bjkb" + response.statusCode.toString());
+      //  prefs.setInt("login_count", loginwithserver['data']['login_count']);
+      prefs.setString("deviceid", deviceid);
+      // prefs.setInt("password", loginwithserver['data']['password']);
+      prefs.setString("token", loginwithserver['access_token']);
+      gettoken();
+      // logintimebackup(prefs.getString("token"));
+    } else if (loginwithserver['data']['email'] == null) {
+      prefs.setString("user_type", loginwithserver['data']['user_type']);
 
-        setState(() {
-          isError = true;
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print(e);
-      setState(() {
-        isError = true;
-        isLoading = false;
-      });
+      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+      prefs.setString("deviceid", deviceid);
+      // prefs.setInt("password", loginwithserver['data']['password']);
+      prefs.setString("token", loginwithserver['access_token']);
+      gettoken();
+    } else {
+      prefs.setString("email", loginwithserver['data']['email']);
+      prefs.setString("user_type", loginwithserver['data']['user_type']);
+
+      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+      prefs.setString("deviceid", deviceid);
+      // prefs.setInt("password", loginwithserver['data']['password']);
+      prefs.setString("token", loginwithserver['access_token']);
+      //  logintimebackup(prefs.getString("token"));
+      //prefs.setString('email', emailController.text);
+      //Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
+      gettoken();
     }
   }
 
@@ -319,7 +297,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   dynamic firstloginlist = new List();
   dynamic loginwithserver = new List();
   signin(deviceid) async {
-    print(deviceid);
+    print(fcmtoken + "deviceid");
     try {
       final response = await http.post(firstlogin, body: {
         "device_id": deviceid,
@@ -362,27 +340,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final response = await http.post(login, body: {
         "device_id": deviceid,
         "password": "1234",
+        "Fcmtoken": fcmtoken
       });
       //print("bjkb" + response.statusCode.toString());
       if (response.statusCode == 200) {
         final responseJson = json.decode(response.body);
 
         loginwithserver = responseJson;
+
         // print(loginwithserver['data']['email']);
         print(loginwithserver);
         // loginasguest(deviceid);
         // showToast("");
         savedata(deviceid);
-        gettoken();
-        getalert();
         setState(() {
           isError = false;
           isLoading = false;
           print('setstate');
         });
       } else {
-        print("bjkb" + response.statusCode.toString());
-        showToast("Mismatch Credentials");
+        print("bssddsdjkb" + response.statusCode.toString());
+        //  showToast("Mismatch Credentials");
         setState(() {
           isError = true;
           isLoading = false;
@@ -397,34 +375,202 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Future<void> savedata(deviceid) async {
+  getdate() async {}
+
+  getenddate() async {
+    final DateTime enddate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2021, 4),
+      lastDate: DateTime(2022, 5),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color(0xFFDE439A),
+            accentColor: Color(0xFFDE439A),
+            colorScheme: ColorScheme.light(primary: Color(0xFFDE439A)),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child,
+        );
+      },
+    );
+    if (enddate != null && enddate != selectedDate)
+      setState(() async {
+        end = enddate;
+        print(end);
+      });
+  }
+
+  dynamic settingfromserver = new List();
+  Future<void> sendperioddate(date) async {
+    // isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (loginwithserver['data']['login_count'] == null) {
-      prefs.setString("user_type", loginwithserver['data']['user_type']);
+    token = prefs.getString("token");
+    print("ddffd" + token);
+    try {
+      final response = await http.post(getperiodsdate, headers: {
+        'Authorization': 'Bearer $token',
+      }, body: {
+        "start_date": date.toString(),
+      });
+      print(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
 
-      //  prefs.setInt("login_count", loginwithserver['data']['login_count']);
-      prefs.setString("deviceid", deviceid);
-      // prefs.setInt("password", loginwithserver['data']['password']);
-      prefs.setString("token", loginwithserver['access_token']);
-    } else if (loginwithserver['data']['email'] == null) {
-      prefs.setString("user_type", loginwithserver['data']['user_type']);
+        settingfromserver = responseJson;
+        getdaytext();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("alert", "true");
+        prefs.setString("startdate", date.toString());
+        Navigator.pop(context);
+        // print("lvnsdlm l" + settingfromserver);
+        getNextperiod();
+        setState(() {
+          isError = false;
+          isLoading = true;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
 
-      prefs.setInt("login_count", loginwithserver['data']['login_count']);
-      prefs.setString("deviceid", deviceid);
-      // prefs.setInt("password", loginwithserver['data']['password']);
-      prefs.setString("token", loginwithserver['access_token']);
-    } else {
-      prefs.setString("email", loginwithserver['data']['email']);
-      prefs.setString("user_type", loginwithserver['data']['user_type']);
-
-      prefs.setInt("login_count", loginwithserver['data']['login_count']);
-      prefs.setString("deviceid", deviceid);
-      // prefs.setInt("password", loginwithserver['data']['password']);
-      prefs.setString("token", loginwithserver['access_token']);
-      //prefs.setString('email', emailController.text);
-      //Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
+        setState(() {
+          isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
     }
   }
+
+  // _getId() async {
+  //   var deviceInfo = DeviceInfoPlugin();
+  //   if (Platform.isIOS) {
+  //     // import 'dart:io'
+  //     var iosDeviceInfo = await deviceInfo.iosInfo;
+  //     print(iosDeviceInfo.identifierForVendor);
+  //     await signin(iosDeviceInfo.identifierForVendor);
+  //     return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+  //   } else {
+  //     var androidDeviceInfo = await deviceInfo.androidInfo;
+  //     print(androidDeviceInfo.androidId);
+  //     await signin(androidDeviceInfo.androidId);
+  //     return androidDeviceInfo.androidId; // unique ID on Android
+  //   }
+  // }
+
+  // signin(deviceid) async {
+  //   print(deviceid);
+  //   try {
+  //     final response = await http.post(firstlogin, body: {
+  //       "device_id": deviceid,
+  //       "pin": "1234",
+  //     });
+  //     //print("bjkb" + response.statusCode.toString());
+  //     if (response.statusCode == 200) {
+  //       final responseJson = json.decode(response.body);
+
+  //       firstloginlist = responseJson;
+  //       // print(loginwithserver['data']['email']);
+  //       print(firstloginlist);
+  //       loginasguest(deviceid);
+  //       // showToast("");
+  //       // savedata();
+  //       setState(() {
+  //         isError = false;
+  //         isLoading = false;
+  //         print('setstate');
+  //       });
+  //     } else {
+  //       print("bjkb" + response.statusCode.toString());
+  //       showToast("Mismatch Credentials");
+  //       setState(() {
+  //         isError = true;
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     setState(() {
+  //       isError = true;
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
+
+  // Future<void> loginasguest(deviceid) async {
+  //   try {
+  //     final response = await http.post(login, body: {
+  //       "device_id": deviceid,
+  //       "password": "1234",
+  //     });
+  //     //print("bjkb" + response.statusCode.toString());
+  //     if (response.statusCode == 200) {
+  //       final responseJson = json.decode(response.body);
+
+  //       loginwithserver = responseJson;
+  //       // print(loginwithserver['data']['email']);
+  //       print(loginwithserver);
+  //       // loginasguest(deviceid);
+  //       // showToast("");
+  //       savedata(deviceid);
+  //       gettoken();
+  //       getalert();
+  //       setState(() {
+  //         isError = false;
+  //         isLoading = false;
+  //         print('setstate');
+  //       });
+  //     } else {
+  //       print("bjkb" + response.statusCode.toString());
+  //       showToast("Mismatch Credentials");
+  //       setState(() {
+  //         isError = true;
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     setState(() {
+  //       isError = true;
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
+
+  // Future<void> savedata(deviceid) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   if (loginwithserver['data']['login_count'] == null) {
+  //     prefs.setString("user_type", loginwithserver['data']['user_type']);
+
+  //     //  prefs.setInt("login_count", loginwithserver['data']['login_count']);
+  //     prefs.setString("deviceid", deviceid);
+  //     // prefs.setInt("password", loginwithserver['data']['password']);
+  //     prefs.setString("token", loginwithserver['access_token']);
+  //   } else if (loginwithserver['data']['email'] == null) {
+  //     prefs.setString("user_type", loginwithserver['data']['user_type']);
+
+  //     prefs.setInt("login_count", loginwithserver['data']['login_count']);
+  //     prefs.setString("deviceid", deviceid);
+  //     // prefs.setInt("password", loginwithserver['data']['password']);
+  //     prefs.setString("token", loginwithserver['access_token']);
+  //   } else {
+  //     prefs.setString("email", loginwithserver['data']['email']);
+  //     prefs.setString("user_type", loginwithserver['data']['user_type']);
+
+  //     prefs.setInt("login_count", loginwithserver['data']['login_count']);
+  //     prefs.setString("deviceid", deviceid);
+  //     // prefs.setInt("password", loginwithserver['data']['password']);
+  //     prefs.setString("token", loginwithserver['access_token']);
+  //     //prefs.setString('email', emailController.text);
+  //     //Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
+  //   }
+  // }
 
   dynamic nextfromserver = new List();
   Future<void> getNextperiod() async {
@@ -453,11 +599,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               "fertilewindow", settingfromserver['fertile_window_starts']);
           getnext = prefs.getString("nextdate");
           getfertile = prefs.getString("fertilewindow");
-          getDay();
+          getdaytext();
+          //  getDay();
         } else {
           getnext = prefs.getString("nextdate");
-           getfertile = prefs.getString("fertilewindow");
-          getDay();
+          getfertile = prefs.getString("fertilewindow");
+          getdaytext();
+          // getDay();
         }
 
         print(settingfromserver);
@@ -484,22 +632,84 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Future<void> getDay() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var select = preferences.getString("selected");
-    print("toays dayt" + select.toString().substring(8, 10));
-    print("toays dayt" + formattedDate.toString().substring(8, 10));
-    print(
-        "${DateTime.parse(formattedDate).difference(DateTime.parse(select)).inDays}");
-    periodno = (DateTime.parse(formattedDate)
-            .difference(DateTime.parse(select))
-            .inDays)
-        .toString();
+  // Future<void> getDay() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   var select = preferences.getString("selected");
+  //   print("toays dayt" + select.toString().substring(8, 10));
+  //   print("toays dayt" + formattedDate.toString().substring(8, 10));
+  //   print(
+  //       "${DateTime.parse(formattedDate).difference(DateTime.parse(select)).inDays}");
+  //   periodno = (DateTime.parse(formattedDate)
+  //           .difference(DateTime.parse(select))
+  //           .inDays)
+  //       .toString();
+  //   // if(periodno){}
+  // }
+  dynamic getalldays = new List();
+  Future<void> getdaytext() async {
+    try {
+      final response = await http.post(
+          Uri.parse("http://girl-period.uplosse.com/api/display-date-results"),
+          headers: {
+            'Authorization': 'Bearer $token',
+          });
+      //print("bjkb" + response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        getalldays = responseJson;
+        // print(loginwithserver['data']['email']);
+        print(getalldays);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+       prefs.setBool("buttonvisibility", getalldays['button']);
+        prefs.setString("buttontext", getalldays['text']);
+        prefs.setInt("totaldays", getalldays['days']);
+       
+        periodno = prefs.getInt("totaldays").toString();
+        prefs.setString("daystext", getalldays['days_text']);
+        if (prefs.getString("daystext") == null) {
+          prefs.setString("daystext", "Period Day");
+        } else {
+          prefs.setString("daystext", getalldays['days_text']);
+        }
+        if (prefs.getString("buttontext") == null) {
+          print("kofo;dodofsd ");
+          prefs.setString("buttontext", "button");
+        } else {
+          prefs.setString("buttontext", getalldays['text']);
+        }
+
+        // loginasguest(deviceid);
+        // showToast("");
+        // savedata(deviceid);
+        // gettoken();
+        // getalert();
+        setState(() {
+          isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+        showToast("Mismatch Credentials");
+        setState(() {
+          isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> gettoken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
+    getalert();
   }
 }
 

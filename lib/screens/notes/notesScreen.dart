@@ -12,9 +12,13 @@ import 'package:vietnamese/common/notesapirepo.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/bottom.dart';
 import 'package:vietnamese/models/addnotes.dart';
+import 'package:vietnamese/screens/lunar.dart';
+import 'package:vietnamese/screens/notes/alerts/period_ended.dart';
+import 'package:vietnamese/screens/notes/alerts/period_started.dart';
 import 'package:vietnamese/screens/notes/components/two_item_container.dart';
 import 'package:vietnamese/screens/signup/signUp.dart';
 
+import 'components/notes_text_field.dart';
 import 'moodcustomclass.dart';
 
 class NotesScreen extends StatefulWidget {
@@ -45,6 +49,7 @@ class _NotesScreenState extends State<NotesScreen> {
   String flow;
   String tookMedicine;
   String intercourse;
+  String startperioddate;
   String masturbated;
   String weight;
   DateTime selectedDate = DateTime.now();
@@ -121,21 +126,73 @@ class _NotesScreenState extends State<NotesScreen> {
                 ],
               ),
               Divider(),
-              GestureDetector(
-                onTap: () {
-                  showAlertDialog(context);
-                },
-                child: TwoItemContainer(
-                  title: "Add Notes",
-                  itemType: ItemType.icon,
+              // GestureDetector(
+              //   onTap: () {
+              //     showAlertDialog(context);
+              //   },
+              //   child: TwoItemContainer(
+              //     title: "Add Notes",
+              //     itemType: ItemType.icon,
+              //   ),
+              // ),
+
+              Container(
+                padding: EdgeInsets.only(
+                  left: getProportionateScreenWidth(10),
+                  right: getProportionateScreenWidth(10),
+                  bottom: getProportionateScreenHeight(10),
+                ),
+                child: TextField(
+                  controller: notescontroller,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    isDense: true,
+                    focusColor: kPrimaryLightColor,
+                    hoverColor: kPrimaryLightColor,
+                    hintStyle: TextStyle(
+                      color: kTextColor,
+                    ),
+                    hintText: "Your Notes...",
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 42, vertical: 10),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: kPrimaryColor),
+                      gapPadding: 10,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: kPrimaryColor),
+                      gapPadding: 10,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: kPrimaryColor),
+                      gapPadding: 10,
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      notes = value;
+                    });
+                  },
                 ),
               ),
-              // NotesTextField(
-              //   hintText: "Your note...",
-              // ),
               GestureDetector(
-                onTap: () {
-                  showstartDialog(context);
+                onTap: () async {
+                  startperioddate = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) => PeriodStartedAlert());
+                  SharedPreferences prfs =
+                      await SharedPreferences.getInstance();
+                  setState(() {
+                    print(startPerioddate);
+
+                    print(prfs.getString("selecteddate"));
+                  });
+                  //showstartDialog(context);
                 },
                 child: TwoItemContainer(
                   title: "Period Started Today",
@@ -144,7 +201,10 @@ class _NotesScreenState extends State<NotesScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  showendDialog(context);
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => PeriodEndedAlert());
+                  //showstartDialog(context);
                 },
                 child: TwoItemContainer(
                   title: "Period Ended Today",
@@ -413,7 +473,8 @@ class _NotesScreenState extends State<NotesScreen> {
                             isDense: true,
                             focusColor: kPrimaryLightColor,
                             hoverColor: kPrimaryLightColor,
-                            hintStyle: TextStyle(color: kTextColor),
+                            hintStyle:
+                                TextStyle(color: kTextColor, fontSize: 10),
                             hintText: "Weight",
 
                             floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -444,7 +505,7 @@ class _NotesScreenState extends State<NotesScreen> {
                           validator: (val) {
                             if (double.parse(val) < 30 ||
                                 double.parse(val) > 100) {
-                              return "Enter Range 30-100";
+                              return "Range 30-100";
                             } else {
                               return null;
                             }
@@ -465,13 +526,12 @@ class _NotesScreenState extends State<NotesScreen> {
                           validator: (value) {
                             var converted = int.parse(value);
                             if (value == null) {
-                              return 'Please enter the temperature';
+                              return 'Enter temperature';
                             } else if (converted < 35) {
-                              return 'Please enter between 35c to 45c';
+                              return 'Range between 35c to 45c';
                             } else if (converted > 45) {
-                              return 'Please enter between 35c to 45c';
+                              return 'Range between 35c to 45c';
                             }
-                            return '';
                           },
                           decoration: InputDecoration(
                             fillColor: Colors.white,
@@ -479,7 +539,8 @@ class _NotesScreenState extends State<NotesScreen> {
                             isDense: true,
                             focusColor: kPrimaryLightColor,
                             hoverColor: kPrimaryLightColor,
-                            hintStyle: TextStyle(color: kTextColor),
+                            hintStyle:
+                                TextStyle(color: kTextColor, fontSize: 8),
                             hintText: "Temperature 35c - 45c",
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
@@ -532,7 +593,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     var data = AddUserNotes(
                         date: DateTime.parse(today.toString().substring(0, 10)),
                         note: notes,
-                        periodStartedDate: startPerioddate,
+                        periodStartedDate: DateTime.parse(prefs.getString("startdate")),
                         periodEndedDate: periodenddate,
                         flow: star.toString(),
                         tookMedicine: valuemedicine.toString(),
@@ -556,7 +617,7 @@ class _NotesScreenState extends State<NotesScreen> {
                       postnotes(addnotesList);
                     }
                   } else {
-                    showToast("Error");
+                    showToast("Please Fill all values");
                   }
                 },
                 child: isLoading
@@ -595,7 +656,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
     addusernotesrepo.addusernotes(token, addnotes).then((value) => {
           if (value)
-            {showToast("Notes Added Successfully!"), Navigator.pop(context)}
+            {showToast("Notes Added Successfully!"), Navigator.push(context,MaterialPageRoute(builder: (context)=>Lunar()))}
         });
     setState(() {
       isLoading = false;
@@ -734,9 +795,9 @@ class _NotesScreenState extends State<NotesScreen> {
   enddate() async {
     periodenddate = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: DateTime.now(),
       firstDate: DateTime(2021, 4),
-      lastDate: selectedDate,
+      lastDate: DateTime.now(),
       builder: (BuildContext context, Widget child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -792,7 +853,7 @@ class _NotesScreenState extends State<NotesScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${selectedDate.toString().replaceAll("-", "/").substring(0, 10)}",
+              "${today.toString().replaceAll("-", "/").substring(0, 10)}",
 
               /// style: date,
             ),
@@ -803,7 +864,10 @@ class _NotesScreenState extends State<NotesScreen> {
                   width: 20,
                 ),
                 onTap: () {
-                  enddate();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PeriodStartedAlert()));
                   // getendperioddate();
                 })
           ],
@@ -858,7 +922,7 @@ class _NotesScreenState extends State<NotesScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${selectedDateforstart.toString().replaceAll("-", "/").substring(0, 10)}",
+              "${today.toString().replaceAll("-", "/").substring(0, 10)}",
 
               /// style: date,
             ),
@@ -927,6 +991,12 @@ class _NotesScreenState extends State<NotesScreen> {
         textEditingControllerweight =
             TextEditingController(text: prefs.getString("weight"));
         tx_wieght = prefs.getString("weight");
+      }
+      if (prefs.getString("selecteddate") == null) {
+      } else {
+        setState(() {
+          today = prefs.getString("selecteddate");
+        });
       }
     });
   }

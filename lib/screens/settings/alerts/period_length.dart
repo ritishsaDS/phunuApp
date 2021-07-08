@@ -123,9 +123,8 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                     setState(() {
                       if (periodlength == 1) {
                       } else {
-                         periodlength = periodlength - 1;
+                        periodlength = periodlength - 1;
                       }
-                     
                     });
                   },
                   child: Icon(
@@ -216,6 +215,11 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                         averagep = val;
 
                         print(averagep);
+                        if (averagep == false) {
+                          setState(() {
+                            irregularcyclep = false;
+                          });
+                        }
                       });
                     },
                   ),
@@ -245,9 +249,15 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       setState(() {
-                        irregularcyclep = val;
+                        if (averagep == true) {
+                          irregularcyclep = val;
 
-                        print(irregularcyclep);
+                          print(irregularcyclep);
+                        } else if (averagep == false) {
+                          setState(() {
+                            irregularcyclep = false;
+                          });
+                        } else {}
                       });
                     },
                   ),
@@ -270,6 +280,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                         await SharedPreferences.getInstance();
                     prefs.setBool("irregularcyclep", irregularcyclep);
                     prefs.setBool("averagep", averagep);
+                     prefs.setString("periodlength", periodlength.toString());
                     Navigator.of(context).pop(periodlength.toString());
                   }),
             ],

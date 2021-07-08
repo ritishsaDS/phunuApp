@@ -17,6 +17,8 @@ import 'package:vietnamese/screens/settings/PinAndRegister/pin_register_screen.d
 import 'package:vietnamese/screens/settings/alerts/cycle_length.dart';
 import 'package:vietnamese/screens/settings/components/genral_list_tile.dart';
 import 'package:vietnamese/screens/settings/components/privacy_policy.dart';
+import 'package:vietnamese/screens/settings/suggestfeatures.dart';
+import 'package:vietnamese/screens/signup/signUp.dart';
 
 import 'alerts/period_length.dart';
 import 'components/pregnent_tile.dart';
@@ -31,6 +33,7 @@ class _SettingScreenState extends State<SettingScreen> {
   String token;
   bool isError;
   var mensturllength;
+  var pregnancy;
   var perioddate;
   bool switchVal = false;
   String startdate = "28";
@@ -149,9 +152,16 @@ class _SettingScreenState extends State<SettingScreen> {
                                           value: switchVal,
                                           inactiveThumbColor:
                                               kPrimaryLightColor,
-                                          onChanged: (val) {
+                                          onChanged: (val) async {
+                                            SharedPreferences prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
                                             setState(() {
                                               switchVal = val;
+
+                                              prefs.setBool(
+                                                  "pregnancy", switchVal);
+                                              print(prefs.getBool("pregnancy"));
                                             });
                                           }),
                                     ],
@@ -237,9 +247,28 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ));
                                 }
                               }),
-                          GenralListTile(title: 'Report Bug', onTap: null),
                           GenralListTile(
-                              title: 'Suggest Features', onTap: null),
+                              title: 'Report Bug',
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => suggestfeatures(
+                                            title: "Report Bug",
+                                            subject: "Báo cáo lỗi",
+                                            email: login)));
+                              }),
+                          GenralListTile(
+                              title: 'Suggest Features',
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => suggestfeatures(
+                                            title: "Suggest Features",
+                                            subject: "Đề nghị chức năng app",
+                                            email: login)));
+                              }),
                           GenralListTile(
                             title: 'Share',
                             onTap: share,
@@ -302,6 +331,13 @@ class _SettingScreenState extends State<SettingScreen> {
     isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
+    pregnancy = prefs.getBool("pregnancy");
+    print(pregnancy);
+    if (pregnancy == true) {
+      switchVal = true;
+    } else {
+      switchVal = false;
+    }
     print(token);
     try {
       final response = await http.post(getSetting, headers: {
@@ -385,6 +421,20 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() {
       login = preferences.getString("email");
     });
+    if (preferences.getString("cyclelength") != null) {
+      setState(() {
+        startdate = preferences.getString("cyclelength");
+      });
+    } else {
+      startdate = "28";
+    }
+    if (preferences.getString("periodlength") != null) {
+      setState(() {
+        enddate = preferences.getString("periodlength");
+      });
+    } else {
+      enddate = "20";
+    }
   }
 
   showAlertDialog(BuildContext context) {
@@ -402,6 +452,25 @@ class _SettingScreenState extends State<SettingScreen> {
         },
         child: Text(
           "Cancel",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+
+    Widget register = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(
+            15.0,
+          ),
+          color: kPrimaryColor),
+      child: FlatButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+        },
+        child: Text(
+          "Register",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -431,9 +500,7 @@ class _SettingScreenState extends State<SettingScreen> {
           ],
         ),
       ),
-      actions: [
-        okButton,
-      ],
+      actions: [okButton, register],
     );
 
     // show the dialog

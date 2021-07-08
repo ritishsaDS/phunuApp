@@ -102,7 +102,7 @@ class _HeaderState extends State<Header> {
   DateTime selectedDate = DateTime.now();
 
   DateTime end;
-  bool visible = true;
+  bool visible = false;
   @override
   void initState() {
     gettoken();
@@ -114,6 +114,8 @@ class _HeaderState extends State<Header> {
     // TODO: implement initState
     super.initState();
   }
+
+  var daystext;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +131,7 @@ class _HeaderState extends State<Header> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$Title',
+                  '$daystext',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: getProportionateScreenHeight(24),
@@ -165,15 +167,20 @@ class _HeaderState extends State<Header> {
             ),
           ),
           GestureDetector(
-            onTap: () {
-              if (buttontext == "Is Your Period Ended Yet?") {
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              if (prefs.getString("buttontext") ==
+                  "Has your period ended yet") {
+                print("kkldskd");
                 showAlertDialog(context);
               } else {
-                //showAlertDialog(context);
+                print("kklewkekwakdskd");
+                showstartDialog(context);
               }
             },
             child: Visibility(
               visible: visible,
+             
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: getProportionateScreenWidth(20),
@@ -212,7 +219,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "OK",
+          "Yes",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -269,7 +276,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "OK",
+          "Yes",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -280,15 +287,31 @@ class _HeaderState extends State<Header> {
       ),
     );
 
+    Widget No = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(
+            15.0,
+          ),
+          color: kPrimaryColor),
+      child: FlatButton(
+        child: Text(
+          "No",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       contentPadding: EdgeInsets.all(0),
       //  backgroundColor: kPrimaryColor,
 
-      title: Text("Your Period ended"),
-      actions: [
-        okButton,
-      ],
+      title: Text("Your Period Started"),
+      actions: [okButton, No],
     );
 
     // show the dialog
@@ -339,7 +362,7 @@ class _HeaderState extends State<Header> {
       final response = await http.post(getperiodsdate, headers: {
         'Authorization': 'Bearer $token',
       }, body: {
-        "start_date": DateTime.now(),
+        "start_date": DateTime.now().toString(),
       });
       print(response.statusCode.toString());
       if (response.statusCode == 200) {
@@ -349,6 +372,8 @@ class _HeaderState extends State<Header> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("alert", "true");
         prefs.setString("startdate", DateTime.now().toString());
+        prefs.setBool("buttonstart", false);
+        prefs.setString("buttontext", "Has Your Period Started Yet");
         Navigator.pop(context);
         // print("lvnsdlm l" + settingfromserver);
         getNextperiod();
@@ -399,8 +424,10 @@ class _HeaderState extends State<Header> {
             endperiodfromserver['fertile_window_starts'].toString());
         prefs.setString(
             "nextdate", endperiodfromserver['next_period_date'].toString());
-        prefs.setBool("button", false);
-        getDay();
+
+        prefs.setBool("buttonvisibility", false);
+        prefs.setString("buttontext", "Has Your Period Ended Yet?");
+        //getDay();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => DashboardScreen()));
         // print("lvnsdlm l" + settingfromserver);
@@ -501,30 +528,52 @@ class _HeaderState extends State<Header> {
   Future<void> gettoken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
-    setState(() {
-      if (int.parse(widget.day) <= 3) {
-        Title = "Period Day";
-        buttontext = "Is Your Period Ended Yet?";
-        setState(() {
-          visible = true;
-        });
-      } else if (int.parse(widget.day) > 3 && int.parse(widget.day) <= 7) {
-        Title = "Period Day";
-        setState(() {
-          visible = false;
-        });
-      } else if (int.parse(widget.day) > 7 && int.parse(widget.day) < 20) {
-        Title = "Days Until Next Period";
-        setState(() {
-          visible = false;
-        });
-      } else if (int.parse(widget.day) > 20) {
-        Title = "Days Until Next Period";
-        buttontext = "Is Your Period Started?";
-        setState(() {
-          visible = true;
-        });
-      }
-    });
+    daystext = prefs.getString("daystext");
+    if (prefs.getString("buttontext") == null ||
+        prefs.getBool("buttonvisibility") == null) {
+      buttontext = "Is Your period ended";
+      visible = true;
+    } else {
+      buttontext = prefs.getString("buttontext");
+      visible = prefs.getBool("buttonvisibility");
+    }
+
+    //   setState(() {
+    //     if (int.parse(widget.day) <= 3) {
+    //       Title = "Period Day";
+    //       buttontext = "Is Your Period Ended Yet?";
+    //       if (prefs.getBool("buttonend") != null) {
+    //         Title = "Days Untill Next Period";
+    //         visible = prefs.getBool("buttonend");
+    //       } else {
+    //         setState(() {
+    //           visible = true;
+    //         });
+    //       }
+    //     } else if (int.parse(widget.day) > 3 && int.parse(widget.day) <= 7) {
+    //       Title = "Period Day";
+    //       setState(() {
+    //         visible = false;
+    //       });
+    //     } else if (int.parse(widget.day) > 7 && int.parse(widget.day) < 20) {
+    //       Title = "Days Until Next Period";
+    //       setState(() {
+    //         visible = false;
+    //       });
+    //     } else if (int.parse(widget.day) > 20) {
+    //       Title = "Days Until Next Period";
+    //       buttontext = "Is Your Period Started?";
+
+    //       if (prefs.getBool("buttonstart") != null) {
+    //         Title = "Days Untill Next Period";
+    //         visible = prefs.getBool("buttonstart");
+    //       } else {
+    //         setState(() {
+    //           visible = true;
+    //         });
+    //       }
+    //     }
+    //   });
+    // }
   }
 }

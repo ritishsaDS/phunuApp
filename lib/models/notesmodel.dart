@@ -9,7 +9,7 @@ class Data {
   String tookMedicine;
   String intercourse;
   String masturbated;
-  String mood;
+    List<Mood> mood;
   String weight;
   String height;
   String createdAt;
@@ -43,7 +43,12 @@ class Data {
     tookMedicine = map['took_medicine'];
     intercourse = map['intercourse'];
     masturbated = map['masturbated'];
-    mood = map['mood'];
+    if (map['mood'] != null) {
+      mood = new List<Mood>();
+      map['mood'].forEach((v) {
+        mood.add(new Mood.fromJson(v));
+      });
+    }
     weight = map['weight'];
     height = map['height'];
     createdAt = map['created_at'];
@@ -62,11 +67,28 @@ class Data {
     map['took_medicine'] = this.tookMedicine;
     map['intercourse'] = this.intercourse;
     map['masturbated'] = this.masturbated;
-    map['mood'] = this.mood;
+      if (this.mood != null) {
+      map['mood'] = this.mood.map((v) => v.toJson()).toList();
+    }
     map['weight'] = this.weight;
     map['height'] = this.height;
     map['created_at'] = this.createdAt;
     map['updated_at'] = this.updatedAt;
     return map;
+  }
+}
+class Mood {
+  String id;
+
+  Mood({this.id});
+
+  Mood.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    return data;
   }
 }
