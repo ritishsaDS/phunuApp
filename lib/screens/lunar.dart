@@ -172,8 +172,8 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
 
   String printLunarDate(DateTime solar) {
     List<int> lunar = CalendarConverter.solarToLunar(
-        solar.year, solar.month, solar.day, Timezone.Japanese);
-    return DateFormat.Md('ja').format(DateTime(lunar[2], lunar[1], lunar[0]));
+        solar.year, solar.month, solar.day, Timezone.Vietnamese);
+    return DateFormat.Md('vi').format(DateTime(lunar[2], lunar[1], lunar[0]));
   }
 
   Widget buildCell(Color color, DateTime date) {
@@ -591,7 +591,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
                     Text(
                       "...." + listdata[i]['note'] == null
                           ? ""
-                          : listdata[i]['note'],
+                          : listdata[i]['note']+"......",
                       style: _textStyle,
                     ),
 

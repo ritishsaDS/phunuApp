@@ -661,17 +661,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // print(loginwithserver['data']['email']);
         print(getalldays);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-       prefs.setBool("buttonvisibility", getalldays['button']);
+        prefs.setBool("buttonvisibility", getalldays['button']);
         prefs.setString("buttontext", getalldays['text']);
         prefs.setInt("totaldays", getalldays['days']);
-       
+
         periodno = prefs.getInt("totaldays").toString();
         prefs.setString("daystext", getalldays['days_text']);
-        if (prefs.getString("daystext") == null) {
-          prefs.setString("daystext", "Period Day");
-        } else {
-          prefs.setString("daystext", getalldays['days_text']);
-        }
+        
         if (prefs.getString("buttontext") == null) {
           print("kofo;dodofsd ");
           prefs.setString("buttontext", "button");
@@ -746,7 +742,9 @@ class BodyContent extends StatelessWidget {
                       color: kPrimaryColor, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  date == null ? "" : date,
+                  date == null
+                      ? ""
+                      : date,
                   style: TextStyle(
                     color: kPrimaryColor,
                     fontWeight: FontWeight.w600,

@@ -527,8 +527,13 @@ class _HeaderState extends State<Header> {
 
   Future<void> gettoken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    daystext = prefs.getString("daystext");
+    token = prefs.getString("token"); daystext = prefs.getString("daystext");
+    if(daystext==null){
+      daystext="Period Day";
+    }else{
+      daystext = prefs.getString("daystext");
+    }
+   
     if (prefs.getString("buttontext") == null ||
         prefs.getBool("buttonvisibility") == null) {
       buttontext = "Is Your period ended";
