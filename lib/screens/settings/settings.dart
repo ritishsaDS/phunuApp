@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +9,7 @@ import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/bottom.dart';
+import 'package:flutter_appavailability/flutter_appavailability.dart';
 import 'package:http/http.dart' as http;
 import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/Login/login.dart';
@@ -37,7 +38,7 @@ class _SettingScreenState extends State<SettingScreen> {
   var perioddate;
   bool switchVal = false;
   String startdate = "28";
-  String enddate = "20";
+  String enddate = "4";
   String formattedDate;
   Widget _widget;
   var login;
@@ -81,7 +82,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             getProportionateScreenHeight(20),
                           ),
                           GenralListTile(
-                            title: 'Period Length',
+                            title: 'Chu kinh',
                             tileType: TileType.subtext,
                             subtitle: '($startdate Days)',
                             onTap: () async {
@@ -101,7 +102,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             },
                           ),
                           GenralListTile(
-                            title: 'Menstrual Period',
+                            title: 'Số ngay den do',
                             tileType: TileType.subtext,
                             subtitle: '($enddate Days)',
                             onTap: () async {
@@ -112,7 +113,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               setState(() {
                                 print(mensturllength);
                                 if (mensturllength == null) {
-                                  enddate = "20";
+                                  enddate = "4";
                                 } else {
                                   enddate = mensturllength;
                                 }
@@ -142,7 +143,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'I\'m Pregnant!',
+                                        'Tôi có thai!',
                                         style: TextStyle(
                                           color: kPrimaryColor,
                                           fontWeight: FontWeight.bold,
@@ -229,7 +230,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                           ),
                           GenralListTile(
-                              title: 'Back up And Restore',
+                              title: '"Đã lưu thông tin',
                               onTap: () {
                                 backup();
                               }),
@@ -248,50 +249,44 @@ class _SettingScreenState extends State<SettingScreen> {
                                 }
                               }),
                           GenralListTile(
-                              title: 'Report Bug',
+                              title: 'Bâo câo loi',
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => suggestfeatures(
-                                            title: "Report Bug",
-                                            subject: "Báo cáo lỗi",
-                                            email: login)));
+                                   _modalBottomSheetMenu(  "Report Bug",
+                                            "Báo cáo lỗi",);
+                                
                               }),
                           GenralListTile(
-                              title: 'Suggest Features',
+                              title: 'Đề xuất tính năng',
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => suggestfeatures(
-                                            title: "Suggest Features",
-                                            subject: "Đề nghị chức năng app",
-                                            email: login)));
+                                _modalBottomSheetMenu( "Suggest Features",
+                                           "Đề nghị chức năng app",);
+                                //  openEmailApp(context);
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => suggestfeatures(
+                                //             title: "Suggest Features",
+                                //             subject: "Đề nghị chức năng app",
+                                //             email: login)));
                               }),
                           GenralListTile(
-                            title: 'Share',
+                            title: 'Chia sé',
                             onTap: share,
                           ),
                           GenralListTile(
-                              title: 'Update Settings',
+                              title: 'Đã cập nhật thông tin',
                               onTap: () {
                                 updateSetting();
                               }),
                           GenralListTile(
-                              title: 'Erase Personal Data',
+                              title: 'Đã xóa mọi thông tin',
                               onTap: () async {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.clear();
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DashboardScreen()));
+                                showdialogforerase(context);
+
+
                               }),
                           GenralListTile(
-                            title: 'Privacy Policy',
+                            title: 'Chính sách bảo mật',
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -299,23 +294,24 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             ),
                           ),
-                          login == null
-                              ? Container()
-                              : GenralListTile(
-                                  title: login == null ? 'Login' : "Logout",
-                                  onTap: () async {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    print(prefs.getString("email"));
-                                    setState(() {
-                                      prefs.remove("email");
-                                      getdetail();
-                                    });
-                                    // Navigator.pushReplacement(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => LoginScreen()));
-                                  }),
+                          // login == null
+                          //     ? Container()
+                          //     : GenralListTile(
+                          //         title:
+                          //             login == null ? 'Login' : "Đã đăng xuấ",
+                          //         onTap: () async {
+                          //           SharedPreferences prefs =
+                          //               await SharedPreferences.getInstance();
+                          //           print(prefs.getString("email"));
+                          //           setState(() {
+                          //             prefs.remove("email");
+                          //             getdetail();
+                          //           });
+                          //           // Navigator.pushReplacement(
+                          //           //     context,
+                          //           //     MaterialPageRoute(
+                          //           //         builder: (context) => LoginScreen()));
+                          //         }),
                         ],
                       ),
               ),
@@ -433,7 +429,7 @@ class _SettingScreenState extends State<SettingScreen> {
         enddate = preferences.getString("periodlength");
       });
     } else {
-      enddate = "20";
+      enddate = "4";
     }
   }
 
@@ -511,6 +507,80 @@ class _SettingScreenState extends State<SettingScreen> {
       },
     );
   }
+  showdialogforerase(BuildContext context) {
+    // set up the button
+    Widget okButton = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(
+            15.0,
+          ),
+          color: kPrimaryColor),
+      child: FlatButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text(
+          "Cancel",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+
+    Widget register = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(
+            15.0,
+          ),
+          color: kPrimaryColor),
+      child: FlatButton(
+        onPressed: () async {
+
+          erasedata();
+        },
+        child: Text(
+          "Erase Data",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      contentPadding: EdgeInsets.all(0),
+      //  backgroundColor: kPrimaryColor,
+
+      content: Container(
+        height: SizeConfig.screenHeight / 5,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              child: Center(
+                child: Text(
+                  "Are you sure you want to erase data",
+                  style: TextStyle(
+                      color: kPrimaryColor, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [okButton, register],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
   getdate() async {
     final DateTime pickedDate = await showDatePicker(
@@ -566,7 +636,7 @@ class _SettingScreenState extends State<SettingScreen> {
         backuplist = responseJson;
         print(backuplist);
         showToast("Bakcup  Updated Succesfully");
-        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
         setState(() {
           isError = false;
           isLoading = false;
@@ -587,5 +657,158 @@ class _SettingScreenState extends State<SettingScreen> {
         isLoading = false;
       });
     }
+  }
+  Future<void> erasedata() async {
+    isLoading = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
+    print(token);
+    try {
+      final response = await http.post(
+        Erasedataapi,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(response.statusCode.toString());
+      print(perioddate.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+        SharedPreferences prefs =
+        await SharedPreferences.getInstance();
+        prefs.clear();
+        print("erase");
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SettingScreen()));
+        showToast("Erase Data successfully");
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
+        setState(() {
+          isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+
+        setState(() {
+          isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("uhdfuhdfuh");
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
+  }
+  void openEmailApp(BuildContext context) {
+    try {
+      AppAvailability.launchApp(
+              Platform.isIOS ? "message://" : "com.google.android.gm")
+          .then((_) {
+        print("App Email launched!");
+      }).catchError((err) {
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text("App Email not found!")));
+        print(err);
+      });
+    } catch (e) {
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text("Email App not found!")));
+    }
+  }
+
+  void _modalBottomSheetMenu(title,subject) {
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return new Container(
+            margin: EdgeInsets.symmetric(horizontal: 40),
+            height: 150.0,
+            color: Colors.transparent, //could change this to Color(0xFF737373),
+            //so you don't have to change MaterialApp canvasColor
+            child: new Container(
+                decoration: new BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: new BorderRadius.only(
+                        topLeft: const Radius.circular(10.0),
+                        topRight: const Radius.circular(10.0))),
+                child: new Center(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                          child: Column(
+                        children: [
+                          MaterialButton(
+                            onPressed: () {
+                               Navigator.push(
+                                    context,
+                                     MaterialPageRoute(
+                                         builder: (context) => suggestfeatures(
+                                             title: title,
+                                             subject: subject,
+                                            email: login)));
+                            },
+                            color: Colors.white,
+                            textColor: Colors.white,
+                            child: Image.asset(
+                              'assets/icons/home_white.png',
+                              height: 30,
+                            ),
+                            padding: EdgeInsets.all(16),
+                            shape: CircleBorder(),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Open in Phu Nu Viét",
+                            style: TextStyle(
+                                color: Colors.pinkAccent,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14),
+                          )
+                        ],
+                      )),
+                    ),
+                    Container(
+                        child: Column(
+                      children: [
+                        MaterialButton(
+                          onPressed: () {
+                            openEmailApp(context);
+                          },
+                          color: Colors.white,
+                          textColor: Colors.white,
+                          child: Image.asset(
+                            'assets/icons/gmail.png',
+                            height: 30,
+                          ),
+                          padding: EdgeInsets.all(16),
+                          shape: CircleBorder(),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Open in Gmail",
+                          style: TextStyle(
+                              color: Colors.pinkAccent,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14),
+                        )
+                      ],
+                    ))
+                  ],
+                ))),
+          );
+        });
   }
 }

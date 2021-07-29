@@ -12,6 +12,7 @@ import 'package:vietnamese/common/notesapirepo.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/bottom.dart';
 import 'package:vietnamese/models/addnotes.dart';
+import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/lunar.dart';
 import 'package:vietnamese/screens/notes/alerts/period_ended.dart';
 import 'package:vietnamese/screens/notes/alerts/period_started.dart';
@@ -29,19 +30,22 @@ class NotesScreen extends StatefulWidget {
 class _NotesScreenState extends State<NotesScreen> {
   final addusernotesrepo = AddNotesRepo();
   TextEditingController textEditingControllerweight;
+  TextEditingController textEditingControllerheight;
   bool isLoading = false;
   DateTime date;
   String note;
+  var addcount = 0;
   final key = GlobalKey<FormState>();
   var user_type;
+  var data;
   var login_count;
   var deviceid;
-  String notes;
+  String notes = "";
   String tx_wieght;
   var moods;
   var u_flow = "";
   String tx_height;
-  var star;
+  var star = 3.0;
   DateTime periodStartedDate;
   DateTime periodenddate;
   TextEditingController notescontroller;
@@ -52,10 +56,13 @@ class _NotesScreenState extends State<NotesScreen> {
   String startperioddate;
   String masturbated;
   String weight;
+  int filed_count;
+  List<int> arr = [];
   DateTime selectedDate = DateTime.now();
   DateTime selectedDateforstart = DateTime.now();
   String height;
   List<Mood> mood;
+
   bool valuemedicine = false;
   bool valueinter = false;
   bool valuemasturbrated = false;
@@ -70,13 +77,14 @@ class _NotesScreenState extends State<NotesScreen> {
       masturbated: "no",
       weight: "65",
       height: "6",
+      filed_count: 2,
       mood: [
         Mood(id: "1"),
         Mood(id: "2"),
         Mood(id: "3"),
       ]);
   final List<AddUserNotes> addnotesList = [];
-
+  var notesid = 0;
   DateTime startPerioddate;
   dynamic today;
   @override
@@ -85,6 +93,7 @@ class _NotesScreenState extends State<NotesScreen> {
     var formatter = new DateFormat('yyyy-MM-dd');
     today = formatter.format(now);
     getdetail();
+    // getnotesfromsevr();
     super.initState();
   }
 
@@ -116,7 +125,9 @@ class _NotesScreenState extends State<NotesScreen> {
                   ),
                   WidthBox(getProportionateScreenWidth(40)),
                   Text(
-                    "${today.toString().substring(0, 10)}",
+                    "${DateTime.parse(today).day.toString()}" +
+                        "/" "${DateTime.parse(today).month.toString()}" +
+                        "/" "${DateTime.parse(today).year.toString()}",
                     style: TextStyle(
                       color: kPrimaryColor,
                       fontWeight: FontWeight.bold,
@@ -153,7 +164,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     hintStyle: TextStyle(
                       color: kTextColor,
                     ),
-                    hintText: "Your Notes...",
+                    hintText: "Viet nhñ'ng gi dâng nhâ'",
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 42, vertical: 10),
@@ -177,11 +188,13 @@ class _NotesScreenState extends State<NotesScreen> {
                     setState(() {
                       notes = value;
                     });
+                    if (notes != "") {}
                   },
                 ),
               ),
               GestureDetector(
                 onTap: () async {
+                  addcount = addcount + 1;
                   startperioddate = await showDialog(
                       context: context,
                       builder: (BuildContext context) => PeriodStartedAlert());
@@ -195,19 +208,20 @@ class _NotesScreenState extends State<NotesScreen> {
                   //showstartDialog(context);
                 },
                 child: TwoItemContainer(
-                  title: "Period Started Today",
+                  title: "Kinh bat dau horn nay",
                   itemType: ItemType.icon,
                 ),
               ),
               GestureDetector(
                 onTap: () {
+                  addcount = addcount + 1;
                   showDialog(
                       context: context,
                       builder: (BuildContext context) => PeriodEndedAlert());
                   //showstartDialog(context);
                 },
                 child: TwoItemContainer(
-                  title: "Period Ended Today",
+                  title: "Het kinh horn nay",
                   itemType: ItemType.icon,
                 ),
               ),
@@ -231,7 +245,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Flow",
+                        "Ra nhieu ft",
                         style: TextStyle(
                           color: kPrimaryColor,
                           fontWeight: FontWeight.bold,
@@ -247,7 +261,7 @@ class _NotesScreenState extends State<NotesScreen> {
                       Container(
                         //height: getProportionateScreenHeight(40),
                         child: RatingBar.builder(
-                          initialRating: 3,
+                          initialRating: star,
                           minRating: 0,
                           direction: Axis.horizontal,
                           allowHalfRating: false,
@@ -260,6 +274,8 @@ class _NotesScreenState extends State<NotesScreen> {
                           ),
                           onRatingUpdate: (rating) {
                             star = rating;
+                            addcount = addcount + 1;
+
                             setState(() {
                               if (star == 1) {
                                 u_flow = "(Ra rất ít)";
@@ -320,6 +336,9 @@ class _NotesScreenState extends State<NotesScreen> {
                               () {
                                 valuemedicine = medicine;
                                 print(valuemedicine);
+                                if (valuemedicine == true) {
+                                  addcount = addcount + 1;
+                                }
                               },
                             );
                           },
@@ -367,6 +386,9 @@ class _NotesScreenState extends State<NotesScreen> {
                             setState(
                               () {
                                 valueinter = currentValuei;
+                                if (valueinter == true) {
+                                  addcount = addcount + 1;
+                                }
                                 print(valueinter);
                               },
                             );
@@ -415,6 +437,9 @@ class _NotesScreenState extends State<NotesScreen> {
                             setState(
                               () {
                                 valuemasturbrated = currentValuem;
+                                if (valuemasturbrated == true) {
+                                  addcount = addcount + 1;
+                                }
                                 print(valuemasturbrated);
                               },
                             );
@@ -436,8 +461,12 @@ class _NotesScreenState extends State<NotesScreen> {
                 onTap: () async {
                   moods = await showDialog(
                       context: context,
-                      builder: (BuildContext context) => MyDialogContent());
+                      builder: (BuildContext context) =>
+                          MyDialogContent(id: arr));
                   // print(moods[1]);
+                  if (moods != null) {
+                    addcount = addcount + 1;
+                  }
                 },
                 child: TwoItemContainer(
                   title: "Mình cảm thấy",
@@ -475,7 +504,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             hoverColor: kPrimaryLightColor,
                             hintStyle:
                                 TextStyle(color: kTextColor, fontSize: 10),
-                            hintText: "Weight",
+                            hintText: "Cân 30-100  (Kg) ",
 
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
@@ -501,6 +530,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             setState(() {
                               tx_wieght = value;
                             });
+                            addcount = addcount + 1;
                           },
                           validator: (val) {
                             if (double.parse(val) < 30 ||
@@ -518,19 +548,22 @@ class _NotesScreenState extends State<NotesScreen> {
                         width: SizeConfig.screenWidth * 0.45,
                         child: TextFormField(
                           keyboardType: TextInputType.number,
+                          controller: textEditingControllerheight,
+                          maxLength: 4,
                           buildCounter: (BuildContext context,
                                   {int currentLength,
                                   int maxLength,
                                   bool isFocused}) =>
                               null,
                           validator: (value) {
-                            var converted = int.parse(value);
                             if (value == null) {
-                              return 'Enter temperature';
-                            } else if (converted < 35) {
-                              return 'Range between 35c to 45c';
+                              tx_height = "0.00";
+                            }
+                            var converted = double.parse(value);
+                            if (converted < 35) {
+                              return 'Range 35c to 45c';
                             } else if (converted > 45) {
-                              return 'Range between 35c to 45c';
+                              return 'Range 35c to 45c';
                             }
                           },
                           decoration: InputDecoration(
@@ -541,7 +574,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             hoverColor: kPrimaryLightColor,
                             hintStyle:
                                 TextStyle(color: kTextColor, fontSize: 8),
-                            hintText: "Temperature 35c - 45c",
+                            hintText: "Thân nhiet (C) 35c - 45c",
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 42, vertical: 5),
@@ -579,30 +612,47 @@ class _NotesScreenState extends State<NotesScreen> {
                 height: 20,
               ),
 
+              // ignore: deprecated_member_use
               RaisedButton(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: kPrimaryColor, width: 0.5),
                     borderRadius: BorderRadius.circular(10)),
                 onPressed: () async {
-                  if (key.currentState.validate() && moods.length != null) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  if (tx_wieght != "" || null) {
+                    addcount = addcount + 1;
+                  } else if (tx_height != "" || null) {
+                    addcount = addcount + 1;
+                  } else if (notes != "" || null) {
+                    addcount = addcount + 1;
+                  }
+                  print(addcount.toString() + "addcount");
+                  if (moods == null) {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     prefs.setString("weight", tx_wieght);
-
-                    var data = AddUserNotes(
+                    print(notes);
+                    data = AddUserNotes(
                         date: DateTime.parse(today.toString().substring(0, 10)),
-                        note: notes,
-                        periodStartedDate: DateTime.parse(prefs.getString("startdate")),
-                        periodEndedDate: periodenddate,
+                        note: notes == null ? "" : notes,
+                        periodStartedDate:
+                            DateTime.parse(prefs.getString("startdate")),
+                        periodEndedDate: periodenddate == null
+                            ? DateTime.parse("1970-01-25")
+                            : periodEndedDate,
                         flow: star.toString(),
                         tookMedicine: valuemedicine.toString(),
                         intercourse: valueinter.toString(),
                         masturbated: valuemasturbrated.toString(),
-                        weight: tx_wieght,
-                        height: tx_height,
-                        mood: moods);
-
+                        weight: tx_wieght == '' ? "" : tx_wieght,
+                        height: tx_height == '' ? "" : tx_height,
+                        mood: [],
+                        filed_count: addcount,
+                        user_notes_id: notesid);
+                    print("addcouht" + addcount.toString());
                     setState(() {
                       isLoading = true;
                     });
@@ -617,7 +667,41 @@ class _NotesScreenState extends State<NotesScreen> {
                       postnotes(addnotesList);
                     }
                   } else {
-                    showToast("Please Fill all values");
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setString("weight", tx_wieght);
+
+                    data = AddUserNotes(
+                        date: DateTime.parse(today.toString().substring(0, 10)),
+                        note: notes == null ? "" : notes,
+                        periodStartedDate:
+                            DateTime.parse(prefs.getString("startdate")),
+                        periodEndedDate: periodenddate == null
+                            ? DateTime.parse("1970-01-25")
+                            : periodEndedDate,
+                        flow: star.toString(),
+                        tookMedicine: valuemedicine.toString(),
+                        intercourse: valueinter.toString(),
+                        masturbated: valuemasturbrated.toString(),
+                        weight: tx_wieght == '' ? "" : tx_wieght,
+                        height: tx_height == '' ? "" : tx_height,
+                        filed_count: addcount,
+                        mood: moods,
+                        user_notes_id: notesid);
+                    print("add" + notesid.toString());
+                    setState(() {
+                      isLoading = true;
+                    });
+                    addnotesList.add(data);
+                    if (user_type == "guest") {
+                      if (login_count <= 3) {
+                        showregisterdialog(context);
+                      } else {
+                        postnotes(addnotesList);
+                      }
+                    } else {
+                      postnotes(addnotesList);
+                    }
                   }
                 },
                 child: isLoading
@@ -626,7 +710,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             new AlwaysStoppedAnimation<Color>(Colors.pink),
                       )
                     : Text(
-                        "Save Notes",
+                        " Đã lưu thông tin",
                         style: TextStyle(color: Colors.pink),
                       ),
               )
@@ -648,15 +732,18 @@ class _NotesScreenState extends State<NotesScreen> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     dynamic token = preferences.getString("token");
-    setState(() {
-      isLoading = true;
-    });
+
     print(token);
     print(addnotes.length);
 
     addusernotesrepo.addusernotes(token, addnotes).then((value) => {
+          print(value),
           if (value)
-            {showToast("Notes Added Successfully!"), Navigator.push(context,MaterialPageRoute(builder: (context)=>Lunar()))}
+            {
+              showToast("Notes Added Successfully!"),
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DashboardScreen()))
+            }
         });
     setState(() {
       isLoading = false;
@@ -986,6 +1073,7 @@ class _NotesScreenState extends State<NotesScreen> {
       login_count = prefs.getInt("login_count");
       print(login_count);
       deviceid = prefs.getString("deviceid");
+
       if (prefs.getString("weight") == null) {
       } else {
         textEditingControllerweight =
@@ -996,6 +1084,7 @@ class _NotesScreenState extends State<NotesScreen> {
       } else {
         setState(() {
           today = prefs.getString("selecteddate");
+          getnotescount(today);
         });
       }
     });
@@ -1021,7 +1110,6 @@ class _NotesScreenState extends State<NotesScreen> {
         print(login_count);
         //print(loginwithserver);
 
-        Navigator.pop(context);
         postnotes(addnotesList);
 
         // showToast("");
@@ -1045,6 +1133,90 @@ class _NotesScreenState extends State<NotesScreen> {
         // isError = true;
         isLoading = false;
       });
+    }
+  }
+
+  dynamic countfromserver = new List();
+  getnotescount(date) async {
+    // count++;
+    // isLoading = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+    print(token);
+    try {
+      final response = await http.post(
+        getnotescountapi,
+        body: {"date": date.toString().substring(0, 10)},
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        setState(() {
+          countfromserver = responseJson['data'];
+          //  print(listdata['mood'])
+          //  moodserver = mooddata;
+        });
+        print(responseJson);
+        notescontroller =
+            TextEditingController(text: countfromserver[0]['note']);
+        textEditingControllerweight =
+            TextEditingController(text: countfromserver[0]['weight']);
+        textEditingControllerheight =
+            TextEditingController(text: countfromserver[0]['height']);
+        notesid = countfromserver[0]['id'];
+        print(countfromserver[0]['mood']);
+
+        // print(double.parse(countfromserver[0]['flow']));
+
+        //  List<Map<String, dynamic>> varr = countfromserver[0]['mood'];
+        for (int i = 0; i < countfromserver[0]['mood'].length; i++) {
+          print(countfromserver[0]['mood'][i]['id']);
+          arr.add(int.parse(countfromserver[0]['mood'][i]['id']));
+          print(arr);
+        }
+        setState(() {
+          if (countfromserver[0]["masturbated"] == "true") {
+            valuemasturbrated = true;
+          } else {
+            valuemasturbrated = false;
+          }
+          if (countfromserver[0]["intercourse"] == "true") {
+            valueinter = true;
+          } else {
+            valueinter = false;
+          }
+          if (countfromserver[0]['took_medicine'] == "true") {
+            valuemedicine = true;
+          } else {
+            valuemedicine = false;
+          }
+        });
+
+        if (countfromserver[0]["flow"] == 5) {
+          star = 5.0;
+        } else if (countfromserver[0]["flow"] == 3) {
+          star = 3.0;
+        } else if (countfromserver[0]["flow"] == 4) {
+          star = 4.0;
+        } else if (countfromserver[0]["flow"] == 1) {
+          star = 1.0;
+        } else if (countfromserver[0]['flow'] == 2) {
+          star = 2.0;
+        }
+
+        /// notesdate = nextfromserver['date'];
+        // usernotes = nextfromserver["note"];
+        // print(nextfromserver[0]["note"]);
+
+      } else {
+        print("bjkb" + response.statusCode.toString());
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

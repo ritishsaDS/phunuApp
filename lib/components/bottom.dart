@@ -83,7 +83,7 @@ class _BottomTabsState extends State<BottomTabs> {
                                 height: 5,
                               ),
                               Text(
-                                "Home",
+                                "Phu Nu Viét",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
@@ -124,7 +124,7 @@ class _BottomTabsState extends State<BottomTabs> {
                                 height: 5,
                               ),
                               Text(
-                                "Calendar",
+                                "Lịch",
                                 style: TextStyle(
                                     color: widget.index == 1
                                         ? kPrimaryColor
@@ -171,7 +171,7 @@ class _BottomTabsState extends State<BottomTabs> {
                                 height: 5,
                               ),
                               Text(
-                                "Notes",
+                                "Việt",
                                 style: TextStyle(
                                     color: widget.index == 2
                                         ? kPrimaryColor
@@ -216,7 +216,7 @@ class _BottomTabsState extends State<BottomTabs> {
                                 height: 5,
                               ),
                               Text(
-                                "Settings",
+                                "Cài đặt",
                                 style: TextStyle(
                                     color: widget.index == 5
                                         ? kPrimaryColor
@@ -260,7 +260,7 @@ class _BottomTabsState extends State<BottomTabs> {
                                 height: 5,
                               ),
                               Text(
-                                "Articles",
+                                "Bài ",
                                 style: TextStyle(
                                     color: widget.index == 4
                                         ? kPrimaryColor

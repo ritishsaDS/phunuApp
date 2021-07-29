@@ -89,7 +89,7 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Period Ended',
+            'Het kinh',
             style: title,
           ),
           IconButton(
@@ -116,7 +116,7 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Date of period end',
+            'Ngây het kinh',
             style: subTitle,
           ),
           Container(
@@ -133,7 +133,8 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${formattedDate.toString().replaceAll("-", "/").substring(0, 10)}',
+                  '${DateTime.parse(formattedDate).day.toString()+"/"+DateTime.parse(formattedDate).month.toString()+"/"+DateTime.parse(formattedDate).year.toString()}',
+                  
                   style: date,
                 ),
                 AlertIcon(
@@ -156,11 +157,11 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           CommonButton(
-            title: 'Cancel',
+            title: 'bỏ',
             onTap: () => Navigator.of(context).pop(),
           ),
           CommonButton(
-            title: 'Confirm',
+            title: 'Ok',
             onTap: () => Navigator.of(context).pop(),
           ),
         ],

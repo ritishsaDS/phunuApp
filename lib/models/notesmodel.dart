@@ -9,10 +9,11 @@ class Data {
   String tookMedicine;
   String intercourse;
   String masturbated;
-    List<Mood> mood;
+  List<Mood> mood;
   String weight;
   String height;
   String createdAt;
+  int filed_count;
   String updatedAt;
 
   Data(
@@ -28,6 +29,7 @@ class Data {
       this.masturbated,
       this.mood,
       this.weight,
+      this.filed_count,
       this.height,
       this.createdAt,
       this.updatedAt});
@@ -40,6 +42,7 @@ class Data {
     periodStartedDate = map['period_started_date'];
     periodEndedDate = map['period_ended_date'];
     flow = map['flow'];
+    filed_count = map['filed_count'];
     tookMedicine = map['took_medicine'];
     intercourse = map['intercourse'];
     masturbated = map['masturbated'];
@@ -64,10 +67,11 @@ class Data {
     map['period_started_date'] = this.periodStartedDate;
     map['period_ended_date'] = this.periodEndedDate;
     map['flow'] = this.flow;
+    map['filed_count'] = this.filed_count;
     map['took_medicine'] = this.tookMedicine;
     map['intercourse'] = this.intercourse;
     map['masturbated'] = this.masturbated;
-      if (this.mood != null) {
+    if (this.mood != null) {
       map['mood'] = this.mood.map((v) => v.toJson()).toList();
     }
     map['weight'] = this.weight;
@@ -77,6 +81,7 @@ class Data {
     return map;
   }
 }
+
 class Mood {
   String id;
 

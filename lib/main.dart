@@ -6,8 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vietnamese/common/Api.dart';
+import 'package:vietnamese/models/calendarprovider.dart';
 import 'package:vietnamese/screens/Articles/articles.dart';
 import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/Login/login.dart';
@@ -46,6 +48,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    super.initState();
     Firebase.initializeApp().whenComplete(() {
       print("completed");
       setState(() {});
@@ -57,6 +60,7 @@ class _MyAppState extends State<MyApp> {
       });
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+     // notifpermission();
       print("message recieved");
       //  print(event.notification.body);
     });
@@ -67,9 +71,26 @@ class _MyAppState extends State<MyApp> {
     // _mockCheckForSession();
 
     // TODO: implement initState
-    super.initState();
   }
+Future<void> notifpermission() async {
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
 
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    print('User granted provisional permission');
+  } else {
+    print('User declined or has not accepted permission');
+  }
+}
   PushNotification _notificationInfo;
   void registerNotification() async {
     await Firebase.initializeApp();
@@ -209,12 +230,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport(
-        child: MaterialApp(
-            title: 'Vietnamese Women',
-            theme: theme(),
-            debugShowCheckedModeBanner: false,
-            home: DashboardScreen()));
+    return  MaterialApp(
+          title: 'Vietnamese Women',
+          theme: theme(),
+          debugShowCheckedModeBanner: false,
+          home: DashboardScreen(),
+    );
   }
 
   _getId() async {
@@ -236,7 +257,7 @@ class _MyAppState extends State<MyApp> {
   dynamic firstloginlist = new List();
   dynamic loginwithserver = new List();
   signin(deviceid) async {
-    print(fcmtoken + "deviceid");
+   // print(fcmtoken + "deviceid");
     try {
       final response = await http.post(firstlogin, body: {
         "device_id": deviceid,
@@ -255,7 +276,7 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           isError = false;
           isLoading = false;
-          print('setstate');
+          print('setfffstate');
         });
       } else {
         print("bjkb" + response.statusCode.toString());
@@ -286,16 +307,18 @@ class _MyAppState extends State<MyApp> {
         final responseJson = json.decode(response.body);
 
         loginwithserver = responseJson;
-
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("fcmtoken", fcmtoken);
         // print(loginwithserver['data']['email']);
         print(loginwithserver);
         // loginasguest(deviceid);
         // showToast("");
         savedata(deviceid);
+
         setState(() {
           isError = false;
           isLoading = false;
-          print('setstate');
+          print('setstatesdf');
         });
       } else {
         print("bssddsdjkb" + response.statusCode.toString());
@@ -367,7 +390,7 @@ class _MyAppState extends State<MyApp> {
       prefs.setString("deviceid", deviceid);
       // prefs.setInt("password", loginwithserver['data']['password']);
       prefs.setString("token", loginwithserver['access_token']);
-    //  logintimebackup(prefs.getString("token"));
+     // logintimebackup(prefs.getString("token"));
       //prefs.setString('email', emailController.text);
       //Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
     }

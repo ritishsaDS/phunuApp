@@ -21,3 +21,6 @@ String notecountbymonth = domainURL + "get-all-notes-by-months";
 String getperiodsdate = domainURL + "get-period-date";
 String getendperioddate = domainURL + "period-ended-yet";
 String backupapi = domainURL + "take-back-up";
+String Erasedataapi = domainURL + "Erase-data";
+String articlelike = domainURL + "article-like";
+

@@ -30,37 +30,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isLoading = false;
   String token;
   bool isError;
-  var getnext = "       ";
-  var getfertile = "       ";
-  var periodno = "3";
+  var getnext = "    ?   ";
+  var getfertile = "  ?     ";
+  var periodno = "  ? ";
   var fcmtoken;
   FirebaseMessaging messaging;
   DateTime selectedDate = DateTime.now();
-
+bool pressAttention = false;
   DateTime end;
+  Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    print("Handling a background message: ${message.messageId}");
+  }
+
   @override
   void initState() {
-    Firebase.initializeApp().whenComplete(() {
-      print("completed");
-      setState(() {});
-      messaging = FirebaseMessaging.instance;
-      messaging.getToken().then((value) {
-        print("fcm" + value);
-        fcmtoken = value;
-        _getId();
-      });
-    });
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("message recieved");
-      //  print(event.notification.body);
-    });
+    super.initState();
+    _getId();
+    fcmtoken = "lkenwlkklfwlewfnelfk";
+
+    // Firebase.initializeApp().whenComplete(() {
+    //   print("completed");
+    //   setState(() {});
+    //   messaging = FirebaseMessaging.instance;
+    //   messaging.getToken().then((value) {
+    //     print("fcm" + value);
+    //     fcmtoken = value;
+    //     _getId();
+    //   });
+    // });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+    //   print("message recieved");
+    //   //  print(event.notification.body);
+    // });
 
     var now = new DateTime.now();
     formatter = new DateFormat('yyyy-MM-dd');
     formattedDate = formatter.format(now);
     print(formattedDate);
     // getDay();
-    super.initState();
   }
 
   @override
@@ -74,9 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: isLoading
                 ? Column(children: [
                     CommonAppBar(),
-                    DashboardDate(),
-                    //  DashboardTitle(),
-                    DashboardDate(),
+                   
                     CardSection(),
                   ])
                 : Column(
@@ -85,7 +91,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       DashboardTitle(day: periodno),
 
                       BodyContent(
-                        title: 'Next Period Date',
+                        title: "'Ngày dự'đoán sẽ có	 kinh'",
                         date: getnext
                             .toString()
                             .replaceAll("-", "/")
@@ -93,7 +99,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       HeightBox(getProportionateScreenHeight(10)),
                       BodyContent(
-                        title: 'Fertile Window Starts',
+                        title: 'Ngây bat dau meo mo',
                         date: getfertile
                             .toString()
                             .replaceAll("-", "/")
@@ -103,6 +109,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       // DashboardDate(),
                       CardSection(),
                       Spacer(),
+                     
                       AdArea()
                     ],
                   ),
@@ -196,7 +203,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Text(
                           date != null && date != ""
                               ? DateFormat("dd/MM/yyyy").format(date)
-                              : "Period Just Start \n Click Here",
+                              : "Ngày đèn đỏ lần gần\n đây nhất",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: kPrimaryColor),
                         ))),
@@ -279,6 +286,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   _getId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.getString("nextdate");
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+  //  fcmtoken = prefs.getString("fcmtoken");
     var deviceInfo = DeviceInfoPlugin();
     if (Platform.isIOS) {
       // import 'dart:io'
@@ -297,7 +308,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   dynamic firstloginlist = new List();
   dynamic loginwithserver = new List();
   signin(deviceid) async {
-    print(fcmtoken + "deviceid");
+    //print(fcmtoken + "deviceid");
     try {
       final response = await http.post(firstlogin, body: {
         "device_id": deviceid,
@@ -316,7 +327,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           isError = false;
           isLoading = false;
-          print('setstate');
+          print('setstsasadate');
         });
       } else {
         print("bjkb" + response.statusCode.toString());
@@ -597,8 +608,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               "nextdate", nextfromserver['data']['next_period_date']);
           prefs.setString(
               "fertilewindow", settingfromserver['fertile_window_starts']);
-          getnext = prefs.getString("nextdate");
-          getfertile = prefs.getString("fertilewindow");
+
           getdaytext();
           //  getDay();
         } else {
@@ -661,13 +671,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // print(loginwithserver['data']['email']);
         print(getalldays);
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("nextperiod", getalldays['data']['next_period_date']);
+        prefs.setString(
+            "fertilewindow", getalldays['data']['fertile_window_starts']);
         prefs.setBool("buttonvisibility", getalldays['button']);
         prefs.setString("buttontext", getalldays['text']);
         prefs.setInt("totaldays", getalldays['days']);
-
+        getnext = prefs.getString("nextperiod");
+        getfertile = prefs.getString("fertilewindow");
         periodno = prefs.getInt("totaldays").toString();
         prefs.setString("daystext", getalldays['days_text']);
-        
+
         if (prefs.getString("buttontext") == null) {
           print("kofo;dodofsd ");
           prefs.setString("buttontext", "button");
@@ -720,7 +734,7 @@ class BodyContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: getProportionateScreenWidth(15),
+        horizontal: getProportionateScreenWidth(10),
       ),
       child: Container(
         alignment: Alignment.center,
@@ -742,9 +756,7 @@ class BodyContent extends StatelessWidget {
                       color: kPrimaryColor, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  date == null
-                      ? ""
-                      : date,
+                  date == null ? "" : date,
                   style: TextStyle(
                     color: kPrimaryColor,
                     fontWeight: FontWeight.w600,

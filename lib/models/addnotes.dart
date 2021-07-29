@@ -7,19 +7,20 @@ String addUserNotesToJson(List<AddUserNotes> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class AddUserNotes {
-  AddUserNotes({
-    this.date,
-    this.note,
-    this.periodStartedDate,
-    this.periodEndedDate,
-    this.flow,
-    this.tookMedicine,
-    this.intercourse,
-    this.masturbated,
-    this.weight,
-    this.height,
-    this.mood,
-  });
+  AddUserNotes(
+      {this.date,
+      this.note,
+      this.periodStartedDate,
+      this.periodEndedDate,
+      this.flow,
+      this.tookMedicine,
+      this.intercourse,
+      this.masturbated,
+      this.weight,
+      this.height,
+      this.mood,
+      this.user_notes_id,
+      this.filed_count});
 
   DateTime date;
   String note;
@@ -32,6 +33,8 @@ class AddUserNotes {
   String weight;
   String height;
   List<Mood> mood;
+  int filed_count;
+  int user_notes_id;
 
   factory AddUserNotes.fromJson(Map<String, dynamic> json) => AddUserNotes(
         date: DateTime.parse(json["date"]),
@@ -44,6 +47,8 @@ class AddUserNotes {
         masturbated: json["masturbated"],
         weight: json["weight"],
         height: json["height"],
+        filed_count: json["filed_count"],
+        user_notes_id:json['user_notes_id'],
         mood: List<Mood>.from(json["mood"].map((x) => Mood.fromJson(x))),
       );
 
@@ -59,6 +64,8 @@ class AddUserNotes {
         "masturbated": masturbated,
         "weight": weight,
         "height": height,
+        "filed_count": filed_count,
+        "user_notes_id":user_notes_id,
         "mood": List<dynamic>.from(mood.map((x) => x.toJson())),
       };
 }

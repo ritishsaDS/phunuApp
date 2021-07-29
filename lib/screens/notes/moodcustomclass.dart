@@ -81,6 +81,8 @@ dialogContent(BuildContext context) {
 }
 
 class MyDialogContent extends StatefulWidget {
+  List<int> id;
+  MyDialogContent({this.id});
   @override
   _MyDialogContentState createState() => new _MyDialogContentState();
 }
@@ -89,11 +91,11 @@ class _MyDialogContentState extends State<MyDialogContent> {
   List<CustomRowModel> sampleData = new List<CustomRowModel>();
   var arr = [];
   List<Mood> mood = [];
-  
+  List<Mood> moodss = [];
   @override
   void initState() {
     super.initState();
-    //print(moodstatic[2]);
+
     sampleData.add(CustomRowModel(title: "Khó chịu", selected: false, id: 0));
     sampleData.add(CustomRowModel(title: "Buồn", selected: false, id: 1));
     sampleData.add(CustomRowModel(title: "Buồn chán", selected: false, id: 2));
@@ -108,6 +110,10 @@ class _MyDialogContentState extends State<MyDialogContent> {
     sampleData.add(CustomRowModel(title: "Yêu đời", selected: false, id: 9));
     sampleData
         .add(CustomRowModel(title: "Bình thường", selected: false, id: 10));
+    for (int i = 0; i < widget.id.length; i++) {
+      sampleData[widget.id[i]].selected = true;
+      mood.add(Mood(id: sampleData[widget.id[i]].id.toString()));
+    }
   }
 
   @override
@@ -138,11 +144,29 @@ class _MyDialogContentState extends State<MyDialogContent> {
                     onTap: () {
                       setState(() {
                         //  sampleData.forEach((element) => element.selected = false);
-                        sampleData[index].selected = true;
-
-                        arr += [sampleData[index].id];
-                        mood.add(Mood(id: sampleData[index].id.toString()));
-                        print(arr);
+                        //sampleData[index].selected = true;
+                        if (sampleData[index].selected == true) {
+                          sampleData[index].selected = false;
+                          arr += [sampleData[index].id];
+                          if (widget.id != null) {
+                            sampleData[index].selected = false;
+                            // mood.remove(sampleData[index].id);
+                            arr = [sampleData[index].id];
+                            print(arr);
+                            mood.removeWhere(
+                                (item) => item.id == arr.toString().replaceAll("[", "").replaceAll("]", ""));
+                            print(mood.length);
+                          } else {
+                            mood.removeAt(index);
+                          }
+                        } else if (sampleData[index].selected == false) {
+                          setState(() {
+                            sampleData[index].selected = true;
+                            arr += [sampleData[index].id];
+                            mood.add(Mood(id: sampleData[index].id.toString()));
+                            print(arr);
+                          });
+                        }
                       });
                     },
                     child: new CustomRow(sampleData[index]),
@@ -160,12 +184,18 @@ class _MyDialogContentState extends State<MyDialogContent> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pop(context, mood);
+                    if (widget.id == null) {
+                      Navigator.pop(context, mood);
+                    } else if (widget.id != null && arr != null) {
+                      Navigator.pop(context, mood);
+                    } else {
+                      Navigator.pop(context, mood);
+                    }
                   },
                   color: kPrimaryColor,
                   textColor: Colors.white,
                   child: Text(
-                    "Submit",
+                    "Ok",
                   ),
                 ),
               ),

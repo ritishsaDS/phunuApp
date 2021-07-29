@@ -56,7 +56,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
               buildHeader(context),
               buildTitle(),
               Divider(),
-              buildButton(context)
+              //buildButton(context)
             ],
           ),
         ),
@@ -83,7 +83,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Cycle Length',
+            'Chu	kinh',
             style: title,
           ),
           IconButton(
@@ -152,7 +152,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
                         ),
                       ),
                       Text(
-                        'Days',
+                        'ngày',
                         style: TextStyle(
                           color: kPrimaryColor,
                           fontSize: getProportionateScreenHeight(12),
@@ -207,7 +207,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Use Average",
+                  "Ding trung bình",
                   style: TextStyle(color: kPrimaryColor),
                 ),
                 Center(
@@ -242,7 +242,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Irregular Cycle",
+                  "Bo qua nhñ'ng gi batthuong",
                   style: TextStyle(color: kPrimaryColor),
                 ),
                 Center(
@@ -274,11 +274,11 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CommonButton(
-                title: 'Cancel',
+                title: 'bỏ',
                 onTap: () => Navigator.of(context).pop(text.toString()),
               ),
               CommonButton(
-                  title: 'Confirm',
+                  title: 'Ok',
                   onTap: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();

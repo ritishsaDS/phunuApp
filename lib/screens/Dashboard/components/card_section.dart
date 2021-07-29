@@ -65,14 +65,14 @@ class _TopRowState extends State<TopRow> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CardButton(
-            title: 'Calender',
+            title: 'Lịch',
             iconUrl: 'assets/icons/calender.png',
             onTap: () {
-              Navigator.push(context,
+              Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => Lunar()));
             }),
         CardButton(
-          title: 'Notes',
+          title: 'Việt',
           iconUrl: 'assets/icons/notes.png',
           onTap: () => Navigator.push(
             context,
@@ -114,7 +114,7 @@ class BottomRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CardButton(
-          title: 'Articles',
+          title: 'Bài',
           iconUrl: 'assets/icons/articles.png',
           onTap: () => Navigator.push(
             context,
@@ -122,7 +122,7 @@ class BottomRow extends StatelessWidget {
           ),
         ),
         CardButton(
-          title: 'Settings',
+          title: 'Cài đặt',
           iconUrl: 'assets/icons/seetings.png',
           onTap: () => Navigator.push(
             context,

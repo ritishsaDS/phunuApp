@@ -19,9 +19,9 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
   void initState() {
     getdetail();
     var now = new DateTime.now();
-    var formatter = new DateFormat('MM/dd/yyyy');
-    formattedDate = formatter.format(now);
-    print(formattedDate);
+    //v//ar formatter = new DateFormat('dd/mm/yyyy');
+    //formattedDate = formatter.format(now);
+   // print(formattedDate);
 
     super.initState();
   }
@@ -89,7 +89,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Period Started',
+            'Bat dau kinh',
             style: title,
           ),
           IconButton(
@@ -116,7 +116,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Date of period start',
+            'Ngay dén do bat dau',
             style: subTitle,
           ),
           Container(
@@ -133,7 +133,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${formattedDate.toString().replaceAll("-", "/").substring(0, 10)}',
+                  '${DateTime.parse(formattedDate).day.toString()+"/"+DateTime.parse(formattedDate).month.toString()+"/"+DateTime.parse(formattedDate).year.toString()}',
                   style: date,
                 ),
                 AlertIcon(
@@ -155,11 +155,11 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           CommonButton(
-            title: 'Cancel',
+            title: 'bỏ',
             onTap: () => Navigator.of(context).pop(),
           ),
           CommonButton(
-            title: 'Confirm',
+            title: 'OK',
             onTap: () async {
               print(formattedDate);
               SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -205,6 +205,8 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
     } else {
       setState(() {
         formattedDate = prefs.getString("selecteddate");
+       // formattedDate=DateTime.parse(formattedDate).toString();
+
       });
     }
   }

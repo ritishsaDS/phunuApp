@@ -157,7 +157,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                             hintStyle: TextStyle(
                                 color: kPrimaryColor,
                                 fontWeight: FontWeight.bold),
-                            hintText: "Pin",
+                            hintText: "So PIN (4 con so)",
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 42, vertical: 20),
@@ -251,7 +251,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                "Cancel",
+                                "bỏ",
                                 style: TextStyle(
                                   color: Colors.white,
                                 ),
@@ -275,7 +275,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                "Continue",
+                                "Ok",
                                 style: TextStyle(
                                   color: Colors.white,
                                 ),
@@ -366,7 +366,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
     } else if (_radioValue == 5) {
       age = "55+";
     } else {
-      age = "Under 18";
+      age = "Dưới 18 ";
     }
   }
 

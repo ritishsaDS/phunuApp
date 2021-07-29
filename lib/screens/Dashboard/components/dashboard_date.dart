@@ -17,7 +17,7 @@ class _DashboardDateState extends State<DashboardDate> {
   String token;
   bool isError;
   bool isLoading = false;
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,14 +30,13 @@ class _DashboardDateState extends State<DashboardDate> {
           HeightBox(getProportionateScreenHeight(10)),
           BodyContent(
             title: 'Fertile Window Starts',
-            date: '21/11',
+            date: ' ',
           ),
         ],
       ),
     );
   }
-
- }
+}
 
 class BodyContent extends StatelessWidget {
   const BodyContent({Key key, @required this.title, @required this.date})

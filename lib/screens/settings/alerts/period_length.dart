@@ -55,7 +55,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
               buildHeader(context),
               buildTitle(),
               Divider(),
-              buildButton(context)
+             // buildButton(context)
             ],
           ),
         ),
@@ -82,7 +82,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Period Length',
+            'Cycle Length',
             style: title,
           ),
           IconButton(
@@ -150,7 +150,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                         ),
                       ),
                       Text(
-                        'Days',
+                        'ngày',
                         style: TextStyle(
                           color: kPrimaryColor,
                           fontSize: getProportionateScreenHeight(12),
@@ -203,7 +203,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Use Average",
+                  "Ding trung bình",
                   style: TextStyle(color: kPrimaryColor),
                 ),
                 Center(
@@ -238,7 +238,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Irregular Cycle",
+                  "Bo qua nhñ'ng gi batthuong",
                   style: TextStyle(color: kPrimaryColor),
                 ),
                 Center(
@@ -280,7 +280,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                         await SharedPreferences.getInstance();
                     prefs.setBool("irregularcyclep", irregularcyclep);
                     prefs.setBool("averagep", averagep);
-                     prefs.setString("periodlength", periodlength.toString());
+                    prefs.setString("periodlength", periodlength.toString());
                     Navigator.of(context).pop(periodlength.toString());
                   }),
             ],
