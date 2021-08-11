@@ -27,7 +27,8 @@ class _ArticleCardState extends State<ArticleCard> {
   bool isError;
   @override
   void initState() {
-    print(widget.userlikes);
+    getstatus();
+    //print(widget.userlikes);
    // getArticlesfromserver();
     // TODO: implement initState
     super.initState();
@@ -45,6 +46,7 @@ class _ArticleCardState extends State<ArticleCard> {
           MaterialPageRoute(
             builder: (context) => ArticleDetailScreen(
               title: widget.title,
+              id:widget.id,
               image: widget.image,
               description:widget.description,
             ),
@@ -91,32 +93,66 @@ class _ArticleCardState extends State<ArticleCard> {
                           ],
                         ),
                       ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(15),
-                          vertical: 10
-                        ),
-                        height: getProportionateScreenHeight(25),
-                        child: GestureDetector(
-                          onTap: () {
-                            print("like");
-                            setState(() {
-                              if(widget.userlikes==null){
-                                like=false;
-                              }else{
-                                like=true;
-                              }
-                            });
-                            setState(() => like = !like);
-                            likeapihit();
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Icon(
-                              like ? Icons.thumb_up_alt_outlined: Icons.thumb_up_alt_rounded
-                              ,
-                              color: Colors.pink,
+                      GestureDetector(
+                        onTap: () {
+                          print("like");
+                          setState(() {
+                            if(like==true){
+                              like=false;
+                            }else{
+                              like=true;
+                            }
+                          });
+                          setState(() => like = !like);
+                          likeapihit();
+                        },
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: getProportionateScreenWidth(15),
+                            vertical: 10
+                          ),
+                          height: getProportionateScreenHeight(25),
+                          child: GestureDetector(
+                            onTap: () {
+                              print("like");
+                              setState(() {
+                                // if(widget.userlikes==null){
+                                //   like=false;
+                                // }else{
+                                //   like=true;
+                                // }
+                              });
+                              setState(() => like = !like);
+                              likeapihit();
+                            },
+                            child: Container(
+                              //padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: GestureDetector(
+                                onTap: () {
+                                  print("like");
+                                  setState(() {
+                                    if(like){
+                                      like=false;
+                                    }
+                                    else{
+                                      like=true;
+                                    }
+                                    // if(widget.userlikes==null){
+                                    //   like=false;
+                                    // }else{
+                                    //   like=true;
+                                    // }
+                                  });
+                                  setState(() => like = !like);
+                                 likeapihit();
+                                },
+                                child: Icon(
+                                  like ? Icons.thumb_up_alt_rounded: Icons.thumb_up_off_alt_outlined
+                                  ,
+                                  color: Colors.pink,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -177,6 +213,19 @@ print(articlewithserver);
         isLoading = false;
       });
     }
+  }
+
+  void getstatus() {
+    print("jbwerjn;n");
+   setState(() {
+     if(widget.userlikes==null){
+       setState(() {
+         like=false;
+       });
+     }else{
+       like=true;
+     }
+   });
   }
 
 

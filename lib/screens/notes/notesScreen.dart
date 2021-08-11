@@ -164,7 +164,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     hintStyle: TextStyle(
                       color: kTextColor,
                     ),
-                    hintText: "Viet nhñ'ng gi dâng nhâ'",
+                    hintText: "Viết những gì đáng nhớ",
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 42, vertical: 10),
@@ -208,7 +208,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   //showstartDialog(context);
                 },
                 child: TwoItemContainer(
-                  title: "Kinh bat dau horn nay",
+                  title: "Kinh bắt đầu hôm nay",
                   itemType: ItemType.icon,
                 ),
               ),
@@ -221,7 +221,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   //showstartDialog(context);
                 },
                 child: TwoItemContainer(
-                  title: "Het kinh horn nay",
+                  title: "Hết kinh hôm nay",
                   itemType: ItemType.icon,
                 ),
               ),
@@ -245,7 +245,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Ra nhieu ft",
+                        "Ra nhiều ít",
                         style: TextStyle(
                           color: kPrimaryColor,
                           fontWeight: FontWeight.bold,
@@ -504,7 +504,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             hoverColor: kPrimaryLightColor,
                             hintStyle:
                                 TextStyle(color: kTextColor, fontSize: 10),
-                            hintText: "Cân 30-100  (Kg) ",
+                            hintText: "Cân (Kg) ",
 
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
@@ -574,7 +574,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             hoverColor: kPrimaryLightColor,
                             hintStyle:
                                 TextStyle(color: kTextColor, fontSize: 8),
-                            hintText: "Thân nhiet (C) 35c - 45c",
+                            hintText: "Thân nhiệt (C)",
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 42, vertical: 5),
@@ -710,7 +710,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             new AlwaysStoppedAnimation<Color>(Colors.pink),
                       )
                     : Text(
-                        " Đã lưu thông tin",
+                        " Lưu",
                         style: TextStyle(color: Colors.pink),
                       ),
               )

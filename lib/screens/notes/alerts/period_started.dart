@@ -89,7 +89,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Bat dau kinh',
+            'Bắt đầu kinh',
             style: title,
           ),
           IconButton(
@@ -116,7 +116,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Ngay dén do bat dau',
+            'Ngày đèn đỏ bắt đầu',
             style: subTitle,
           ),
           Container(
@@ -155,7 +155,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           CommonButton(
-            title: 'bỏ',
+            title: 'Bỏ',
             onTap: () => Navigator.of(context).pop(),
           ),
           CommonButton(

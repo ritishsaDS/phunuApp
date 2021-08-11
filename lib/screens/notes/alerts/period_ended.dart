@@ -89,7 +89,7 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Het kinh',
+            'Hết kinh',
             style: title,
           ),
           IconButton(
@@ -116,7 +116,7 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Ngây het kinh',
+            'Ngày hết kinh',
             style: subTitle,
           ),
           Container(
@@ -157,7 +157,7 @@ class _PeriodEndedAlertState extends State<PeriodEndedAlert> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           CommonButton(
-            title: 'bỏ',
+            title: 'Bỏ',
             onTap: () => Navigator.of(context).pop(),
           ),
           CommonButton(

@@ -83,11 +83,11 @@ class _BottomTabsState extends State<BottomTabs> {
                                 height: 5,
                               ),
                               Text(
-                                "Phu Nu Viét",
+                                "Phụ Nữ Việt",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14),
+                                    fontSize: 12),
                               )
                             ],
                           ),
@@ -171,7 +171,7 @@ class _BottomTabsState extends State<BottomTabs> {
                                 height: 5,
                               ),
                               Text(
-                                "Việt",
+                                "Viết",
                                 style: TextStyle(
                                     color: widget.index == 2
                                         ? kPrimaryColor

@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:intl/intl.dart';
+import 'package:mailto/mailto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/common/constants.dart';
@@ -14,6 +17,7 @@ import 'package:http/http.dart' as http;
 import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/Login/login.dart';
 import 'package:vietnamese/screens/notes/alerts/period_ended.dart';
+import 'package:vietnamese/screens/notes/Mailtoclass.dart';
 import 'package:vietnamese/screens/settings/PinAndRegister/pin_register_screen.dart';
 import 'package:vietnamese/screens/settings/alerts/cycle_length.dart';
 import 'package:vietnamese/screens/settings/components/genral_list_tile.dart';
@@ -82,9 +86,9 @@ class _SettingScreenState extends State<SettingScreen> {
                             getProportionateScreenHeight(20),
                           ),
                           GenralListTile(
-                            title: 'Chu kinh',
+                            title: 'Chu kỳ kinh',
                             tileType: TileType.subtext,
-                            subtitle: '($startdate Days)',
+                            subtitle: '($startdate ngày)',
                             onTap: () async {
                               perioddate = await showDialog(
                                   context: context,
@@ -102,9 +106,9 @@ class _SettingScreenState extends State<SettingScreen> {
                             },
                           ),
                           GenralListTile(
-                            title: 'Số ngay den do',
+                            title: 'Số ngày đèn đỏ',
                             tileType: TileType.subtext,
-                            subtitle: '($enddate Days)',
+                            subtitle: '($enddate ngày)',
                             onTap: () async {
                               mensturllength = await showDialog(
                                   context: context,
@@ -230,12 +234,12 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                           ),
                           GenralListTile(
-                              title: '"Đã lưu thông tin',
+                              title: 'Lưu và phục hồi',
                               onTap: () {
                                 backup();
                               }),
                           GenralListTile(
-                              title: 'Pin And Register',
+                              title: 'Khóa bằng PIN',
                               onTap: () {
                                 if (login == null) {
                                   showAlertDialog(context);
@@ -249,17 +253,17 @@ class _SettingScreenState extends State<SettingScreen> {
                                 }
                               }),
                           GenralListTile(
-                              title: 'Bâo câo loi',
+                              title: 'Báo cáo lỗi',
                               onTap: () {
                                    _modalBottomSheetMenu(  "Report Bug",
-                                            "Báo cáo lỗi",);
+                                            "Báo cáo lỗi cho Phụ Nữ Việt",);
                                 
                               }),
                           GenralListTile(
-                              title: 'Đề xuất tính năng',
+                              title: 'Đề nghị với PNV',
                               onTap: () {
                                 _modalBottomSheetMenu( "Suggest Features",
-                                           "Đề nghị chức năng app",);
+                                           "Đề nghị chức năng với app Phụ Nữ Việ",);
                                 //  openEmailApp(context);
                                 // Navigator.push(
                                 //     context,
@@ -270,23 +274,23 @@ class _SettingScreenState extends State<SettingScreen> {
                                 //             email: login)));
                               }),
                           GenralListTile(
-                            title: 'Chia sé',
+                            title: 'Chia sẻ',
                             onTap: share,
                           ),
                           GenralListTile(
-                              title: 'Đã cập nhật thông tin',
+                              title: 'Cập nhật các thay đổi',
                               onTap: () {
                                 updateSetting();
                               }),
                           GenralListTile(
-                              title: 'Đã xóa mọi thông tin',
+                              title: 'Xóa mọi thông tin',
                               onTap: () async {
                                 showdialogforerase(context);
 
 
                               }),
                           GenralListTile(
-                            title: 'Chính sách bảo mật',
+                            title: 'Chính sách riêng tư',
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -447,7 +451,7 @@ class _SettingScreenState extends State<SettingScreen> {
           Navigator.pop(context);
         },
         child: Text(
-          "Cancel",
+          "bỏ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -466,7 +470,7 @@ class _SettingScreenState extends State<SettingScreen> {
               context, MaterialPageRoute(builder: (context) => SignUpScreen()));
         },
         child: Text(
-          "Register",
+          "Đăng ký",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -487,7 +491,7 @@ class _SettingScreenState extends State<SettingScreen> {
             Container(
               child: Center(
                 child: Text(
-                  "You Have to Login First",
+                  "Trước tiên, bạn phải đăng nhập",
                   style: TextStyle(
                       color: kPrimaryColor, fontWeight: FontWeight.bold),
                 ),
@@ -521,7 +525,7 @@ class _SettingScreenState extends State<SettingScreen> {
           Navigator.pop(context);
         },
         child: Text(
-          "Cancel",
+          "Đừng xóa",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -540,7 +544,7 @@ class _SettingScreenState extends State<SettingScreen> {
           erasedata();
         },
         child: Text(
-          "Erase Data",
+          "Xóa",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -561,7 +565,7 @@ class _SettingScreenState extends State<SettingScreen> {
             Container(
               child: Center(
                 child: Text(
-                  "Are you sure you want to erase data",
+                  "Bạn chắc chắn muốn xóa hết thông tin?",
                   style: TextStyle(
                       color: kPrimaryColor, fontWeight: FontWeight.bold),
                 ),
@@ -635,7 +639,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
         backuplist = responseJson;
         print(backuplist);
-        showToast("Bakcup  Updated Succesfully");
+        showToast("Đã cập nhật BackUp thành công");
         Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
         setState(() {
           isError = false;
@@ -683,7 +687,7 @@ class _SettingScreenState extends State<SettingScreen> {
             MaterialPageRoute(
                 builder: (context) =>
                     SettingScreen()));
-        showToast("Erase Data successfully");
+        showToast("Đã xóa mọi thông tin");
         Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
         setState(() {
           isError = false;
@@ -706,21 +710,22 @@ class _SettingScreenState extends State<SettingScreen> {
       });
     }
   }
-  void openEmailApp(BuildContext context) {
-    try {
-      AppAvailability.launchApp(
-              Platform.isIOS ? "message://" : "com.google.android.gm")
-          .then((_) {
-        print("App Email launched!");
-      }).catchError((err) {
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text("App Email not found!")));
-        print(err);
-      });
-    } catch (e) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("Email App not found!")));
+  Future<void> openEmailApp(BuildContext context,subject) async {
+
+      final url = Mailto(
+
+
+        subject: subject,
+           ).toString();
+      if (await canLaunch(url)) {
+    await launch(url);
+    } else {
+    showCupertinoDialog(
+    context: context,
+    builder: MailClientOpenErrorDialog(url: url).build,
+    );
     }
+
   }
 
   void _modalBottomSheetMenu(title,subject) {
@@ -783,7 +788,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       children: [
                         MaterialButton(
                           onPressed: () {
-                            openEmailApp(context);
+                            openEmailApp(context,subject);
                           },
                           color: Colors.white,
                           textColor: Colors.white,

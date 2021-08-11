@@ -83,7 +83,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Chu	kinh',
+            'Chu kỳ kinh',
             style: title,
           ),
           IconButton(
@@ -185,7 +185,8 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
             ),
           ),
           Text(
-            'We use this cycle length to predict your next period start date.',
+            'Phụ Nữ Việt dùng	thông tin này để tính ngày đèn đỏ tới .'
+             ,
           ),
         ],
       ),

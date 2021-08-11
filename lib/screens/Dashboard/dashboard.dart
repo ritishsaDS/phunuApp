@@ -7,12 +7,16 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:overlay_support/overlay_support.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
+import 'package:vietnamese/main.dart';
+import 'package:vietnamese/screens/Articles/articles.dart';
+import 'package:vietnamese/screens/Articles/components/article_detail.dart';
 import 'package:vietnamese/screens/Dashboard/components/adArea.dart';
 import 'package:vietnamese/screens/Dashboard/components/appBar.dart';
 import 'package:vietnamese/screens/Dashboard/components/card_section.dart';
@@ -46,8 +50,17 @@ bool pressAttention = false;
   @override
   void initState() {
     super.initState();
+    gettoken();
     _getId();
-    fcmtoken = "lkenwlkklfwlewfnelfk";
+   // // FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+   //    // notifpermission();
+   //    print("message recieved");
+   //    //  print(event.notification.body);
+   //  });
+   //
+    registerNotification();
+    checkForInitialMessage();
+   // fcmtoken = "lkenwlkklfwlewfnelfk";
 
     // Firebase.initializeApp().whenComplete(() {
     //   print("completed");
@@ -91,7 +104,7 @@ bool pressAttention = false;
                       DashboardTitle(day: periodno),
 
                       BodyContent(
-                        title: "'Ngày dự'đoán sẽ có	 kinh'",
+                        title: "Ngày dự đoán sẽ có kinh",
                         date: getnext
                             .toString()
                             .replaceAll("-", "/")
@@ -99,7 +112,7 @@ bool pressAttention = false;
                       ),
                       HeightBox(getProportionateScreenHeight(10)),
                       BodyContent(
-                        title: 'Ngây bat dau meo mo',
+                        title: 'Ngày bắt đầu màu mỡ',
                         date: getfertile
                             .toString()
                             .replaceAll("-", "/")
@@ -288,8 +301,8 @@ bool pressAttention = false;
   _getId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.getString("nextdate");
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-  //  fcmtoken = prefs.getString("fcmtoken");
+  //  SharedPreferences prefs = await SharedPreferences.getInstance();
+   fcmtoken = prefs.getString("fcmtoken");
     var deviceInfo = DeviceInfoPlugin();
     if (Platform.isIOS) {
       // import 'dart:io'
@@ -326,7 +339,7 @@ bool pressAttention = false;
         // savedata();
         setState(() {
           isError = false;
-          isLoading = false;
+          isLoading = true;
           print('setstsasadate');
         });
       } else {
@@ -334,7 +347,7 @@ bool pressAttention = false;
         showToast("Mismatch Credentials");
         setState(() {
           isError = true;
-          isLoading = false;
+          isLoading = true;
         });
       }
     } catch (e) {
@@ -366,7 +379,7 @@ bool pressAttention = false;
         savedata(deviceid);
         setState(() {
           isError = false;
-          isLoading = false;
+          isLoading = true;
           print('setstate');
         });
       } else {
@@ -447,7 +460,7 @@ bool pressAttention = false;
 
         setState(() {
           isError = true;
-          isLoading = false;
+          isLoading = true;
         });
       }
     } catch (e) {
@@ -458,7 +471,108 @@ bool pressAttention = false;
       });
     }
   }
+  PushNotification _notificationInfo;
+  void registerNotification() async {
+    await Firebase.initializeApp();
+    messaging = FirebaseMessaging.instance;
 
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    );
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      PushNotification notification = PushNotification(
+        title: message.notification?.title,
+        body: message.notification?.body,
+        dataTitle: message.data['title'],
+        dataBody: message.data['body'],
+
+      );
+
+      // setState(() {
+      //   _notificationInfo = notification;
+      //   //_totalNotifications++;
+      // });
+      if(message.data['click_action']=="FLUTTER_NOTIFICATION_CLICK"){
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ArticleDetailScreen(id:message.data['article_id'])));
+      }
+
+    });
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print(
+            'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => ArticleScreen()));
+        // Parse the message received
+        PushNotification notification = PushNotification(
+          dataTitle: message.data['title'],
+          dataBody: message.data['body'],
+        );
+
+        setState(() {
+          _notificationInfo = notification;
+          //  _totalNotifications++;
+        });
+
+        if (_notificationInfo != null) {
+          // For displaying the notification as an overlay
+          showSimpleNotification(
+            Text(notification.dataTitle),
+            //  leading: NotificationBadge(totalNotifications: _totalNotifications),
+            subtitle: Text(notification.dataTitle),
+            background: Colors.cyan.shade700,
+            duration: Duration(seconds: 10),
+          );
+        }
+      });
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+  Future<void> notifpermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+  checkForInitialMessage() async {
+    await Firebase.initializeApp();
+    RemoteMessage initialMessage =
+    await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      PushNotification notification = PushNotification(
+        title: initialMessage.notification?.title,
+        body: initialMessage.notification?.body,
+
+      );
+      setState(() {
+        _notificationInfo = notification;
+        // _totalNotifications++;
+      });
+    }
+  }
   // _getId() async {
   //   var deviceInfo = DeviceInfoPlugin();
   //   if (Platform.isIOS) {
@@ -767,4 +881,6 @@ class BodyContent extends StatelessWidget {
       ),
     );
   }
+
+
 }

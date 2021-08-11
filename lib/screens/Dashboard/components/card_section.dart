@@ -72,7 +72,7 @@ class _TopRowState extends State<TopRow> {
                   MaterialPageRoute(builder: (context) => Lunar()));
             }),
         CardButton(
-          title: 'Việt',
+          title: 'Nhật ký ',
           iconUrl: 'assets/icons/notes.png',
           onTap: () => Navigator.push(
             context,

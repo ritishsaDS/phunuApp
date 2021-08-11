@@ -30,7 +30,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
   bool isLoading = false;
 
   int _radioValue;
-  String age = "Under 18";
+  String age = "Dưới 18 ";
 
   void _handleRadioValueChange(int value) {
     setState(() {
@@ -39,7 +39,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
       print(_radioValue);
       switch (_radioValue) {
         case 0:
-          age = "Under 18";
+          age = "Dưới 18 ";
           break;
         case 1:
           age = " 18-25";
@@ -124,7 +124,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                             hintStyle: TextStyle(
                                 color: kPrimaryColor,
                                 fontWeight: FontWeight.bold),
-                            hintText: "Email",
+                            hintText: "Địa chỉ email",
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 42, vertical: 20),
@@ -192,7 +192,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                             hintStyle: TextStyle(
                                 color: kPrimaryColor,
                                 fontWeight: FontWeight.bold),
-                            hintText: "Province",
+                            hintText: "Bạn đang ở tỉnh thành nào?",
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 42, vertical: 20),
@@ -412,7 +412,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                   ),
                 ),
                 new Text(
-                  'Under 18',
+                  'Dưới 18 ',
                   style: TextStyle(
                     color: kPrimaryColor,
                     fontSize: 16,
@@ -562,7 +562,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
         print(age_value);
       }
       emailcontroller = TextEditingController(text: email);
-      passcontroller = TextEditingController(text: pin.toString());
+      passcontroller = TextEditingController(text: pin=="null"?"Số PIN (4 con số)":pin.toString());
       print(email);
     });
   }

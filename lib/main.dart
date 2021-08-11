@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/models/calendarprovider.dart';
 import 'package:vietnamese/screens/Articles/articles.dart';
+import 'package:vietnamese/screens/Articles/components/article_detail.dart';
 import 'package:vietnamese/screens/Dashboard/dashboard.dart';
 import 'package:vietnamese/screens/Login/login.dart';
 import 'package:vietnamese/screens/lunar.dart';
@@ -27,7 +28,7 @@ final Map<DateTime, List> _holidays = {
 };
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
+  print("Handling a background message: ${message.data}");
 }
 
 void main() {
@@ -110,21 +111,24 @@ Future<void> notifpermission() async {
         body: message.notification?.body,
         dataTitle: message.data['title'],
         dataBody: message.data['body'],
+
       );
 
-      setState(() {
-        _notificationInfo = notification;
-        //_totalNotifications++;
-      });
+      // setState(() {
+      //   _notificationInfo = notification;
+      //   //_totalNotifications++;
+      // });
+      if(message.data['click_action']){}
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ArticleScreen()));
+          context, MaterialPageRoute(builder: (context) => ArticleDetailScreen(
+         id: message.data["article_id"])));
     });
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         print(
-            'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
+            'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data['']}');
         // Navigator.push(
         //     context, MaterialPageRoute(builder: (context) => ArticleScreen()));
         // Parse the message received
@@ -163,6 +167,7 @@ Future<void> notifpermission() async {
       PushNotification notification = PushNotification(
         title: initialMessage.notification?.title,
         body: initialMessage.notification?.body,
+
       );
       setState(() {
         _notificationInfo = notification;
@@ -302,7 +307,7 @@ Future<void> notifpermission() async {
         "password": "1234",
         "Fcmtoken": fcmtoken
       });
-      //print("bjkb" + response.statusCode.toString());
+      print("bjkb" + fcmtoken.toString());
       if (response.statusCode == 200) {
         final responseJson = json.decode(response.body);
 

@@ -46,7 +46,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                   getProportionateScreenHeight(30),
                 ),
                 Text(
-                  'Privacy Policy',
+                  'Phụ Nữ Việt tôn trọng quyền riêng tư của bạn',
                   style: TextStyle(
                     color: kPrimaryColor,
                     fontSize: getProportionateScreenHeight(18),
@@ -148,7 +148,7 @@ class PrivacyHeaderBar extends StatelessWidget {
           color: kSecondaryColor.withOpacity(0.2),
           child: Center(
             child: Text(
-              'Privacy Policy',
+              'Chính sách quyền riêng tư',
               style: TextStyle(
                 color: kPrimaryLightColor,
                 fontWeight: FontWeight.w600,

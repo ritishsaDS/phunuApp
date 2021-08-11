@@ -23,4 +23,6 @@ String getendperioddate = domainURL + "period-ended-yet";
 String backupapi = domainURL + "take-back-up";
 String Erasedataapi = domainURL + "Erase-data";
 String articlelike = domainURL + "article-like";
+String advertisement = domainURL + "ads";
+String articledetail = domainURL + "get-article-details";
 

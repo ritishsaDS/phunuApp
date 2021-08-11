@@ -532,20 +532,21 @@ class _HeaderState extends State<Header> {
       daystext = "Ngày nguyệt san";
     } else {
       daystext = prefs.getString("daystext");
+      print("jhh;jlkl"+daystext);
       daystext = "Ngày cho đến kỳ tiếp theo";
     }
 
     if (prefs.getString("buttontext") == null ||
         prefs.getBool("buttonvisibility") == null) {
-      buttontext = "Is Your period ended";
+      buttontext = "Bạn bắt đầu kinh chưa?";
       visible = true;
     } else {
       buttontext = prefs.getString("buttontext");
       visible = prefs.getBool("buttonvisibility");
       if (buttontext == "Has your period ended yet") {
-        buttontext = " Bạn hốt kinh chưa";
+        buttontext = " Bạn hết kinh chưa?";
       } else {
-        buttontext = "Bạn bat dau kinh chưa";
+        buttontext = "Bạn bắt đầu kinh chưa?";
       }
     }
 

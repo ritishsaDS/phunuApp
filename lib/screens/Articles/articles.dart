@@ -23,16 +23,11 @@ class _ArticleScreenState extends State<ArticleScreen> {
   bool isError;
   @override
   void initState() {
-    setUpTimedFetch();
+    getArticlesfromserver();
     // TODO: implement initState
     super.initState();
   }
-  setUpTimedFetch() {
-    Timer.periodic(Duration(milliseconds: 2000), (timer) {
-      getArticlesfromserver();
-     // print("jnern"+timer.toString());
-    });
-  }
+
   bool like = false;
   @override
   Widget build(BuildContext context) {
@@ -104,6 +99,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
             builder: (context) => ArticleDetailScreen(
               title: articlewithserver[i]["title"],
               image: articlewithserver[i]["image"],
+              id:articlewithserver[i]['id'],
               description: articlewithserver[i]["description"],
             ),
           ),

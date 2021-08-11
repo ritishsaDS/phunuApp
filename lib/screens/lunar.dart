@@ -476,6 +476,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
         outsideWeekendStyle: TextStyle(color: Colors.white60),
         outsideStyle: TextStyle(color: Colors.white60),
         weekendStyle: TextStyle(color: Colors.white),
+
         renderDaysOfWeek: true,
       ),
       daysOfWeekStyle: DaysOfWeekStyle(
@@ -881,81 +882,102 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     List<Widget> productList = new List();
 
     for (int i = 0; i < countfromserver.length; i++) {
+
       productList.add(Padding(
         padding: EdgeInsets.symmetric(
           horizontal: getProportionateScreenWidth(20),
         ),
+
         child: value != []
-            ? Container(
+
+            ?
+        Container(
                 margin: EdgeInsets.only(top: 10),
                 //height: getProportionateScreenHeight(150),
                 width: SizeConfig.screenWidth,
-                alignment: Alignment.center,
+            alignment: Alignment.bottomLeft,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      DateTime.parse(countfromserver[i]['date'])
-                              .day
-                              .toString() +
-                          "/" +
-                          DateTime.parse(countfromserver[i]['date'])
-                              .month
-                              .toString() +
-                          "/" +
-                          DateTime.parse(countfromserver[i]['date'])
-                              .year
-                              .toString(),
-                      style: _textStyle.copyWith(
-                        fontWeight: FontWeight.bold,
+                    Center(
+                      child: Text(
+                        DateTime.parse(countfromserver[i]['date'])
+                                .day
+                                .toString() +
+                            "/" +
+                            DateTime.parse(countfromserver[i]['date'])
+                                .month
+                                .toString() +
+                            "/" +
+                            DateTime.parse(countfromserver[i]['date'])
+                                .year
+                                .toString(),
+                        style: _textStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    Text(
-                      countfromserver[i]['note'] == null
-                          ? "......"
-                          : countfromserver[i]['note'] + "......",
-                      style: _textStyle,
-                    ),
+                    SizedBox(height: 10,),
+
+                   // SizedBox(height: 10,),
                     Container(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                            "Uống thuốc: "+ countfromserver[i]['took_medicine'].toString()+".....",
-                              style: _textStyle,
-                            ),
-                            SizedBox(width: 10,),
-                           
-                            Text(
-                              "Tự sướng: "+ countfromserver[i]['masturbated'].toString()+".....",
-                              style: _textStyle,
-                            ),  SizedBox(width: 10,),
-                            
-                          ],
-                        ),
+                      child: Wrap(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            countfromserver[i]['note'] == null
+                                ? "......"
+                                : countfromserver[i]['note'] + "...",
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                          Text(
+                           countfromserver[i]['took_medicine'].toString()=="true"?"Uống thuốc:  thật..." :  "Uống thuốc: sai"+"...",
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                          //SizedBox(width: 1,),
+
+                          Text(
+                             countfromserver[i]['masturbated'].toString()=="true"?"Tự sướng: thật...":"Tự sướng: sai"+"...",
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),  //SizedBox(width: 10,),
+                          Text(
+                            countfromserver[i]['intercourse'].toString()=="true"?"Giao hợp: thật...":"Giao hợp: sai"+"...",
+                            style: _textStyle,textAlign: TextAlign.start,
+                          ),
+                          Text(countfromserver[i]['weight']==null?"":
+                          "Cân:"+ countfromserver[i]['weight'].toString()+"Kg."+"...",
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                          SizedBox(width: 10,),
+                          Text(countfromserver[i]['height']==null?"":
+                          "Thân nhiệt:"+ countfromserver[i]['height'].toString()+"...",
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                        ],
                       ),
                       
                     ),
-                     Text(
-                              "Giao hợp: "+countfromserver[i]['intercourse'].toString()+".....",
-                              style: _textStyle,
-                            ), 
+
                     SizedBox(height: 10,),
-                    Text(countfromserver[i]['weight']==null?"":
-                             "Weight:"+ countfromserver[i]['weight'].toString()+"Kg."+".......",
-                              style: _textStyle,
-                            ),
-                             SizedBox(height: 10,),
-                            Text(countfromserver[i]['height']==null?"":
-                             "Temp:"+ countfromserver[i]['height'].toString()+".......",
-                              style: _textStyle,
-                            ),
+                   // Row(
+                   //   children: [
+                   //     Text(countfromserver[i]['weight']==null?"":
+                   //   "Cân:"+ countfromserver[i]['weight'].toString()+"Kg."+"...",
+                   //     style: _textStyle,textAlign:TextAlign.start,
+                   //   ),
+                   //     SizedBox(width: 10,),
+                   //     Text(countfromserver[i]['height']==null?"":
+                   //     "Thân nhiệt:"+ countfromserver[i]['height'].toString()+"...",
+                   //       style: _textStyle,textAlign:TextAlign.start,
+                   //     ),],
+                   // ),
+                   //  SizedBox(height: 10,),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: getmoods(countfromserver[i]['mood']),
                       ),
                     ),
@@ -983,12 +1005,12 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
       print("knlwnl");
       moodlist.add(Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: getProportionateScreenWidth(5),
+            horizontal: getProportionateScreenWidth(1),
           ),
           child: Container(
               child: Text(
             moodstatic[int.parse(moodget[i]['id'])] + "...",
-            style: TextStyle(color: kPrimaryColor),
+            style: TextStyle(color: kPrimaryColor),textAlign:TextAlign.start,
           ))));
     }
     return moodlist;
