@@ -1,11 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:vietnamese/common/Api.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/size_config.dart';
 import 'package:vietnamese/components/common_button.dart';
 
+import '../settings.dart';
+
 class PeriodLenghtAlert extends StatefulWidget {
+  dynamic day;
+  PeriodLenghtAlert({this.day});
   @override
   _PeriodLenghtAlertState createState() => _PeriodLenghtAlertState();
 }
@@ -18,6 +26,8 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
     fontWeight: FontWeight.w500,
   );
   bool averagep = false;
+  bool isError = false;
+  bool isLoading = false;
   bool irregularcyclep = false;
 
   final TextStyle subTitle = TextStyle(
@@ -29,6 +39,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
       TextStyle(fontSize: getProportionateScreenHeight(12), color: kTextColor);
   @override
   void initState() {
+    periodlength=int.parse(widget.day);
     getswitchvlue();
     // TODO: implement initState
     super.initState();
@@ -55,7 +66,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
               buildHeader(context),
               buildTitle(),
               Divider(),
-             // buildButton(context)
+             buildButton(context)
             ],
           ),
         ),
@@ -193,89 +204,89 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
     return Container(
       child: Column(
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: getProportionateScreenWidth(20),
-            ),
-            width: SizeConfig.screenWidth,
-            height: getProportionateScreenHeight(40),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Ding trung bình",
-                  style: TextStyle(color: kPrimaryColor),
-                ),
-                Center(
-                  child: Switch(
-                    value: averagep,
-                    inactiveThumbColor: kPrimaryLightColor,
-                    onChanged: (val) async {
-                      setState(() {
-                        averagep = val;
-
-                        print(averagep);
-                        if (averagep == false) {
-                          setState(() {
-                            irregularcyclep = false;
-                          });
-                        }
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: getProportionateScreenWidth(20),
-            ),
-            width: SizeConfig.screenWidth,
-            height: getProportionateScreenHeight(40),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Bo qua nhñ'ng gi batthuong",
-                  style: TextStyle(color: kPrimaryColor),
-                ),
-                Center(
-                  child: Switch(
-                    value: irregularcyclep,
-                    inactiveThumbColor: kPrimaryLightColor,
-                    onChanged: (val) async {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      setState(() {
-                        if (averagep == true) {
-                          irregularcyclep = val;
-
-                          print(irregularcyclep);
-                        } else if (averagep == false) {
-                          setState(() {
-                            irregularcyclep = false;
-                          });
-                        } else {}
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          HeightBox(getProportionateScreenHeight(20)),
+          // Container(
+          //   padding: EdgeInsets.symmetric(
+          //     horizontal: getProportionateScreenWidth(20),
+          //   ),
+          //   width: SizeConfig.screenWidth,
+          //   height: getProportionateScreenHeight(40),
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text(
+          //         "Ding trung bình",
+          //         style: TextStyle(color: kPrimaryColor),
+          //       ),
+          //       Center(
+          //         child: Switch(
+          //           value: averagep,
+          //           inactiveThumbColor: kPrimaryLightColor,
+          //           onChanged: (val) async {
+          //             setState(() {
+          //               averagep = val;
+          //
+          //               print(averagep);
+          //               if (averagep == false) {
+          //                 setState(() {
+          //                   irregularcyclep = false;
+          //                 });
+          //               }
+          //             });
+          //           },
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // Container(
+          //   padding: EdgeInsets.symmetric(
+          //     horizontal: getProportionateScreenWidth(20),
+          //   ),
+          //   width: SizeConfig.screenWidth,
+          //   height: getProportionateScreenHeight(40),
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text(
+          //         "Bo qua nhñ'ng gi batthuong",
+          //         style: TextStyle(color: kPrimaryColor),
+          //       ),
+          //       Center(
+          //         child: Switch(
+          //           value: irregularcyclep,
+          //           inactiveThumbColor: kPrimaryLightColor,
+          //           onChanged: (val) async {
+          //             SharedPreferences prefs =
+          //                 await SharedPreferences.getInstance();
+          //             setState(() {
+          //               if (averagep == true) {
+          //                 irregularcyclep = val;
+          //
+          //                 print(irregularcyclep);
+          //               } else if (averagep == false) {
+          //                 setState(() {
+          //                   irregularcyclep = false;
+          //                 });
+          //               } else {}
+          //             });
+          //           },
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // HeightBox(getProportionateScreenHeight(20)),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CommonButton(
-                title: 'Cancel',
+                title: 'bỏ',
                 onTap: () => Navigator.of(context).pop(periodlength.toString()),
               ),
               CommonButton(
-                  title: 'Confirm',
+                  title: 'OK',
                   onTap: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
@@ -291,7 +302,50 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
       ),
     );
   }
+  dynamic settingfromserver = new List();
+  Future<void> updateSetting() async {
+    // isLoading = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+    print(token);
+    try {
+      final response = await post(updatesetings, headers: {
+        'Authorization': 'Bearer $token',
+      }, body: {
+        "is_pregnency": "false",
+        "period_length": "28",
+        "menstural_period": periodlength.toString()
+      });
+      print(response.statusCode.toString());
+      // print(perioddate.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
 
+        settingfromserver = responseJson;
+        print(settingfromserver);
+        showToast("PNV đã lưu cài đặt của bạn");
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
+        setState(() {
+          isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+
+        setState(() {
+          isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("uhdfuhdfuh");
+      setState(() {
+        isError = true;
+        isLoading = false;
+      });
+    }
+  }
   Future<void> getswitchvlue() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.getBool("averagep") == null &&

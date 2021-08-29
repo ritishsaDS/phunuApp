@@ -60,15 +60,9 @@ class _MailtoDemoState extends State<MailtoDemo> {
                 final url = Mailto(
                   to: [
                     'example@example.com',
-                    'ejemplo@ejemplo.com',
+
                   ],
-                  cc: [
-                    'percentage%100@example.com',
-                    'QuestionMark?address@example.com',
-                  ],
-                  bcc: [
-                    'Mike&family@example.org',
-                  ],
+
                   subject: 'Let\'s drink a "café"! ☕️ 2+2=4 #coffeeAndMath',
                   body:
                   'Hello this if the first line!\n\nNew line with some special characters őúóüűáéèßáñ\nEmoji: 🤪💙👍',

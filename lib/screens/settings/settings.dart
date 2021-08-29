@@ -93,7 +93,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               perioddate = await showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>
-                                      CycleLenghtAlert());
+                                      CycleLenghtAlert(day:startdate));
                               print(perioddate);
                               setState(() {
                                 if (perioddate == null) {
@@ -113,7 +113,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               mensturllength = await showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>
-                                      PeriodLenghtAlert());
+                                      PeriodLenghtAlert(day:enddate));
                               setState(() {
                                 print(mensturllength);
                                 if (mensturllength == null) {
@@ -187,7 +187,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                'Start of pregnancy',
+                                                'Bắt đầu mang thai',
                                                 //style: subTitle,
                                               ),
                                               Container(
@@ -242,7 +242,8 @@ class _SettingScreenState extends State<SettingScreen> {
                               title: 'Khóa bằng PIN',
                               onTap: () {
                                 if (login == null) {
-                                  showAlertDialog(context);
+                                  Navigator.push(
+                                      context, MaterialPageRoute(builder: (context) => PinRegisterScreen()));
                                 } else {
                                   Navigator.push(
                                       context,
@@ -254,16 +255,54 @@ class _SettingScreenState extends State<SettingScreen> {
                               }),
                           GenralListTile(
                               title: 'Báo cáo lỗi',
-                              onTap: () {
-                                   _modalBottomSheetMenu(  "Report Bug",
-                                            "Báo cáo lỗi cho Phụ Nữ Việt",);
+                              onTap: () async{
+                                final url = Mailto(
+                                  to: [
+                                    'example@example.com',
+
+                                  ],
+
+                                  subject: 'Báo cáo lỗi cho Phụ Nữ Việt',
+                                  body:
+                                  ''
+                                ).toString();
+                                if (await canLaunch(url) != null) {
+                                await launch(url);
+                                } else {
+                                showCupertinoDialog(
+                                context: context,
+                                builder: MailClientOpenErrorDialog(url: url).build,
+                                );
+                                }
+                                // openEmailApp(context,"Báo cáo lỗi cho Phụ Nữ Việt");
+                                   // _modalBottomSheetMenu(  "Report Bug",
+                                   //          "Báo cáo lỗi cho Phụ Nữ Việt",);
                                 
                               }),
                           GenralListTile(
                               title: 'Đề nghị với PNV',
-                              onTap: () {
-                                _modalBottomSheetMenu( "Suggest Features",
-                                           "Đề nghị chức năng với app Phụ Nữ Việ",);
+                              onTap: () async{
+                                final url = Mailto(
+                                    to: [
+                                      'example@example.com',
+
+                                    ],
+
+                                    subject: 'Đề nghị chức năng với app Phụ Nữ Việ',
+                                    body:
+                                    ''
+                                ).toString();
+                                if (await canLaunch(url) != null) {
+                                await launch(url);
+                                } else {
+                                showCupertinoDialog(
+                                context: context,
+                                builder: MailClientOpenErrorDialog(url: url).build,
+                                );
+                                }
+                                // openEmailApp(context,"Đề nghị chức năng với app Phụ Nữ Việ");
+                                // // _modalBottomSheetMenu( "Suggest Features",
+                                //            "Đề nghị chức năng với app Phụ Nữ Việ",);
                                 //  openEmailApp(context);
                                 // Navigator.push(
                                 //     context,
@@ -392,8 +431,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
         settingfromserver = responseJson;
         print(settingfromserver);
-        showToast("Settings  Updated Succesfully");
-        Navigator.pop(context);
+        showToast("PNV đã lưu cài đặt của bạn");
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
         setState(() {
           isError = false;
           isLoading = false;
@@ -607,6 +646,7 @@ class _SettingScreenState extends State<SettingScreen> {
     if (pickedDate != null && pickedDate != formattedDate)
       setState(() {
         formattedDate = pickedDate.toString();
+        formattedDate=DateTime.parse(formattedDate).day.toString()+"/"+DateTime.parse(formattedDate).month.toString()+"/"+DateTime.parse(formattedDate).year.toString();
         print(formattedDate);
       });
   }
@@ -680,7 +720,9 @@ class _SettingScreenState extends State<SettingScreen> {
         final responseJson = json.decode(response.body);
         SharedPreferences prefs =
         await SharedPreferences.getInstance();
-        prefs.clear();
+       prefs.remove("alert");
+       prefs.remove("nextperiod");
+       prefs.remove("fertilewindow");
         print("erase");
         Navigator.pushReplacement(
             context,
@@ -688,7 +730,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 builder: (context) =>
                     SettingScreen()));
         showToast("Đã xóa mọi thông tin");
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
+       /// Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
         setState(() {
           isError = false;
           isLoading = false;
@@ -711,11 +753,11 @@ class _SettingScreenState extends State<SettingScreen> {
     }
   }
   Future<void> openEmailApp(BuildContext context,subject) async {
-
+    List<String> tooo=['ritishs39@gmail.com'] ;
       final url = Mailto(
 
-
-        subject: subject,
+to: tooo,
+        subject: "",
            ).toString();
       if (await canLaunch(url)) {
     await launch(url);

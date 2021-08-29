@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const domainURL = 'http://girl-period.uplosse.com/api/';
+const domainURL = 'http://18.219.10.133/api/';
 String login = domainURL + "login";
 String regsiter = domainURL + "register";
 String GetArticles = domainURL + "get-articles";

@@ -34,14 +34,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isLoading = false;
   String token;
   bool isError;
-  var getnext = "    ?   ";
-  var getfertile = "  ?     ";
+  var getnext = " ??-??-   ?   ";
+  var getfertile = " ??-??- ?     ";
   var periodno = "  ? ";
   var fcmtoken;
   FirebaseMessaging messaging;
   DateTime selectedDate = DateTime.now();
 bool pressAttention = false;
   DateTime end;
+
+  bool pregnancy=false;
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     print("Handling a background message: ${message.messageId}");
@@ -105,18 +107,21 @@ bool pressAttention = false;
 
                       BodyContent(
                         title: "Ngày dự đoán sẽ có kinh",
-                        date: getnext
-                            .toString()
-                            .replaceAll("-", "/")
-                            .substring(5),
+                        date: "${getnext
+        .split("-")[2]
+        .toString()+"/"+ getnext .split("-")[1]
+        .toString()}"
                       ),
                       HeightBox(getProportionateScreenHeight(10)),
                       BodyContent(
                         title: 'Ngày bắt đầu màu mỡ',
-                        date: getfertile
-                            .toString()
-                            .replaceAll("-", "/")
-                            .substring(5),
+                        date: "${getfertile  .split("-")[2]
+                            .toString()+"/"+ getfertile .split("-")[1]
+        .toString(
+    )
+  }"
+                           // .replaceAll("-", "/")
+
                       ),
 
                       // DashboardDate(),
@@ -135,7 +140,7 @@ bool pressAttention = false;
   void getalert() async {
     isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.getString("alert");
+    prefs.getString("lnslnlnl"+"alert");
     var alert;
     alert = prefs.getString("alert");
     print(alert);
@@ -266,6 +271,16 @@ bool pressAttention = false;
 
   Future<void> savedata(deviceid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    pregnancy = prefs.getBool("pregnancy");
+    print(pregnancy);
+    if (pregnancy == null) {
+      pregnancy = false;
+    }
+    else{
+      pregnancy=true;
+     getnext = " ??-??-   ?   ";
+       getfertile = " ??-??- ?     ";
+    }
     if (loginwithserver['data']['login_count'] == null) {
       prefs.setString("user_type", loginwithserver['data']['user_type']);
 
@@ -278,7 +293,7 @@ bool pressAttention = false;
     } else if (loginwithserver['data']['email'] == null) {
       prefs.setString("user_type", loginwithserver['data']['user_type']);
 
-      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+   //   prefs.setInt("login_count", loginwithserver['data']['login_count']);
       prefs.setString("deviceid", deviceid);
       // prefs.setInt("password", loginwithserver['data']['password']);
       prefs.setString("token", loginwithserver['access_token']);
@@ -287,7 +302,7 @@ bool pressAttention = false;
       prefs.setString("email", loginwithserver['data']['email']);
       prefs.setString("user_type", loginwithserver['data']['user_type']);
 
-      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+    //  prefs.setInt("login_count", loginwithserver['data']['login_count']);
       prefs.setString("deviceid", deviceid);
       // prefs.setInt("password", loginwithserver['data']['password']);
       prefs.setString("token", loginwithserver['access_token']);
@@ -773,7 +788,7 @@ bool pressAttention = false;
   Future<void> getdaytext() async {
     try {
       final response = await http.post(
-          Uri.parse("http://girl-period.uplosse.com/api/display-date-results"),
+          Uri.parse("http://18.219.10.133/api/display-date-results"),
           headers: {
             'Authorization': 'Bearer $token',
           });
@@ -837,13 +852,48 @@ bool pressAttention = false;
   }
 }
 
-class BodyContent extends StatelessWidget {
-  const BodyContent({Key key, @required this.title, @required this.date})
+class BodyContent extends StatefulWidget {
+
+   String title;
+   String date;
+   BodyContent({Key key, @required this.title, @required this.date})
       : super(key: key);
 
-  final String title;
-  final String date;
 
+  @override
+  _BodyContentState createState() => _BodyContentState();
+}
+
+class _BodyContentState extends State<BodyContent> {
+  bool pregnancy=false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    //getpregnant();
+
+  }
+  getpregnant() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+     // pregnancy = prefs.getBool("pregnancy");
+     // print(pregnancy);
+
+
+     if (prefs.getBool("pregnancy") == false||null) {
+       print("iiiiiiiiii");
+      setState(() {
+        pregnancy = true;
+      });
+     }
+     else if (prefs.getBool("pregnancy") ==true){
+       print("jkwvkbjkb");
+      setState(() {
+        pregnancy=false;
+      });
+
+     }
+
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -865,22 +915,21 @@ class BodyContent extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                       color: kPrimaryColor, fontWeight: FontWeight.w600),
                 ),
-                Text(
-                  date == null ? "" : date,
-                  style: TextStyle(
-                    color: kPrimaryColor,
-                    fontWeight: FontWeight.w600,
-                  ),
+               Text(
+                    widget.date == null ? "" : widget.date,
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+
                 ),
               ],
             )),
       ),
     );
   }
-
-
 }

@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() {
+  final DateFormat formatter = DateFormat('dd MMMM y');
   initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
@@ -383,7 +385,7 @@ Future<void> notifpermission() async {
     } else if (loginwithserver['data']['email'] == null) {
       prefs.setString("user_type", loginwithserver['data']['user_type']);
 
-      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+    //  prefs.setInt("login_count", loginwithserver['data']['login_count']);
       prefs.setString("deviceid", deviceid);
       // prefs.setInt("password", loginwithserver['data']['password']);
       prefs.setString("token", loginwithserver['access_token']);
@@ -391,7 +393,7 @@ Future<void> notifpermission() async {
       prefs.setString("email", loginwithserver['data']['email']);
       prefs.setString("user_type", loginwithserver['data']['user_type']);
 
-      prefs.setInt("login_count", loginwithserver['data']['login_count']);
+     // prefs.setInt("login_count", loginwithserver['data']['login_count']);
       prefs.setString("deviceid", deviceid);
       // prefs.setInt("password", loginwithserver['data']['password']);
       prefs.setString("token", loginwithserver['access_token']);
@@ -405,7 +407,7 @@ Future<void> notifpermission() async {
     print(token + "tokenthis");
     try {
       final response = await http.post(
-        Uri.parse("http://girl-period.uplosse.com/api/login-time-backup"),
+        Uri.parse("http://18.219.10.133/api/login-time-backup"),
         headers: {
           'Authorization': 'Bearer $token',
         },

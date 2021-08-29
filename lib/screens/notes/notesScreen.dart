@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:vietnamese/common/Api.dart';
+import 'package:vietnamese/common/blocvalidate.dart';
 import 'package:vietnamese/common/constants.dart';
 import 'package:vietnamese/common/notesapirepo.dart';
 import 'package:vietnamese/common/size_config.dart';
@@ -38,13 +41,13 @@ class _NotesScreenState extends State<NotesScreen> {
   final key = GlobalKey<FormState>();
   var user_type;
   var data;
-  var login_count;
+  var login_count=0;
   var deviceid;
   String notes = "";
-  String tx_wieght;
+  String tx_wieght='';
   var moods;
   var u_flow = "";
-  String tx_height;
+  String tx_height='';
   var star = 3.0;
   DateTime periodStartedDate;
   DateTime periodenddate;
@@ -101,7 +104,8 @@ class _NotesScreenState extends State<NotesScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
+        body:  Builder(
+        builder: (context) => SingleChildScrollView(
           child: Column(
             children: [
               BottomTabs(2, true),
@@ -120,7 +124,7 @@ class _NotesScreenState extends State<NotesScreen> {
                       ),
                     ),
                     onTap: () {
-                      notesdate();
+                     // notesdate();
                     },
                   ),
                   WidthBox(getProportionateScreenWidth(40)),
@@ -491,11 +495,17 @@ class _NotesScreenState extends State<NotesScreen> {
                           controller: textEditingControllerweight,
                           keyboardType: TextInputType.number,
                           maxLength: 4,
+                          // inputFormatters: [
+                          //   WhitelistingTextInputFormatter(RegExp("[30-100]")),
+                          //   LengthLimitingTextInputFormatter(3),
+                          //  // _DateFormatter(),
+                          // ],
                           buildCounter: (BuildContext context,
                                   {int currentLength,
                                   int maxLength,
                                   bool isFocused}) =>
                               null,
+
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
@@ -533,16 +543,31 @@ class _NotesScreenState extends State<NotesScreen> {
                             addcount = addcount + 1;
                           },
                           validator: (val) {
-                            if (double.parse(val) < 30 ||
-                                double.parse(val) > 100) {
+                            if (double.parse(val) > 30 ||
+                                double.parse(val) <100) {
                               return "Range 30-100";
                             } else {
                               return null;
                             }
                           },
+
                           // onChangedValue: widget.height,
                         ),
                       ),
+                      // Container(
+                      //
+                      //   child: StreamBuilder(
+                      //     stream: validation.weight,
+                      //     builder: (_, snapShot) => TextField(
+                      //       onChanged: (val) => validation.sinkEmail.add(val),
+                      //       decoration: InputDecoration(
+                      //           hintText: 'Email',
+                      //           errorText: snapShot.hasError?snapShot.error.toString():null
+                      //       ),
+                      //       keyboardType: TextInputType.emailAddress,
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(
                         height: getProportionateScreenHeight(50),
                         width: SizeConfig.screenWidth * 0.45,
@@ -555,17 +580,17 @@ class _NotesScreenState extends State<NotesScreen> {
                                   int maxLength,
                                   bool isFocused}) =>
                               null,
-                          validator: (value) {
-                            if (value == null) {
-                              tx_height = "0.00";
-                            }
-                            var converted = double.parse(value);
-                            if (converted < 35) {
-                              return 'Range 35c to 45c';
-                            } else if (converted > 45) {
-                              return 'Range 35c to 45c';
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null) {
+                          //     tx_height = "0.00";
+                          //   }
+                          //   var converted = double.parse(value);
+                          //   if (converted < 35) {
+                          //     return 'Range 35c to 45c';
+                          //   } else if (converted > 45) {
+                          //     return 'Range 35c to 45c';
+                          //   }
+                          // },
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
@@ -600,6 +625,14 @@ class _NotesScreenState extends State<NotesScreen> {
                               print(tx_height);
                             });
                           },
+                          // validator: (value) {
+                          //   if (double.parse(value) > 35.0 ||
+                          //       double.parse(value) <45.0) {
+                          //     return "Range 30-100";
+                          //   } else {
+                          //     return null;
+                          //   }
+                          // },
 
                           // onChangedValue: widget.height,
                         ),
@@ -622,11 +655,58 @@ class _NotesScreenState extends State<NotesScreen> {
                   setState(() {
                     isLoading = true;
                   });
-                  if (tx_wieght != "" || null) {
-                    addcount = addcount + 1;
-                  } else if (tx_height != "" || null) {
-                    addcount = addcount + 1;
-                  } else if (notes != "" || null) {
+                  if (tx_wieght != "" ) {
+
+                    if(double.parse(textEditingControllerweight.text)<30.0||double.parse(textEditingControllerweight.text)>100.0){
+                      print("ijnpwsdsdsdsd");
+                      setState(() {
+                        isLoading=false;
+                      });
+                      return Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Nhập Cân 30kg - 100kg"),
+                      ));
+                      return  Fluttertoast.showToast(
+                          msg: "Please ENter value in range",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.grey,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+
+
+                    }
+                    else{
+                      addcount = addcount + 1;
+                    }
+
+                  }  if (tx_height != "" ) {
+                  //  print("ijnpw"+textEditingControllerheight.text);
+
+                    if(double.parse(tx_height)<35.0||double.parse(tx_height)>45.0){
+                      print("ijnpwsdsdsdsd");
+                      setState(() {
+                        isLoading=false;
+                      });
+                      return Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Nhập Thân nhiệt 35c - 45c"),
+                      ));
+                      return  Fluttertoast.showToast(
+                          msg: "Please ENter value in range",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.grey,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+
+
+                    }
+                    else{
+                      print('iwejoerv');
+                      addcount = addcount + 1;
+                    }
+                  } else if (notes != "" ) {
                     addcount = addcount + 1;
                   }
                   print(addcount.toString() + "addcount");
@@ -634,7 +714,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     prefs.setString("weight", tx_wieght);
-                    print(notes);
+                   // print("weightweightweight"+prefs.getString("weight"));
                     data = AddUserNotes(
                         date: DateTime.parse(today.toString().substring(0, 10)),
                         note: notes == null ? "" : notes,
@@ -658,6 +738,9 @@ class _NotesScreenState extends State<NotesScreen> {
                     });
                     addnotesList.add(data);
                     if (user_type == "guest") {
+if(login_count==null){
+  login_count=1;
+}
                       if (login_count <= 3) {
                         showregisterdialog(context);
                       } else {
@@ -666,7 +749,8 @@ class _NotesScreenState extends State<NotesScreen> {
                     } else {
                       postnotes(addnotesList);
                     }
-                  } else {
+                  }
+                  else {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     prefs.setString("weight", tx_wieght);
@@ -694,6 +778,9 @@ class _NotesScreenState extends State<NotesScreen> {
                     });
                     addnotesList.add(data);
                     if (user_type == "guest") {
+                      if(login_count==null){
+                        login_count=0;
+                      }
                       if (login_count <= 3) {
                         showregisterdialog(context);
                       } else {
@@ -718,7 +805,7 @@ class _NotesScreenState extends State<NotesScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   String validatePassword(double value) {
@@ -740,7 +827,7 @@ class _NotesScreenState extends State<NotesScreen> {
           print(value),
           if (value)
             {
-              showToast("Notes Added Successfully!"),
+              showToast("Đã thêm ghi chú thành công"),
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DashboardScreen()))
             }
@@ -793,14 +880,14 @@ class _NotesScreenState extends State<NotesScreen> {
   showregisterdialog(BuildContext context) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("Register"),
+      child: Text("Đăng ký"),
       onPressed: () {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => SignUpScreen()));
       },
     );
     Widget deny = FlatButton(
-      child: Text("Continue,without Login"),
+      child: Text("Tiếp tục mà không cần Đăng nhập"),
       onPressed: () {
         print(notes);
         getlogindemo();
@@ -814,7 +901,7 @@ class _NotesScreenState extends State<NotesScreen> {
           height: SizeConfig.screenHeight / 10,
           child: Column(
             children: [
-              Text("For Add Notes You have to login "),
+              Text("Để thêm ghi chú, bạn phải đăng nhập"),
             ],
           )),
       actions: [
@@ -1071,7 +1158,7 @@ class _NotesScreenState extends State<NotesScreen> {
     setState(() {
       user_type = prefs.getString("user_type");
       login_count = prefs.getInt("login_count");
-      print(login_count);
+      print("lohin"+login_count.toString());
       deviceid = prefs.getString("deviceid");
 
       if (prefs.getString("weight") == null) {
@@ -1103,11 +1190,12 @@ class _NotesScreenState extends State<NotesScreen> {
         final responseJson = json.decode(response.body);
         print(responseJson);
         login = responseJson;
-        print(login['data']['login_count']);
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setInt("login_count", login['data']['login_count']);
-        login_count = preferences.getInt("login_count");
-        print(login_count);
+        login_count=login_count+1;
+        // print("lmn lnvlfl"+login['data']['login_count'].toString());
+         SharedPreferences preferences = await SharedPreferences.getInstance();
+         preferences.setInt("login_count",login_count);
+       // login_count = preferences.getInt("login_count");
+        print("login_count"+login_count.toString());
         //print(loginwithserver);
 
         postnotes(addnotesList);

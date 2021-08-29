@@ -65,7 +65,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                   //   height: getProportionateScreenHeight(60),
                   // ),
                   Text(
-                    "SIGN UP",
+                    "ĐĂNG KÝ",
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: getProportionateScreenHeight(22),
@@ -84,7 +84,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Username",
+                            "Tên tài khoản",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -131,7 +131,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Name",
+                            "Tên",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -175,7 +175,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Phone",
+                            "Điện thoại",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -219,7 +219,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Email",
+                            "E-mail",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -263,7 +263,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "PIN",
+                            "GHIM",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -307,7 +307,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Confirm Pin",
+                            "Xác nhận mã PIN",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -401,7 +401,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                                   Colors.white),
                             )
                           : Text(
-                              "SIGN UP",
+                              "ĐĂNG KÝ",
                               style: TextStyle(color: Colors.white),
                             ),
                     ),
@@ -468,7 +468,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                   ),
                   VxTwoRow(
                     left: Text(
-                      'Already have an account?',
+                      'Bạn co săn san để tạo một tai khoản?',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w400,
@@ -483,7 +483,7 @@ class _SignUpBodyState extends State<SignUpBody> {
                         ),
                       ),
                       child: Text(
-                        'SIGN IN',
+                        'ĐĂNG NHẬP',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -542,9 +542,16 @@ class _SignUpBodyState extends State<SignUpBody> {
             loginwithserver = responseJson;
             // print(loginwithserver['data']['email']);
             print(loginwithserver);
+if(loginwithserver["error"]!=null){
+  showToast(loginwithserver["error"]);
+}
+else{
 
-            // showToast("");
-            savedata();
+showToast("Registered Succesfully");
+savedata();
+}
+
+
             setState(() {
               isError = false;
               isLoading = false;

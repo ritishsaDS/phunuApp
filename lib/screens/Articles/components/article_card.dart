@@ -23,12 +23,12 @@ dynamic userlikes;
 
 class _ArticleCardState extends State<ArticleCard> {
   bool isLoading = false;
-
+bool pressAttention=false;
   bool isError;
   @override
   void initState() {
     getstatus();
-    //print(widget.userlikes);
+    print(widget.userlikes);
    // getArticlesfromserver();
     // TODO: implement initState
     super.initState();
@@ -56,12 +56,12 @@ class _ArticleCardState extends State<ArticleCard> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding:  EdgeInsets.all(8.0),
                 child: Container(
                   child: Column(
                     children: [
                       Container(
-                        height: getProportionateScreenHeight(120),
+                        height: getProportionateScreenHeight(100),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -93,74 +93,27 @@ class _ArticleCardState extends State<ArticleCard> {
                           ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          print("like");
-                          setState(() {
-                            if(like==true){
-                              like=false;
-                            }else{
-                              like=true;
-                            }
-                          });
-                          setState(() => like = !like);
-                          likeapihit();
-                        },
+                      GestureDetector(onTap: (){
+                      //  setState(() => pressAttention = !pressAttention);
+                      },
                         child: Container(
                           alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: getProportionateScreenWidth(15),
-                            vertical: 10
-                          ),
-                          height: getProportionateScreenHeight(25),
-                          child: GestureDetector(
-                            onTap: () {
-                              print("like");
-                              setState(() {
-                                // if(widget.userlikes==null){
-                                //   like=false;
-                                // }else{
-                                //   like=true;
-                                // }
-                              });
-                              setState(() => like = !like);
-                              likeapihit();
+                          child: IconButton(
+                            icon: pressAttention ?  Icon(Icons.thumb_up_off_alt): Icon(Icons.thumb_up_alt),
+
+                            color:Colors.pinkAccent,
+                            onPressed: () => {
+                              setState(() => pressAttention = !pressAttention),
+                              likeapihit()
                             },
-                            child: Container(
-                              //padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: GestureDetector(
-                                onTap: () {
-                                  print("like");
-                                  setState(() {
-                                    if(like){
-                                      like=false;
-                                    }
-                                    else{
-                                      like=true;
-                                    }
-                                    // if(widget.userlikes==null){
-                                    //   like=false;
-                                    // }else{
-                                    //   like=true;
-                                    // }
-                                  });
-                                  setState(() => like = !like);
-                                 likeapihit();
-                                },
-                                child: Icon(
-                                  like ? Icons.thumb_up_alt_rounded: Icons.thumb_up_off_alt_outlined
-                                  ,
-                                  color: Colors.pink,
-                                ),
-                              ),
-                            ),
                           ),
-                        ),
+                        )
                       ),
+                      SizedBox(height: 10,),
                       Container(
                         alignment: Alignment.centerLeft,
-                        child: Html(
-                          data: widget.description,
+                        child: Text(
+                           widget.description,
                         ),
                       ),
                     ],
@@ -169,7 +122,8 @@ class _ArticleCardState extends State<ArticleCard> {
               ),
               Divider(
                 height: 1.5,
-              )
+              ),
+
             ],
           ),
         ),
@@ -216,18 +170,15 @@ print(articlewithserver);
   }
 
   void getstatus() {
-    print("jbwerjn;n");
+    print(widget.userlikes);
    setState(() {
      if(widget.userlikes==null){
-       setState(() {
-         like=false;
-       });
-     }else{
-       like=true;
+       setState(() => pressAttention =true);
+     }else if(widget.userlikes!=null){
+       setState(() => pressAttention =false);
      }
    });
   }
-
 
 
 }

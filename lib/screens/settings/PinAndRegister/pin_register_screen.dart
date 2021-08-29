@@ -20,6 +20,7 @@ class PinRegisterScreen extends StatefulWidget {
 class _PinRegisterScreenState extends State<PinRegisterScreen> {
   String email;
   String pin;
+  final signInKey = GlobalKey<FormState>();
   TextEditingController emailcontroller;
   TextEditingController passcontroller;
   TextEditingController provincecontroller;
@@ -104,112 +105,115 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                   bottom: getProportionateScreenHeight(10),
                 ),
                 child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: getProportionateScreenWidth(10),
-                          right: getProportionateScreenWidth(10),
-                          bottom: getProportionateScreenHeight(10),
-                        ),
-                        child: TextField(
-                          style: TextStyle(color: kPrimaryLightColor),
-                          decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            isDense: true,
-                            focusColor: kPrimaryLightColor,
-                            hoverColor: kPrimaryLightColor,
-                            hintStyle: TextStyle(
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.bold),
-                            hintText: "Địa chỉ email",
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 42, vertical: 20),
-                            enabledBorder: outlineInputBorder,
-                            focusedBorder: outlineInputBorder,
-                            border: outlineInputBorder,
+                  child: Form(
+                    key: signInKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: getProportionateScreenWidth(10),
+                            right: getProportionateScreenWidth(10),
+                            bottom: getProportionateScreenHeight(10),
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              email = value;
-                            });
-                          },
-                          controller: emailcontroller,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: getProportionateScreenWidth(10),
-                          right: getProportionateScreenWidth(10),
-                          bottom: getProportionateScreenHeight(10),
-                        ),
-                        child: TextField(
-                          style: TextStyle(color: kPrimaryLightColor),
-                          decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            isDense: true,
-                            focusColor: kPrimaryLightColor,
-                            hoverColor: kPrimaryLightColor,
-                            hintStyle: TextStyle(
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.bold),
-                            hintText: "So PIN (4 con so)",
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 42, vertical: 20),
-                            enabledBorder: outlineInputBorder,
-                            focusedBorder: outlineInputBorder,
-                            border: outlineInputBorder,
+                          child: TextField(
+                            style: TextStyle(color: kPrimaryLightColor),
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              isDense: true,
+                              focusColor: kPrimaryLightColor,
+                              hoverColor: kPrimaryLightColor,
+                              hintStyle: TextStyle(
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.bold),
+                              hintText: "Địa chỉ email",
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 42, vertical: 20),
+                              enabledBorder: outlineInputBorder,
+                              focusedBorder: outlineInputBorder,
+                              border: outlineInputBorder,
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                email = value;
+                              });
+                            },
+                            controller: emailcontroller,
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              pass = value.toString();
-                              //  pass = pin.toString();
-                              print(pass.toString());
-                            });
-                          },
-                          controller: passcontroller,
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: getProportionateScreenWidth(10),
-                          right: getProportionateScreenWidth(10),
-                          bottom: getProportionateScreenHeight(10),
-                        ),
-                        child: TextField(
-                          style: TextStyle(color: kPrimaryLightColor),
-                          decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            isDense: true,
-                            focusColor: kPrimaryLightColor,
-                            hoverColor: kPrimaryLightColor,
-                            hintStyle: TextStyle(
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.bold),
-                            hintText: "Bạn đang ở tỉnh thành nào?",
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 42, vertical: 20),
-                            enabledBorder: outlineInputBorder,
-                            focusedBorder: outlineInputBorder,
-                            border: outlineInputBorder,
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: getProportionateScreenWidth(10),
+                            right: getProportionateScreenWidth(10),
+                            bottom: getProportionateScreenHeight(10),
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              province = value;
-                            });
-                            print(province);
-                          },
-                          controller: provincecontroller,
+                          child: TextField(
+                            style: TextStyle(color: kPrimaryLightColor),
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              isDense: true,
+                              focusColor: kPrimaryLightColor,
+                              hoverColor: kPrimaryLightColor,
+                              hintStyle: TextStyle(
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.bold),
+                              hintText: "So PIN (4 con so)",
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 42, vertical: 20),
+                              enabledBorder: outlineInputBorder,
+                              focusedBorder: outlineInputBorder,
+                              border: outlineInputBorder,
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                pass = value.toString();
+                                //  pass = pin.toString();
+                                print(pass.toString());
+                              });
+                            },
+                            controller: passcontroller,
+                          ),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: getProportionateScreenWidth(10),
+                            right: getProportionateScreenWidth(10),
+                            bottom: getProportionateScreenHeight(10),
+                          ),
+                          child: TextField(
+                            style: TextStyle(color: kPrimaryLightColor),
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              isDense: true,
+                              focusColor: kPrimaryLightColor,
+                              hoverColor: kPrimaryLightColor,
+                              hintStyle: TextStyle(
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.bold),
+                              hintText: "Bạn đang ở tỉnh thành nào?",
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 42, vertical: 20),
+                              enabledBorder: outlineInputBorder,
+                              focusedBorder: outlineInputBorder,
+                              border: outlineInputBorder,
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                province = value;
+                              });
+                              print(province);
+                            },
+                            controller: provincecontroller,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -240,7 +244,9 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                         padding: EdgeInsets.symmetric(
                             horizontal: getProportionateScreenWidth(10)),
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                           child: Container(
                             alignment: Alignment.center,
                             width: getProportionateScreenWidth(100),
@@ -264,7 +270,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                         padding: EdgeInsets.symmetric(
                             horizontal: getProportionateScreenWidth(10)),
                         child: GestureDetector(
-                          onTap: () => updateprofile(),
+                          onTap: () => signin(),
                           child: Container(
                             alignment: Alignment.center,
                             width: getProportionateScreenWidth(100),
@@ -382,7 +388,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Age range*',
+            'Độ tuổi*',
             style: TextStyle(
               color: kPrimaryColor,
               fontWeight: FontWeight.w600,
@@ -562,8 +568,98 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
         print(age_value);
       }
       emailcontroller = TextEditingController(text: email);
-      passcontroller = TextEditingController(text: pin=="null"?"Số PIN (4 con số)":pin.toString());
+     // passcontroller = TextEditingController(text: pin=="null"?"Số PIN (4 con số)":pin.toString());
       print(email);
     });
+  }
+  dynamic loginwithserver= new List();
+  signin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.getString("device_id");
+   // print("osnanl" + usernameString);
+   //// bool isvalid = EmailValidator.validate(usernameString);
+    if (signInKey.currentState.validate()) {
+      signInKey.currentState.save();
+      setState(() {
+        isLoading = true;
+      });
+
+      if (!_validateEmail(email)) {
+        showToast("Phụ Nữ Việt Says .....Địa chỉ email");
+        setState(() {
+          isLoading = false;
+        });
+      } else if (pass.length != 4) {
+        showToast("Phụ Nữ Việt Says .....Số PIN");
+      } else {
+        try {
+          final response = await http.post(regsiter, body: {
+            "user_name": emailcontroller.text,
+            "name": "name",
+            "pin": passcontroller.text,
+            "mobile_number": "99599595",
+            "email": email,
+            "device_id": prefs.getString("deviceid")
+            // "password": passwordString,
+          });
+          print("bjkb" + response.statusCode.toString());
+          if (response.statusCode == 200) {
+            final responseJson = json.decode(response.body);
+
+            loginwithserver = responseJson;
+            // print(loginwithserver['data']['email']);
+            print(loginwithserver);
+            if(loginwithserver["error"]!=null){
+              showToast(loginwithserver["error"]);
+            }
+            else{
+
+              showToast("Đã đăng ký thành công");
+              savedata();
+            }
+
+
+            setState(() {
+              isError = false;
+              isLoading = false;
+              print('setstate');
+            });
+          } else {
+            print("bjkb" + response.statusCode.toString());
+            showToast("Mismatch Credentials");
+            setState(() {
+              isError = true;
+              isLoading = false;
+            });
+          }
+        } catch (e) {
+          print(e);
+          setState(() {
+            isError = true;
+            isLoading = false;
+          });
+        }
+      }
+    }
+  }
+  Future<void> savedata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString("email", loginwithserver['data']['email']);
+    //prefs.setInt("password", loginwithserver['data']['password']);
+    prefs.setString("user_type", loginwithserver['data']['user_type']);
+    //prefs.setString('email', emailController.text);
+    // Navigator.pushReplacement(
+    //     context, MaterialPageRoute(builder: (context) => NotesScreen()));
+  }
+
+  bool _validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return false;
+    else
+      return true;
   }
 }

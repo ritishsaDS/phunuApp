@@ -33,6 +33,7 @@ dependencies:
   provider:
   fluttertoast:
   mailto: ^2.0.0
+  rxdart: ^0.27.1
   firebase_analytics: "^7.0.1"
   shared_preferences:
   flutter_share: ^2.0.0

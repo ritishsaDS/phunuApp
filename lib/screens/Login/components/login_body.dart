@@ -105,7 +105,7 @@ class _LoginBodyState extends State<LoginBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Username",
+                            "tên tài khoản",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -155,7 +155,7 @@ class _LoginBodyState extends State<LoginBody> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "PIN",
+                            "GHIM",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -205,7 +205,7 @@ class _LoginBodyState extends State<LoginBody> {
                   HeightBox(
                     getProportionateScreenHeight(10),
                   ),
-                  RememberCheckbox(),
+                 // RememberCheckbox(),
                   HeightBox(
                     getProportionateScreenHeight(10),
                   ),
@@ -213,17 +213,17 @@ class _LoginBodyState extends State<LoginBody> {
                     padding: EdgeInsets.symmetric(
                         horizontal: getProportionateScreenWidth(10)),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          "Login with OTP",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: getProportionateScreenHeight(18),
-                          ),
-                        ),
+                        // Text(
+                        //   "Login with OTP",
+                        //   style: TextStyle(
+                        //     color: Colors.white,
+                        //     fontWeight: FontWeight.w600,
+                        //     fontSize: getProportionateScreenHeight(18),
+                        //   ),
+                        // ),
                         GestureDetector(
                           onTap: () {
                             signin();
@@ -262,64 +262,64 @@ class _LoginBodyState extends State<LoginBody> {
                   HeightBox(
                     getProportionateScreenHeight(10),
                   ),
-                  Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(10),
-                          vertical: getProportionateScreenHeight(10)),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Sign in with google',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          HeightBox(
-                            getProportionateScreenHeight(10),
-                          ),
-                          SizedBox(
-                            height: getProportionateScreenHeight(60),
-                            width: getProportionateScreenWidth(160),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                GestureDetector(
-                                  child: SizedBox(
-                                    height: getProportionateScreenHeight(60),
-                                    width: getProportionateScreenWidth(60),
-                                    child: Card(
-                                      child: Center(
-                                        child: Image.network(
-                                          "https://cdn2.hubspot.net/hubfs/53/image8-2.jpg",
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    googlelogin();
-                                  },
-                                ),
-                                SizedBox(
-                                  height: getProportionateScreenHeight(60),
-                                  width: getProportionateScreenWidth(60),
-                                  child: Card(
-                                    child: Center(
-                                      child: FaIcon(FontAwesomeIcons.facebookF,
-                                          color: Color(0xff4267B2)),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )),
-
-                  // SocialButton(),
-                  HeightBox(
-                    getProportionateScreenHeight(20),
-                  ),
+                  // Container(
+                  //     padding: EdgeInsets.symmetric(
+                  //         horizontal: getProportionateScreenWidth(10),
+                  //         vertical: getProportionateScreenHeight(10)),
+                  //     child: Column(
+                  //       children: [
+                  //         Text(
+                  //           'Sign in with google',
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //           ),
+                  //         ),
+                  //         HeightBox(
+                  //           getProportionateScreenHeight(10),
+                  //         ),
+                  //         SizedBox(
+                  //           height: getProportionateScreenHeight(60),
+                  //           width: getProportionateScreenWidth(160),
+                  //           child: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //             children: [
+                  //               GestureDetector(
+                  //                 child: SizedBox(
+                  //                   height: getProportionateScreenHeight(60),
+                  //                   width: getProportionateScreenWidth(60),
+                  //                   child: Card(
+                  //                     child: Center(
+                  //                       child: Image.network(
+                  //                         "https://cdn2.hubspot.net/hubfs/53/image8-2.jpg",
+                  //                         fit: BoxFit.cover,
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 onTap: () {
+                  //                   googlelogin();
+                  //                 },
+                  //               ),
+                  //               SizedBox(
+                  //                 height: getProportionateScreenHeight(60),
+                  //                 width: getProportionateScreenWidth(60),
+                  //                 child: Card(
+                  //                   child: Center(
+                  //                     child: FaIcon(FontAwesomeIcons.facebookF,
+                  //                         color: Color(0xff4267B2)),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     )),
+                  //
+                  // // SocialButton(),
+                  // HeightBox(
+                  //   getProportionateScreenHeight(20),
+                  // ),
                   // VxTwoRow(
                   //   left: Text(
                   //     'Don\'t have an account?',

@@ -79,7 +79,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     print(token);
     try {
       final response = await http.post(
-        "http://girl-period.uplosse.com/api/get-user-notes",
+        "http://18.219.10.133/api/get-user-notes",
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -209,43 +209,47 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   }
 
   Widget buildCell(Color color, DateTime date) {
-    return Container(
+    return  SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Container(
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
-      margin: const EdgeInsets.all(4.0),
-      // padding: const EdgeInsets.only(top: 5.0, left: 6.0, right: 3, bottom: 3),
+      margin:  EdgeInsets.only(top:2.0,left: 4,right: 4,bottom: 10),
+       //padding:  EdgeInsets.only( bottom: 3),
       width: 100,
-      height: 35,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-                alignment: Alignment.topLeft,
-                child: Text('${date.day}',
-                    style: TextStyle().copyWith(fontSize: 16.0))),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '${printLunarDate(date)}',
-                  style: TextStyle().copyWith(fontSize: 10.0),
+      height: SizeConfig.screenHeight*0.048,
+
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                  alignment: Alignment.topLeft,
+                  child: Text('${date.day}',
+                      style: TextStyle().copyWith(fontSize: 16.0))),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${printLunarDate(date)}',
+                    style: TextStyle().copyWith(fontSize: 10.0),
+                  ),
                 ),
               ),
-            ),
-          ]),
+            ]),
+      ),
     );
   }
 
   Widget _buildEventsMarker(DateTime date, List events) {
-    return AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+    return Container(
+       // duration: const Duration(milliseconds: 300),
         width: 16.0,
         height: 16.0,
         child: Padding(
-          padding: const EdgeInsets.only(left: 6),
+          padding:  EdgeInsets.only(left: 6),
           child: Container(
             height: 20,
             child: ListView.builder(
@@ -494,9 +498,9 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
             height: 250,
             child: Column(
               children: [
-                buildCell(Colors.grey.withOpacity(0.1), date),
+                buildCell(Colors.grey[300].withOpacity(0.5), date),
                 Divider(
-                  height: 3,
+                  height: 1,
                   thickness: 0.2,
                   color: Colors.pink,
                 )
@@ -521,7 +525,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
 
           return GestureDetector(
             onTap: () {
-              print(date);
+             // print(date);
             },
             child: Container(
               child: buildCell(Colors.deepOrange[300].withOpacity(0.5), date),
@@ -531,7 +535,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
         todayDayBuilder: (context, date, _) {
           // print(date);
 
-          return buildCell(Colors.deepOrange[300].withOpacity(0.5), date);
+          return buildCell(Colors.red.withOpacity(0.7), date);
         },
         markersBuilder: (context, date, events, holidays) {
           final children = <Widget>[];
@@ -702,7 +706,8 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     print(DateTime.parse(start).day);
     print(prefs.getInt("login_count"));
     var two;
-    var one = DateTime(DateTime.parse(start).year, DateTime.parse(start).month,
+    var one =
+    DateTime(DateTime.parse(start).year, DateTime.parse(start).month,
         DateTime.parse(start).day + 1);
     two = DateTime(
         DateTime.parse(one.toString()).year,
@@ -933,27 +938,34 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
                             style: _textStyle,textAlign:TextAlign.start,
                           ),
                           Text(
-                           countfromserver[i]['took_medicine'].toString()=="true"?"Uống thuốc:  thật..." :  "Uống thuốc: sai"+"...",
+                           countfromserver[i]['took_medicine'].toString()=="true"?"Uống thuốc..." :  ""+"...",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),
                           //SizedBox(width: 1,),
 
                           Text(
-                             countfromserver[i]['masturbated'].toString()=="true"?"Tự sướng: thật...":"Tự sướng: sai"+"...",
+                             countfromserver[i]['masturbated'].toString()=="true"?"Tự sướng...":""+"...",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),  //SizedBox(width: 10,),
                           Text(
-                            countfromserver[i]['intercourse'].toString()=="true"?"Giao hợp: thật...":"Giao hợp: sai"+"...",
+                            countfromserver[i]['intercourse'].toString()=="true"?"Giao hợp...":""+"...",
                             style: _textStyle,textAlign: TextAlign.start,
                           ),
-                          Text(countfromserver[i]['weight']==null?"":
+                          Text(countfromserver[i]['weight']==null||double.parse(countfromserver[i]['weight'])<30||double.parse(countfromserver[i]['weight'])>100?"":
                           "Cân:"+ countfromserver[i]['weight'].toString()+"Kg."+"...",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),
-                          SizedBox(width: 10,),
-                          Text(countfromserver[i]['height']==null?"":
+                        //  SizedBox(width: 10,),
+                          Text(countfromserver[i]['height']==null||double.parse(countfromserver[i]['height'])<35||double.parse(countfromserver[i]['height'])>50?"":
                           "Thân nhiệt:"+ countfromserver[i]['height'].toString()+"...",
                             style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: getmoods(countfromserver[i]['mood']),
+                            ),
                           ),
                         ],
                       ),
@@ -974,13 +986,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
                    //     ),],
                    // ),
                    //  SizedBox(height: 10,),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: getmoods(countfromserver[i]['mood']),
-                      ),
-                    ),
+
 
                     // getmood()
                   ],
