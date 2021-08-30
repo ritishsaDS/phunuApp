@@ -32,8 +32,8 @@ class NotesScreen extends StatefulWidget {
 
 class _NotesScreenState extends State<NotesScreen> {
   final addusernotesrepo = AddNotesRepo();
-  TextEditingController textEditingControllerweight;
-  TextEditingController textEditingControllerheight;
+  TextEditingController textEditingControllerweight = new TextEditingController();
+  TextEditingController textEditingControllerheight = new TextEditingController();
   bool isLoading = false;
   DateTime date;
   String note;
@@ -1230,7 +1230,6 @@ if(login_count==null){
     // isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
-    print(token);
     try {
       final response = await http.post(
         getnotescountapi,
