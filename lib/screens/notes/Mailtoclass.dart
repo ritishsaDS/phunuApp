@@ -59,7 +59,7 @@ class _MailtoDemoState extends State<MailtoDemo> {
               onPressed: () async {
                 final url = Mailto(
                   to: [
-                    'example@example.com',
+                    'Phunuvietapplication@gmail.com',
 
                   ],
 

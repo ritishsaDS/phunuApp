@@ -258,7 +258,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               onTap: () async{
                                 final url = Mailto(
                                   to: [
-                                    'example@example.com',
+                                    'Phunuvietapplication@gmail.com',
 
                                   ],
 
@@ -284,7 +284,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               onTap: () async{
                                 final url = Mailto(
                                     to: [
-                                      'example@example.com',
+                                      'Phunuvietapplication@gmail.com',
 
                                     ],
 
