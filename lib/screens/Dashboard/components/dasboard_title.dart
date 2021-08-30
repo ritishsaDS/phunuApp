@@ -251,7 +251,7 @@ class _HeaderState extends State<Header> {
       contentPadding: EdgeInsets.all(0),
       //  backgroundColor: kPrimaryColor,
 
-      title: Text("Your Period ended"),
+      title: Text("Thời gian của bạn đã kết thúc"),
       actions: [okButton, NoBUtton],
     );
 
@@ -309,7 +309,7 @@ class _HeaderState extends State<Header> {
       contentPadding: EdgeInsets.all(0),
       //  backgroundColor: kPrimaryColor,
 
-      title: Text("Your Period Started"),
+      title: Text("Thời kỳ của bạn đã bắt đầu"),
       actions: [okButton, No],
     );
 
