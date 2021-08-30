@@ -218,7 +218,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
       margin:  EdgeInsets.only(top:2.0,left: 4,right: 4,bottom: 10),
        //padding:  EdgeInsets.only( bottom: 3),
       width: 100,
-      height: SizeConfig.screenHeight*0.048,
+      height: SizeConfig.screenHeight*0.044,
 
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -494,7 +494,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
       builders: CalendarBuilders(
         dayBuilder: (context, date, events) {
           return Container(
-            height: 250,
+            height: 251,
             child: Column(
               children: [
                 buildCell(Colors.grey[300].withOpacity(0.5), date),
