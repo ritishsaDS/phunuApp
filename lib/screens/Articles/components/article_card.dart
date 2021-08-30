@@ -39,7 +39,6 @@ bool pressAttention=false;
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: SizeConfig.screenHeight,
       child: GestureDetector(
         onTap: () => Navigator.push(
           context,
@@ -61,7 +60,6 @@ bool pressAttention=false;
                   child: Column(
                     children: [
                       Container(
-                        height: getProportionateScreenHeight(100),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -123,7 +121,7 @@ bool pressAttention=false;
               Divider(
                 height: 1.5,
               ),
-
+              SizedBox(height: 12,),
             ],
           ),
         ),
