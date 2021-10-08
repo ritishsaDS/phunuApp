@@ -753,7 +753,7 @@ if(login_count==null){
                   else {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    prefs.setString("weight", tx_wieght);
+                    // prefs.setString("weight", tx_wieght);
 
                     data = AddUserNotes(
                         date: DateTime.parse(today.toString().substring(0, 10)),
@@ -1163,9 +1163,9 @@ if(login_count==null){
 
       if (prefs.getString("weight") == null) {
       } else {
-        textEditingControllerweight =
-            TextEditingController(text: prefs.getString("weight"));
-        tx_wieght = prefs.getString("weight");
+        // textEditingControllerweight =
+        //     TextEditingController(text: prefs.getString("weight"));
+        // tx_wieght = prefs.getString("weight");
       }
       if (prefs.getString("selecteddate") == null) {
       } else {

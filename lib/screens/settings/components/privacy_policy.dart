@@ -82,13 +82,14 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
   Future<void> getprivacypolicy() async {
     isLoading = true;
     try {
-      final response = await http.post(getpolicies);
+      final response = await http.post("http://18.219.10.133/api/privacy-policy");
       print(response.statusCode.toString());
       if (response.statusCode == 200) {
         final responseJson = json.decode(response.body);
 
         privacyfromserver = responseJson['data'];
-        print(privacyfromserver['description']);
+        print(privacyfromserver.length);
+        //print(privacyfromserver['data']['description']);
         setState(() {
           isError = false;
           isLoading = false;
@@ -113,7 +114,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
 
   List<Widget> getprivacy() {
     List<Widget> productList = new List();
-    for (int i = 0; i <= privacyfromserver.length; i++) {
+    for (int i = 0; i < 1; i++) {
       productList.add(GestureDetector(
         onTap: () {},
         child: Container(

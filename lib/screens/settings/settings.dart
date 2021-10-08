@@ -288,7 +288,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                                     ],
 
-                                    subject: 'Đề nghị chức năng với app Phụ Nữ Việ',
+                                    subject: 'Đề nghị chức năng với app Phụ Nữ Việt',
                                     body:
                                     ''
                                 ).toString();
@@ -316,11 +316,50 @@ class _SettingScreenState extends State<SettingScreen> {
                             title: 'Chia sẻ',
                             onTap: share,
                           ),
-                          GenralListTile(
-                              title: 'Cập nhật các thay đổi',
-                              onTap: () {
-                                updateSetting();
-                              }),
+                          GestureDetector(
+                            onTap: updateSetting,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom: getProportionateScreenHeight(10),
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: getProportionateScreenWidth(10),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: getProportionateScreenWidth(20),
+                                    vertical: getProportionateScreenHeight(11)),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: kPrimaryColor),
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                   Text(
+                                        "Cập nhật các thay đổi",
+                                        style: TextStyle(
+                                          color: kPrimaryColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                     // right: _widget,
+
+                                    Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: kPrimaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          // GenralListTile(
+                          //     title: 'Cập nhật các thay đổi',
+                          //     onTap: () {
+                          //       updateSetting();
+                          //     }),
                           GenralListTile(
                               title: 'Xóa mọi thông tin',
                               onTap: () async {
@@ -653,10 +692,10 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> share() async {
     await FlutterShare.share(
-        title: 'Example share',
-        text: 'Example share text',
+        title: '"Cài đặt app Phụ Nữ Việ',
+        text: '"Cài đặt app Phụ Nữ Việ',
         linkUrl: 'https://flutter.dev/',
-        chooserTitle: 'Example Chooser Title');
+        chooserTitle: 'Cài đặt app Phụ Nữ Việt');
   }
 
   dynamic backuplist = List();

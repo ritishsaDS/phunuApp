@@ -19,7 +19,7 @@ class PeriodLenghtAlert extends StatefulWidget {
 }
 
 class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
-  int periodlength = 4;
+  int periodlength = 7;
   final TextStyle title = TextStyle(
     fontSize: getProportionateScreenHeight(18),
     color: Colors.white,
@@ -177,7 +177,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                   padding: EdgeInsets.zero,
                   onPressed: () {
                     setState(() {
-                      if (periodlength == 10) {
+                      if (periodlength == 7) {
                       } else {
                         periodlength = periodlength + 1;
                       }
@@ -293,7 +293,9 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
                     prefs.setBool("irregularcyclep", irregularcyclep);
                     prefs.setBool("averagep", averagep);
                     prefs.setString("periodlength", periodlength.toString());
+                    updateSetting();
                     Navigator.of(context).pop(periodlength.toString());
+
                   }),
             ],
           ),

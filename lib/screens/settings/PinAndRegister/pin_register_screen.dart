@@ -160,7 +160,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                               hintStyle: TextStyle(
                                   color: kPrimaryColor,
                                   fontWeight: FontWeight.bold),
-                              hintText: "So PIN (4 con so)",
+                              hintText: "Số PIN (4 con số)",
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 42, vertical: 20),

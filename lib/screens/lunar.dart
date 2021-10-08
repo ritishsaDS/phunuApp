@@ -23,6 +23,7 @@ class Lunar extends StatefulWidget {
 class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   CalendarController _calendarController;
   Map<DateTime, List<dynamic>> _events = {};
+  List<DateTime> days = [];
   // List<CalendarItem> _data = [];
   final TextStyle _textStyle = TextStyle(color: kPrimaryLightColor);
   var value;
@@ -30,13 +31,24 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   var fertileone;
   var fertilethee;
   var fertilefour;
+  var flowstar=[
+    "Ra rất ít",
+    "Ra hơi ít",
+    "Ra bình thường",
+    "Ra hơi nhiều",
+    "Ra rất nhiều"
+  ];
+
   var fertilefive;
   var fertilesix;
+  var fertileseven;
   List<dynamic> _selectedEvents = [];
   var pregnancy;
   bool isLoading = false;
   var fertilewindow;
   Map<DateTime, List> _holidays = {};
+  Map<DateTime, List> final_holidays = {};
+  Map<DateTime, List> static_holidays = {};
   DateTime _selectedDateTime;
   List<Widget> get _eventWidgets =>
       _selectedEvents.map((e) => events(e)).toList();
@@ -50,9 +62,11 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   var ourdate;
   void initState() {
     super.initState();
+    getNextperiod();
+
     //  Provider.of<Calendarprovider>(context, listen: false).getnotes(ourdate);
     //getnotescount(ourdate);
-    getnextdate();
+
     _fetchEvents();
     _calendarController = CalendarController();
     _animationController = AnimationController(
@@ -281,177 +295,202 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   Widget _buildHolidays2Marker() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.deepOrange[300].withOpacity(0.5),
+        color: Colors.pinkAccent.withOpacity(0.5),
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
-      margin: const EdgeInsets.all(4.0),
+      margin:  EdgeInsets.all(2.0),
       // padding: const EdgeInsets.only(top: 5.0, left: 6.0, right: 3, bottom: 3),
       width: 100,
       height: 35,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 5,
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  color: Colors.white,
-                ),
-                Align(
-                    alignment: Alignment.topLeft,
-                    child: Text('${DateTime.parse(fertilewindow).day}',
-                        style: TextStyle().copyWith(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white))),
-              ],
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '${printLunarDate(DateTime.parse(fertilewindow))}',
-                  style:
-                      TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
-                ),
-              ),
-            ),
-          ]),
+     child: Stack(children: [
+       Container(
+         height: 5,
+         margin: EdgeInsets.only(left: 5, right: 5),
+         color: Colors.white,
+       )
+     ],),
+      // child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.start,
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       Stack(
+      //         children: [
+      //           Container(
+      //             height: 5,
+      //             margin: EdgeInsets.only(left: 5, right: 5),
+      //             color: Colors.white,
+      //           ),
+      //           Align(
+      //               alignment: Alignment.topLeft,
+      //               child: Text('${DateTime.parse(fertilewindow).day}',
+      //                   style: TextStyle().copyWith(
+      //                       fontSize: 16.0,
+      //                       fontWeight: FontWeight.bold,
+      //                       color: Colors.white))),
+      //         ],
+      //       ),
+      //       Expanded(
+      //         child: Align(
+      //           alignment: Alignment.center,
+      //           child: Text(
+      //             '${printLunarDate(DateTime.parse(fertilewindow))}',
+      //             style:
+      //                 TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
+      //           ),
+      //         ),
+      //       ),
+      //     ]),
     );
   }
 
   Widget _buildHolidays3Marker() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.deepOrange[300].withOpacity(0.5),
+        color: Colors.pinkAccent.withOpacity(0.5),
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       margin: const EdgeInsets.all(4.0),
       // padding: const EdgeInsets.only(top: 5.0, left: 6.0, right: 3, bottom: 3),
       width: 100,
       height: 35,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 5,
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  color: Colors.white,
-                ),
-                Align(
-                    alignment: Alignment.topLeft,
-                    child: Text('${DateTime.parse(fertileone.toString()).day}',
-                        style: TextStyle().copyWith(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white))),
-              ],
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '${printLunarDate(DateTime.parse(fertileone.toString()))}',
-                  style:
-                      TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
-                ),
-              ),
-            ),
-          ]),
-    );
+      child: Stack(children: [
+        Container(
+        height: 5,
+        margin: EdgeInsets.only(left: 5, right: 5),
+        color: Colors.white,
+      )]));
+      // child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.start,
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       Stack(
+      //         children: [
+      //           Container(
+      //             height: 5,
+      //             margin: EdgeInsets.only(left: 5, right: 5),
+      //             color: Colors.white,
+      //           ),
+      //           Align(
+      //               alignment: Alignment.topLeft,
+      //               child: Text('${DateTime.parse(fertileone.toString()).day}',
+      //                   style: TextStyle().copyWith(
+      //                       fontSize: 16.0,
+      //                       fontWeight: FontWeight.bold,
+      //                       color: Colors.white))),
+      //         ],
+      //       ),
+      //       Expanded(
+      //         child: Align(
+      //           alignment: Alignment.center,
+      //           child: Text(
+      //             '${printLunarDate(DateTime.parse(fertileone.toString()))}',
+      //             style:
+      //                 TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
+      //           ),
+      //         ),
+      //       ),
+      //     ]),
+
   }
 
   Widget _buildHolidays4Marker() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.deepOrange[300].withOpacity(0.5),
+        color: Colors.pinkAccent.withOpacity(0.5),
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       margin: const EdgeInsets.all(4.0),
       // padding: const EdgeInsets.only(top: 5.0, left: 6.0, right: 3, bottom: 3),
       width: 100,
       height: 35,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 5,
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  color: Colors.white,
-                ),
-                Align(
-                    alignment: Alignment.topLeft,
-                    child: Text('${DateTime.parse(fertiletwo.toString()).day}',
-                        style: TextStyle().copyWith(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white))),
-              ],
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '${printLunarDate(DateTime.parse(fertiletwo.toString()))}',
-                  style:
-                      TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
-                ),
-              ),
-            ),
-          ]),
+      child:  Stack(children: [
+        Container(
+          height: 5,
+          margin: EdgeInsets.only(left: 5, right: 5),
+          color: Colors.white,
+        )])
+      // child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.start,
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       Stack(
+      //         children: [
+      //           Container(
+      //             height: 5,
+      //             margin: EdgeInsets.only(left: 5, right: 5),
+      //             color: Colors.white,
+      //           ),
+      //           Align(
+      //               alignment: Alignment.topLeft,
+      //               child: Text('${DateTime.parse(fertiletwo.toString()).day}',
+      //                   style: TextStyle().copyWith(
+      //                       fontSize: 16.0,
+      //                       fontWeight: FontWeight.bold,
+      //                       color: Colors.white))),
+      //         ],
+      //       ),
+      //       Expanded(
+      //         child: Align(
+      //           alignment: Alignment.center,
+      //           child: Text(
+      //             '${printLunarDate(DateTime.parse(fertiletwo.toString()))}',
+      //             style:
+      //                 TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
+      //           ),
+      //         ),
+      //       ),
+      //     ]),
     );
   }
 
   Widget _buildHolidays5Marker(DateTime date) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.deepOrange[300].withOpacity(0.5),
+        color: Colors.pinkAccent.withOpacity(0.5),
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       margin: const EdgeInsets.all(4.0),
       // padding: const EdgeInsets.only(top: 5.0, left: 6.0, right: 3, bottom: 3),
       width: 100,
       height: 35,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 5,
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  color: Colors.white,
-                ),
-                Align(
-                    alignment: Alignment.topLeft,
-                    child: Text('${DateTime.parse(date.toString()).day}',
-                        style: TextStyle().copyWith(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white))),
-              ],
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '${printLunarDate(DateTime.parse(date.toString()))}',
-                  style:
-                      TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
-                ),
-              ),
-            ),
-          ]),
-    );
+    child:  Stack(children: [
+      Container(
+        height: 5,
+        margin: EdgeInsets.only(left: 5, right: 5),
+        color: Colors.white,
+      )]));
+    //   child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.start,
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: [
+    //         Stack(
+    //           children: [
+    //             Container(
+    //               height: 5,
+    //               margin: EdgeInsets.only(left: 5, right: 5),
+    //               color: Colors.white,
+    //             ),
+    //             Align(
+    //                 alignment: Alignment.topLeft,
+    //                 child: Text('${DateTime.parse(date.toString()).day}',
+    //                     style: TextStyle().copyWith(
+    //                         fontSize: 16.0,
+    //                         fontWeight: FontWeight.bold,
+    //                         color: Colors.white))),
+    //           ],
+    //         ),
+    //         Expanded(
+    //           child: Align(
+    //             alignment: Alignment.center,
+    //             child: Text(
+    //               '${printLunarDate(DateTime.parse(date.toString()))}',
+    //               style:
+    //                   TextStyle().copyWith(fontSize: 10.0, color: Colors.white),
+    //             ),
+    //           ),
+    //         ),
+    //       ]),
+    // );
   }
 
   getBool() {
@@ -463,6 +502,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   Widget calendar() {
     var tableCalendar = TableCalendar(
       holidays: _holidays,
+
       availableCalendarFormats: {
         CalendarFormat.month: '',
       },
@@ -494,12 +534,12 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
       builders: CalendarBuilders(
         dayBuilder: (context, date, events) {
           return Container(
-            height: 251,
+            height: 249,
             child: Column(
               children: [
                 buildCell(Colors.grey[300].withOpacity(0.5), date),
                 Divider(
-                  height: 1,
+                  height: 0.5,
                   thickness: 0.2,
                   color: Colors.pink,
                 )
@@ -599,7 +639,13 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
                                                 right: 0,
                                                 child: _buildHolidays5Marker(
                                                     fertilesix))
-                                            : Positioned(
+                                            : holidays.contains("fertile windowseven")
+                ? Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: _buildHolidays5Marker(
+                    fertileseven)):Positioned(
                                                 top: 5,
                                                 left: 0,
                                                 right: 0,
@@ -699,9 +745,17 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     }
 
     print("knewjldsnlwkl");
-    next = prefs.getString("nextdate");
+   // next = prefs.getString("nextdate");
+    print("knewjldsnlwkl"+next);
     start = prefs.getString("startdate");
+    var cyclelength;
+    if(prefs.getString("cyclelength")==null){
+      cyclelength=28;
+    }
+    else{
+       cyclelength=int.parse(prefs.getString("cyclelength"));
 
+    }
     print(DateTime.parse(start).day);
     print(prefs.getInt("login_count"));
     var two;
@@ -718,6 +772,8 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     //  print(startyear + startday);
     var three;
     var four;
+    var five;
+    var six;
 
     three = DateTime(
         DateTime.parse(two.toString()).year,
@@ -747,16 +803,22 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     fertilefour = DateTime(
         DateTime.parse(fertilethee.toString()).year,
         DateTime.parse(fertilethee.toString()).month,
-        DateTime.parse(fertilethee.toString()).day - 1);
+        DateTime.parse(fertilethee.toString()).day
+        -1);
     fertilefive = DateTime(
         DateTime.parse(fertilefour.toString()).year,
         DateTime.parse(fertilefour.toString()).month,
         DateTime.parse(fertilefour.toString()).day - 1);
     fertilesix = DateTime(
-        DateTime.parse(fertilefive.toString()).year,
-        DateTime.parse(fertilefive.toString()).month,
-        DateTime.parse(fertilefive.toString()).day - 1);
-    _holidays = {
+        DateTime.parse(fertilewindow.toString()).year,
+        DateTime.parse(fertilewindow.toString()).month,
+        DateTime.parse(fertilewindow.toString()).day - 1);
+    fertileseven = DateTime(
+        DateTime.parse(fertilesix.toString()).year,
+        DateTime.parse(fertilesix.toString()).month,
+        DateTime.parse(fertilesix.toString()).day -1);
+
+    static_holidays = {
       DateTime(
           DateTime.parse(fertilewindow).year,
           DateTime.parse(fertilewindow).month,
@@ -773,8 +835,12 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
           DateTime.parse(fertilethee.toString()).year,
           DateTime.parse(fertilethee.toString()).month,
           DateTime.parse(fertilethee.toString()).day): ["fertile windothree"],
-      DateTime(DateTime.parse(start).year, DateTime.parse(start).month,
-          DateTime.parse(start).day): ['Christmas Day'],
+      DateTime(
+          DateTime.parse(fertileseven.toString()).year,
+          DateTime.parse(fertileseven.toString()).month,
+          DateTime.parse(fertileseven.toString()).day): ["fertile windowseven"],
+      // DateTime(DateTime.parse(start).year, DateTime.parse(start).month,
+      //     DateTime.parse(start).day): ['Christmas Day'],
       DateTime(DateTime.parse(next).year, DateTime.parse(next).month,
           DateTime.parse(next).day): ['New Year\'s Day'],
       DateTime(
@@ -789,23 +855,40 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
           DateTime.parse(fertilesix.toString()).year,
           DateTime.parse(fertilesix.toString()).month,
           DateTime.parse(fertilesix.toString()).day): ["fertile windowsix"],
+
       DateTime(
-          DateTime.parse(one.toString()).year,
-          DateTime.parse(one.toString()).month,
-          DateTime.parse(one.toString()).day): [""],
+          DateTime.parse(next).year, DateTime.parse(next).month,
+              DateTime.parse(next).day + cyclelength): [""],
       DateTime(
-          DateTime.parse(two.toString()).year,
-          DateTime.parse(two.toString()).month,
-          DateTime.parse(two.toString()).day): [""],
+          DateTime.parse(next).year, DateTime.parse(next).month,
+          DateTime.parse(next).day + 2*cyclelength): [""],
       DateTime(
-          DateTime.parse(three.toString()).year,
-          DateTime.parse(three.toString()).month,
-          DateTime.parse(three.toString()).day): [""],
+          DateTime.parse(next).year, DateTime.parse(next).month,
+          DateTime.parse(next).day + 3*cyclelength): [""],
       DateTime(
-          DateTime.parse(four.toString()).year,
-          DateTime.parse(four.toString()).month,
-          DateTime.parse(four.toString()).day): [""]
+          DateTime.parse(next).year, DateTime.parse(next).month,
+          DateTime.parse(next).day + 4*cyclelength): [""],
+
+      // DateTime(
+      //     DateTime.parse(one.toString()).year,
+      //     DateTime.parse(one.toString()).month,
+      //     DateTime.parse(one.toString()).day): [""],
+      // DateTime(
+      //     DateTime.parse(two.toString()).year,
+      //     DateTime.parse(two.toString()).month,
+      //     DateTime.parse(two.toString()).day): [""],
+      // DateTime(
+      //     DateTime.parse(three.toString()).year,
+      //     DateTime.parse(three.toString()).month,
+      //     DateTime.parse(three.toString()).day): [""],
+      // DateTime(
+      //     DateTime.parse(four.toString()).year,
+      //     DateTime.parse(four.toString()).month,
+      //     DateTime.parse(four.toString()).day): [""]
     };
+    SharedPreferences pref=await SharedPreferences.getInstance();
+    pref.getString('startdate');
+    getDaysInBetween(DateTime.parse(pref.getString('startdate')),DateTime.parse("2021-09-23"));
     //print(one+two+three);
 
     if (prefs.getString("selecteddate") == null) {
@@ -932,22 +1015,34 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
                         children: [
                           Text(
                             countfromserver[i]['note'] == null
-                                ? "......"
+                                ? "..."
                                 : countfromserver[i]['note'] + "...",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),
                           Text(
-                           countfromserver[i]['took_medicine'].toString()=="true"?"Uống thuốc..." :  ""+"...",
+                            countfromserver[i]['flow'].toString()==""?"..." :"Ra nhiều ít: "+flowstar[countfromserver[i]['flow']] +" " ,
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                          Text(
+                           countfromserver[i]['took_medicine'].toString()=="true"?"Uống thuốc..." :  "",
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                          Text(
+                            "  Bắt đầu kinh hôm nay : " +countfromserver[i]['period_started_date'].toString().substring(0,10).replaceAll("-", "/")+"...",
+                            style: _textStyle,textAlign:TextAlign.start,
+                          ),
+                          Text(
+                            "  Hết kinh hôm nay : " +countfromserver[i]['period_ended_date'].toString().substring(0,10).replaceAll("-", "/")+"...",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),
                           //SizedBox(width: 1,),
 
                           Text(
-                             countfromserver[i]['masturbated'].toString()=="true"?"Tự sướng...":""+"...",
+                             countfromserver[i]['masturbated'].toString()=="true"?"Tự sướng...":""+"",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),  //SizedBox(width: 10,),
                           Text(
-                            countfromserver[i]['intercourse'].toString()=="true"?"Giao hợp...":""+"...",
+                            countfromserver[i]['intercourse'].toString()=="true"?"Giao hợp...":""+"",
                             style: _textStyle,textAlign: TextAlign.start,
                           ),
                           Text(countfromserver[i]['weight']==null||double.parse(countfromserver[i]['weight'])<30||double.parse(countfromserver[i]['weight'])>100?"":
@@ -1033,4 +1128,126 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   //   }
   //   return productList;
   // }
+
+  dynamic nextdates = new List();
+  Future<void> getNextperiod() async {
+    isLoading = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+   var token = prefs.getString("token");
+    print(token);
+    try {
+      final response = await http.post(
+        nexperiod,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final responseJson = json.decode(response.body);
+
+        nextdates = responseJson;
+        print(nextdates);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        if (prefs.getString("nextdate") == null) {
+          prefs.setString(
+              "nextdate", nextdates['data']['next_period_date']);
+
+          next=nextdates['data']['next_period_date'];
+          print("jnwdjnon"+next);
+          getnextdate();
+         // getdaytext();
+          //  getDay();
+        } else {
+          next=nextdates['data']['next_period_date'];
+          print("jnwdjnon"+next);
+          getnextdate();
+          // getnext = prefs.getString("nextdate");
+          // getfertile = prefs.getString("fertilewindow");
+          // getdaytext();
+          // getDay();
+        }
+
+       // print(settingfromserver);
+
+        setState(() {
+        //  isError = false;
+          isLoading = false;
+          print('setstate');
+        });
+      } else {
+        print("bjkb" + response.statusCode.toString());
+
+        setState(() {
+          //isError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+       // isError = true;
+        isLoading = false;
+      });
+    }
+  }
+  Future<List<DateTime>> getDaysInBetween(DateTime startDate, DateTime endDate) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var mensdays=prefs.getString("periodlength");
+   print( startDate);
+   if(mensdays==''||mensdays==null){
+     mensdays="4";
+   }
+   endDate=DateTime(
+       DateTime.parse(startDate.toString()).year,
+       DateTime.parse(startDate.toString()).month,
+       DateTime.parse(startDate.toString()).day + int.parse(mensdays)-1);
+
+    for (int i = 0; i <= endDate.difference(startDate).inDays; i++) {
+      days.add(startDate.add(Duration(days: i)));
+      print("days-------"+days.toString());
+
+      // ={
+      //   DateTime(DateTime.parse(result[i].toString()).year,
+      //       DateTime.parse(result[i].toString()).month,
+      //       DateTime.parse(result[i].toString()).day):[""],
+      // };
+    }
+
+    for(int i = 0; i < days.length; i++){
+      // _holidays [
+      //   DateTime( DateTime.parse(days[i].toString()).year,DateTime.parse(days[i].toString()).month,DateTime.parse(days[i].toString()).day)]=[""];
+
+      final_holidays.putIfAbsent(DateTime( DateTime.parse(days[i].toString()).year,DateTime.parse(days[i].toString()).month,DateTime.parse(days[i].toString()).day), () => [""]);
+
+
+      // _holidays={
+    //   DateTime( DateTime.parse(days[i].toString()).year,DateTime.parse(days[i].toString()).month,DateTime.parse(days[i].toString()).day):[""]
+    //
+    // };
+    }
+    _holidays={
+      ...static_holidays,
+      ...final_holidays
+
+    };
+
+    // days.forEach((element) {
+    //   var result =_holidays.addEntries( DateTime(DateTime.parse(result[i].toString()).year,
+    //   //       DateTime.parse(result[i].toString()).month,
+    //   //       DateTime.parse(result[i].toString()).day):[""],)
+    //
+    // });
+   // print("resulyt---"+result.toString());
+    print("resulstaticyt---"+static_holidays.toString());
+    print("resulfina;lyt---"+final_holidays.toString());
+    print("resulyt---"+_holidays.toString());
+    // setState(() {
+    //   _holidays = result as Map<DateTime, List>;
+    // });
+    return days;
+  }
 }
+

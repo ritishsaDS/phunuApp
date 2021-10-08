@@ -218,7 +218,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "Yes",
+          "OK",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -237,7 +237,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "No",
+          "bỏ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -251,7 +251,7 @@ class _HeaderState extends State<Header> {
       contentPadding: EdgeInsets.all(0),
       //  backgroundColor: kPrimaryColor,
 
-      title: Text("Thời gian của bạn đã kết thúc"),
+      title: Text("Thời gian đèn đỏ của bạn đã kết thúc"),
       actions: [okButton, NoBUtton],
     );
 
@@ -275,7 +275,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "Yes",
+          "OK",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -295,7 +295,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "No",
+          "bỏ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -533,7 +533,7 @@ class _HeaderState extends State<Header> {
     } else {
       daystext = prefs.getString("daystext");
       print("jhh;jlkl"+daystext);
-      daystext = "Ngày cho đến kỳ tiếp theo";
+      daystext = "Số ngày đến kỳ kinh tới";
     }
 
     if (prefs.getString("buttontext") == null ||

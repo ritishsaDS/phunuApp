@@ -110,8 +110,8 @@ bool pressAttention=false;
                       SizedBox(height: 10,),
                       Container(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                           widget.description,
+                        child: Html(
+                          data: widget.description,
                         ),
                       ),
                     ],
