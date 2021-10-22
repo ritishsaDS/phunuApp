@@ -44,6 +44,7 @@ class _NotesScreenState extends State<NotesScreen> {
   var login_count=0;
   var deviceid;
   String notes = "";
+  var count=1;
   String tx_wieght='';
   var moods;
   var u_flow = "";
@@ -341,7 +342,9 @@ class _NotesScreenState extends State<NotesScreen> {
                                 valuemedicine = medicine;
                                 print(valuemedicine);
                                 if (valuemedicine == true) {
-                                  addcount = addcount + 1;
+                                 setState(() {
+                                   addcount = addcount + 1;
+                                 });
                                 }
                               },
                             );
@@ -391,7 +394,9 @@ class _NotesScreenState extends State<NotesScreen> {
                               () {
                                 valueinter = currentValuei;
                                 if (valueinter == true) {
-                                  addcount = addcount + 1;
+                                 setState(() {
+                                   addcount = addcount + 1;
+                                 });
                                 }
                                 print(valueinter);
                               },
@@ -442,7 +447,9 @@ class _NotesScreenState extends State<NotesScreen> {
                               () {
                                 valuemasturbrated = currentValuem;
                                 if (valuemasturbrated == true) {
-                                  addcount = addcount + 1;
+                                  setState(() {
+                                    addcount = addcount + 1;
+                                  });
                                 }
                                 print(valuemasturbrated);
                               },
@@ -622,7 +629,12 @@ class _NotesScreenState extends State<NotesScreen> {
                           onChanged: (value) {
                             setState(() {
                               tx_height = value;
-                              print(tx_height);
+                              if(count==1){
+                                print("klmfkmfvp");
+                                addcount=addcount+1;
+                                count= count+1;
+                              }
+                              print(count);
                             });
                           },
                           // validator: (value) {
@@ -654,6 +666,12 @@ class _NotesScreenState extends State<NotesScreen> {
                 onPressed: () async {
                   setState(() {
                     isLoading = true;
+
+                    if(count==1){
+                      print("klmfkmfvp");
+                      addcount=addcount+1;
+                      count+1;
+                    }
                   });
                   if (tx_wieght != "" ) {
 
@@ -677,7 +695,9 @@ class _NotesScreenState extends State<NotesScreen> {
 
                     }
                     else{
-                      addcount = addcount + 1;
+                      setState(() {
+                        addcount = addcount + 1;
+                      });
                     }
 
                   }  if (tx_height != "" ) {
@@ -704,7 +724,11 @@ class _NotesScreenState extends State<NotesScreen> {
                     }
                     else{
                       print('iwejoerv');
-                      addcount = addcount + 1;
+                     setState(() {
+                     setState(() {
+                       addcount = addcount + 1;
+                     });
+                     });
                     }
                   } else if (notes != "" ) {
                     addcount = addcount + 1;
@@ -719,7 +743,7 @@ class _NotesScreenState extends State<NotesScreen> {
                         date: DateTime.parse(today.toString().substring(0, 10)),
                         note: notes == null ? "" : notes,
                         periodStartedDate:
-                            DateTime.parse(prefs.getString("startdate")),
+                            DateTime.parse(prefs.getString("startdate"))==null?"":DateTime.parse(prefs.getString("startdate")),
                         periodEndedDate: periodenddate == null
                             ? DateTime.parse("1970-01-25")
                             : periodEndedDate,

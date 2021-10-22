@@ -36,6 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isError;
   var getnext = " ??-??-   ?   ";
   var getfertile = " ??-??- ?     ";
+  var getdays = " ??     ";
   var periodno = "  ? ";
   var fcmtoken;
   FirebaseMessaging messaging;
@@ -85,7 +86,8 @@ bool pressAttention = false;
     print(formattedDate);
     // getDay();
   }
-
+  var i=0;
+  var alert;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -115,8 +117,7 @@ bool pressAttention = false;
                       HeightBox(getProportionateScreenHeight(10)),
                       BodyContent(
                         title: 'Ngày bắt đầu màu mỡ',
-                        date: "${getfertile  .split("-")[2]
-                            .toString()+"/"+ getfertile .split("-")[1]
+                        date: "${getdays.toString()+"/"+ getfertile .split("-")[1]
         .toString(
     )
   }"
@@ -141,7 +142,7 @@ bool pressAttention = false;
     isLoading = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.getString("lnslnlnl"+"alert");
-    var alert;
+
     alert = prefs.getString("alert");
     print(alert);
 
@@ -177,6 +178,26 @@ bool pressAttention = false;
         },
       ),
     );
+    Widget cancel = Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: kPrimaryColor),
+          borderRadius: BorderRadius.circular(
+            15.0,
+          ),
+          color: kPrimaryColor),
+      child: FlatButton(
+        child: Text(
+          "bo",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        onPressed: () {
+setState(() {
+  isLoading=false;
+});
+          Navigator.pop(context);
+        },
+      ),
+    );
     var date;
     // set up the AlertDialog
 
@@ -190,7 +211,7 @@ bool pressAttention = false;
             //  backgroundColor: kPrimaryColor,
 
             content: Container(
-              height: SizeConfig.screenHeight / 5,
+              height: SizeConfig.screenHeight*0.2,
               child: Column(
                 children: [
                   SizedBox(
@@ -208,7 +229,7 @@ bool pressAttention = false;
                   ),
                   GestureDetector(
                     child: Container(
-                        margin: EdgeInsets.all(15),
+                        margin: EdgeInsets.all(10),
                         padding: EdgeInsets.all(10),
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
@@ -261,7 +282,9 @@ bool pressAttention = false;
               ),
             ),
             actions: [
+              cancel,
               okButton,
+
             ],
           );
         });
@@ -315,7 +338,7 @@ bool pressAttention = false;
 
   _getId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.getString("nextdate");
+   // prefs.getString("nextdate");
   //  SharedPreferences prefs = await SharedPreferences.getInstance();
    fcmtoken = prefs.getString("fcmtoken");
     var deviceInfo = DeviceInfoPlugin();
@@ -808,6 +831,8 @@ bool pressAttention = false;
         prefs.setInt("totaldays", getalldays['days']);
         getnext = prefs.getString("nextperiod");
         getfertile = prefs.getString("fertilewindow");
+        getdays=(DateTime.parse(getfertile).day-5).toString();
+        print("jhebieri"+getdays);
         periodno = prefs.getInt("totaldays").toString();
         prefs.setString("daystext", getalldays['days_text']);
 
@@ -848,7 +873,22 @@ bool pressAttention = false;
   Future<void> gettoken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
-    getalert();
+    alert = prefs.getString("alert");
+
+    i=i+1;
+    print("------"+i.toString());
+    if(i==1){
+      getalert();
+    }
+    else{
+      if (alert == null) {
+        //showAlertDialog(context);
+      } else {
+        getNextperiod();
+      }
+     // getNextperiod();
+    }
+
   }
 }
 

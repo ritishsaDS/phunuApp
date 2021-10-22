@@ -21,7 +21,8 @@ dependencies:
   flutter_pin_code_fields: ^1.1.0
   vertical_weight_slider :  
   lunar_calendar: ^1.0.1
-  table_calendar: 
+  table_calendar:
+  package_info: ^2.0.2
   device_info: ^2.0.2
   rate_my_app: 
   flutter_local_notifications: ^5.0.0

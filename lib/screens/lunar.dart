@@ -61,8 +61,9 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
   DateTime _selectedDay = DateTime.now();
   var ourdate;
   void initState() {
-    super.initState();
     getNextperiod();
+    super.initState();
+
 
     //  Provider.of<Calendarprovider>(context, listen: false).getnotes(ourdate);
     //getnotescount(ourdate);
@@ -737,7 +738,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
 
   void getnextdate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    fertilewindow = prefs.getString("fertilewindow");
+    //fertilewindow = prefs.getString("fertilewindow");
     pregnancy = prefs.getBool("pregnancy");
     print(pregnancy);
     if (pregnancy == null) {
@@ -1019,22 +1020,19 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
                                 : countfromserver[i]['note'] + "...",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),
-                          Text(
-                            countfromserver[i]['flow'].toString()==""?"..." :"Ra nhiều ít: "+flowstar[countfromserver[i]['flow']] +" " ,
-                            style: _textStyle,textAlign:TextAlign.start,
-                          ),
+
                           Text(
                            countfromserver[i]['took_medicine'].toString()=="true"?"Uống thuốc..." :  "",
                             style: _textStyle,textAlign:TextAlign.start,
                           ),
-                          Text(
-                            "  Bắt đầu kinh hôm nay : " +countfromserver[i]['period_started_date'].toString().substring(0,10).replaceAll("-", "/")+"...",
-                            style: _textStyle,textAlign:TextAlign.start,
-                          ),
-                          Text(
-                            "  Hết kinh hôm nay : " +countfromserver[i]['period_ended_date'].toString().substring(0,10).replaceAll("-", "/")+"...",
-                            style: _textStyle,textAlign:TextAlign.start,
-                          ),
+                          // Text(
+                          //   "  Bắt đầu kinh hôm nay : " +countfromserver[i]['period_started_date'].toString().substring(0,10).replaceAll("-", "/")+"...",
+                          //   style: _textStyle,textAlign:TextAlign.start,
+                          // ),
+                          // Text(
+                          //   "  Hết kinh hôm nay : " +countfromserver[i]['period_ended_date'].toString().substring(0,10).replaceAll("-", "/")+"...",
+                          //   style: _textStyle,textAlign:TextAlign.start,
+                          // ),
                           //SizedBox(width: 1,),
 
                           Text(
@@ -1137,7 +1135,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
     print(token);
     try {
       final response = await http.post(
-        nexperiod,
+        "http://18.219.10.133/api/display-date-results",
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -1147,22 +1145,34 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
         final responseJson = json.decode(response.body);
 
         nextdates = responseJson;
+        print("nextdates");
         print(nextdates);
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         if (prefs.getString("nextdate") == null) {
+          print("n;jona;np");
           prefs.setString(
               "nextdate", nextdates['data']['next_period_date']);
+          prefs.setString(
+              "fertilewindow", nextdates['data']['fertile_window_starts']);
 
-          next=nextdates['data']['next_period_date'];
-          print("jnwdjnon"+next);
-          getnextdate();
+         setState(() {
+           next=nextdates['data']['next_period_date'];
+           fertilewindow=nextdates['data']['fertile_window_starts'];
+           print("jnwdjnon"+next);
+           getnextdate();
+         });
          // getdaytext();
           //  getDay();
-        } else {
+        }
+        else {
+          print("jkdkdkfk");
+        setState(() {
           next=nextdates['data']['next_period_date'];
+          fertilewindow=nextdates['data']['fertile_window_starts'];
           print("jnwdjnon"+next);
           getnextdate();
+        });
           // getnext = prefs.getString("nextdate");
           // getfertile = prefs.getString("fertilewindow");
           // getdaytext();
@@ -1203,7 +1213,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
    endDate=DateTime(
        DateTime.parse(startDate.toString()).year,
        DateTime.parse(startDate.toString()).month,
-       DateTime.parse(startDate.toString()).day + int.parse(mensdays)-1);
+       DateTime.parse(startDate.toString()).day + int.parse(mensdays));
 
     for (int i = 0; i <= endDate.difference(startDate).inDays; i++) {
       days.add(startDate.add(Duration(days: i)));
@@ -1216,7 +1226,7 @@ class _CalendarState extends State<Lunar> with TickerProviderStateMixin {
       // };
     }
 
-    for(int i = 0; i < days.length; i++){
+    for(int i = 0; i < days.length-1; i++){
       // _holidays [
       //   DateTime( DateTime.parse(days[i].toString()).year,DateTime.parse(days[i].toString()).month,DateTime.parse(days[i].toString()).day)]=[""];
 

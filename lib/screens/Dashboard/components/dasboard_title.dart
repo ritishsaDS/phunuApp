@@ -309,8 +309,8 @@ class _HeaderState extends State<Header> {
       contentPadding: EdgeInsets.all(0),
       //  backgroundColor: kPrimaryColor,
 
-      title: Text("Thời kỳ của bạn đã bắt đầu"),
-      actions: [okButton, No],
+      title: Text("Bạn bắt đầu kinh nữa chưa?"),
+      actions: [No,okButton],
     );
 
     // show the dialog

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:intl/intl.dart';
 import 'package:mailto/mailto.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -56,6 +57,9 @@ class _SettingScreenState extends State<SettingScreen> {
     getdetail();
     super.initState();
   }
+  String versionnumber;
+  String buildnumber;
+
 
   @override
   Widget build(BuildContext context) {
@@ -256,24 +260,46 @@ class _SettingScreenState extends State<SettingScreen> {
                           GenralListTile(
                               title: 'Báo cáo lỗi',
                               onTap: () async{
+                                PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+
+                                  setState(() {
+                                    versionnumber = packageInfo.version;
+                                    buildnumber = packageInfo.buildNumber;
+                                  });
+                                });
+                                String osVersion = Platform.operatingSystemVersion;
+                                print(osVersion);
                                 final url = Mailto(
-                                  to: [
-                                    'Phunuvietapplication@gmail.com',
+                                    to: [
+                                      'Phunuvietapplication@gmail.com',
 
-                                  ],
+                                    ],
 
-                                  subject: 'Báo cáo lỗi cho Phụ Nữ Việt',
-                                  body:
-                                  ''
+                                    subject: 'Báo cáo lỗi với Phụ Nữ Việt',
+                                    body:
+                                    "App Version: "+versionnumber+", "+" OS Version: "+osVersion
                                 ).toString();
                                 if (await canLaunch(url) != null) {
-                                await launch(url);
+                                  await launch(url);
                                 } else {
-                                showCupertinoDialog(
-                                context: context,
-                                builder: MailClientOpenErrorDialog(url: url).build,
-                                );
+                                  showCupertinoDialog(
+                                    context: context,
+                                    builder: MailClientOpenErrorDialog(url: url).build,
+                                  );
                                 }
+                                // openEmailApp(context,"Đề nghị chức năng với app Phụ Nữ Việ");
+                                // // _modalBottomSheetMenu( "Suggest Features",
+                                //            "Đề nghị chức năng với app Phụ Nữ Việ",);
+                                //  openEmailApp(context);
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => suggestfeatures(
+                                //             title: "Suggest Features",
+                                //             subject: "Đề nghị chức năng app",
+                                //             email: login)));
+
+
                                 // openEmailApp(context,"Báo cáo lỗi cho Phụ Nữ Việt");
                                    // _modalBottomSheetMenu(  "Report Bug",
                                    //          "Báo cáo lỗi cho Phụ Nữ Việt",);
@@ -293,13 +319,40 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ''
                                 ).toString();
                                 if (await canLaunch(url) != null) {
-                                await launch(url);
+                                  await launch(url);
                                 } else {
-                                showCupertinoDialog(
-                                context: context,
-                                builder: MailClientOpenErrorDialog(url: url).build,
-                                );
+                                  showCupertinoDialog(
+                                    context: context,
+                                    builder: MailClientOpenErrorDialog(url: url).build,
+                                  );
                                 }
+                                // PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+                                //
+                                //  setState(() {
+                                //    versionnumber = packageInfo.version;
+                                //    buildnumber = packageInfo.buildNumber;
+                                //  });
+                                // });
+                                // String osVersion = Platform.operatingSystemVersion;
+                                // print(osVersion);
+                                // final url = Mailto(
+                                //     to: [
+                                //       'Phunuvietapplication@gmail.com',
+                                //
+                                //     ],
+                                //
+                                //     subject: 'Đề nghị chức năng với app Phụ Nữ Việt',
+                                //     body:
+                                //     "App Version: "+versionnumber+", "+" OS Version: "+osVersion
+                                // ).toString();
+                                // if (await canLaunch(url) != null) {
+                                // await launch(url);
+                                // } else {
+                                // showCupertinoDialog(
+                                // context: context,
+                                // builder: MailClientOpenErrorDialog(url: url).build,
+                                // );
+                                // }
                                 // openEmailApp(context,"Đề nghị chức năng với app Phụ Nữ Việ");
                                 // // _modalBottomSheetMenu( "Suggest Features",
                                 //            "Đề nghị chức năng với app Phụ Nữ Việ",);
@@ -426,7 +479,7 @@ class _SettingScreenState extends State<SettingScreen> {
         final responseJson = json.decode(response.body);
 
         settingfromserver = responseJson;
-        print(settingfromserver);
+        print("settingfromserver---"+settingfromserver.toString());
 
         setState(() {
           isError = false;
@@ -692,9 +745,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> share() async {
     await FlutterShare.share(
-        title: '"Cài đặt app Phụ Nữ Việ',
-        text: '"Cài đặt app Phụ Nữ Việ',
-        linkUrl: 'https://flutter.dev/',
+        title: '"Cài đặt app Phụ Nữ Việt',
+        text: '"Cài đặt app Phụ Nữ Việt',
+        linkUrl: 'https://thedigitlers.com/',
         chooserTitle: 'Cài đặt app Phụ Nữ Việt');
   }
 
@@ -762,6 +815,8 @@ class _SettingScreenState extends State<SettingScreen> {
        prefs.remove("alert");
        prefs.remove("nextperiod");
        prefs.remove("fertilewindow");
+       prefs.remove("startdate");
+       prefs.remove("enddate");
         print("erase");
         Navigator.pushReplacement(
             context,
