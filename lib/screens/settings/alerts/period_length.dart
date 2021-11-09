@@ -282,7 +282,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CommonButton(
-                title: 'bỏ',
+                title: 'Bỏ',
                 onTap: () => Navigator.of(context).pop(periodlength.toString()),
               ),
               CommonButton(
@@ -315,7 +315,7 @@ class _PeriodLenghtAlertState extends State<PeriodLenghtAlert> {
         'Authorization': 'Bearer $token',
       }, body: {
         "is_pregnency": "false",
-        "period_length": "28",
+        "period_length": prefs.getString("cyclelength")==null?"28":prefs.getString("cyclelength"),
         "menstural_period": periodlength.toString()
       });
       print(response.statusCode.toString());

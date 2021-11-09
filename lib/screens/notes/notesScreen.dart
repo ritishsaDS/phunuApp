@@ -20,6 +20,7 @@ import 'package:vietnamese/screens/lunar.dart';
 import 'package:vietnamese/screens/notes/alerts/period_ended.dart';
 import 'package:vietnamese/screens/notes/alerts/period_started.dart';
 import 'package:vietnamese/screens/notes/components/two_item_container.dart';
+import 'package:vietnamese/screens/settings/PinAndRegister/pin_register_screen.dart';
 import 'package:vietnamese/screens/signup/signUp.dart';
 
 import 'components/notes_text_field.dart';
@@ -52,7 +53,7 @@ class _NotesScreenState extends State<NotesScreen> {
   var star = 3.0;
   DateTime periodStartedDate;
   DateTime periodenddate;
-  TextEditingController notescontroller;
+  TextEditingController notescontroller=new TextEditingController();
   DateTime periodEndedDate;
   String flow;
   String tookMedicine;
@@ -125,14 +126,12 @@ class _NotesScreenState extends State<NotesScreen> {
                       ),
                     ),
                     onTap: () {
-                     // notesdate();
+                      notesdate();
                     },
                   ),
                   WidthBox(getProportionateScreenWidth(40)),
                   Text(
-                    "${DateTime.parse(today).day.toString()}" +
-                        "/" "${DateTime.parse(today).month.toString()}" +
-                        "/" "${DateTime.parse(today).year.toString()}",
+                    (today).toString().replaceAll("-", "/").substring(0,10).toString(),
                     style: TextStyle(
                       color: kPrimaryColor,
                       fontWeight: FontWeight.bold,
@@ -192,6 +191,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   onChanged: (value) {
                     setState(() {
                       notes = value;
+
                     });
                     if (notes != "") {}
                   },
@@ -341,11 +341,7 @@ class _NotesScreenState extends State<NotesScreen> {
                               () {
                                 valuemedicine = medicine;
                                 print(valuemedicine);
-                                if (valuemedicine == true) {
-                                 setState(() {
-                                   addcount = addcount + 1;
-                                 });
-                                }
+
                               },
                             );
                           },
@@ -393,11 +389,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             setState(
                               () {
                                 valueinter = currentValuei;
-                                if (valueinter == true) {
-                                 setState(() {
-                                   addcount = addcount + 1;
-                                 });
-                                }
+
                                 print(valueinter);
                               },
                             );
@@ -446,11 +438,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             setState(
                               () {
                                 valuemasturbrated = currentValuem;
-                                if (valuemasturbrated == true) {
-                                  setState(() {
-                                    addcount = addcount + 1;
-                                  });
-                                }
+
                                 print(valuemasturbrated);
                               },
                             );
@@ -476,7 +464,7 @@ class _NotesScreenState extends State<NotesScreen> {
                           MyDialogContent(id: arr));
                   // print(moods[1]);
                   if (moods != null) {
-                    addcount = addcount + 1;
+                    //addcount = addcount + 1;
                   }
                 },
                 child: TwoItemContainer(
@@ -546,8 +534,11 @@ class _NotesScreenState extends State<NotesScreen> {
                           onChanged: (value) {
                             setState(() {
                               tx_wieght = value;
+                              // if(value.length==1){
+                              //   addcount = addcount + 1;
+                              // }
                             });
-                            addcount = addcount + 1;
+
                           },
                           validator: (val) {
                             if (double.parse(val) > 30 ||
@@ -629,11 +620,13 @@ class _NotesScreenState extends State<NotesScreen> {
                           onChanged: (value) {
                             setState(() {
                               tx_height = value;
-                              if(count==1){
-                                print("klmfkmfvp");
-                                addcount=addcount+1;
-                                count= count+1;
-                              }
+                              // if(count==1){
+                              //   print("klmfkmfvp");
+                              //   addcount=addcount+1;
+                              //   print(addcount);
+                              //   count= count+1;
+                              //
+                              // }
                               print(count);
                             });
                           },
@@ -667,13 +660,44 @@ class _NotesScreenState extends State<NotesScreen> {
                   setState(() {
                     isLoading = true;
 
-                    if(count==1){
-                      print("klmfkmfvp");
-                      addcount=addcount+1;
-                      count+1;
-                    }
+
                   });
-                  if (tx_wieght != "" ) {
+                  print(notes+"jkjonlnln");
+                  SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+                  if( (prefs.getString("startdate"))==null){
+                    setState(() {
+                      isLoading=false;
+                    });
+                    return showToast('Để viết nhật ký, xin bạn cho biết ngày bắt đầu kinh gần đây nhất');
+                  }
+                  if(notescontroller.text!=""){
+                    print(notes+"jkjonlnln");
+                    setState(() {
+                      addcount=addcount+1;
+                    });
+                  }
+                  if(valuemasturbrated==true){
+                    setState(() {
+                      addcount = addcount + 1;
+                    });
+                  }
+                  if(valueinter==true){
+                    setState(() {
+                      addcount = addcount + 1;
+                    });
+                  }
+                  if(valuemedicine==true){
+                    setState(() {
+                      addcount = addcount + 1;
+                    });
+                  }
+                  if(moods!=null){
+                    setState(() {
+                      addcount = addcount + 1;
+                    });
+                  }
+                  if (textEditingControllerweight.text != "" ) {
 
                     if(double.parse(textEditingControllerweight.text)<30.0||double.parse(textEditingControllerweight.text)>100.0){
                       print("ijnpwsdsdsdsd");
@@ -700,10 +724,10 @@ class _NotesScreenState extends State<NotesScreen> {
                       });
                     }
 
-                  }  if (tx_height != "" ) {
+                  }  if (textEditingControllerheight.text != "" ) {
                   //  print("ijnpw"+textEditingControllerheight.text);
 
-                    if(double.parse(tx_height)<35.0||double.parse(tx_height)>45.0){
+                    if(double.parse(textEditingControllerheight.text)<35.0||double.parse(textEditingControllerheight.text)>45.0){
                       print("ijnpwsdsdsdsd");
                       setState(() {
                         isLoading=false;
@@ -724,15 +748,14 @@ class _NotesScreenState extends State<NotesScreen> {
                     }
                     else{
                       print('iwejoerv');
-                     setState(() {
-                     setState(() {
-                       addcount = addcount + 1;
-                     });
-                     });
-                    }
-                  } else if (notes != "" ) {
-                    addcount = addcount + 1;
-                  }
+setState(() {
+  addcount = addcount + 1;
+});
+                    }}
+                  // } else if (notes != "" ) {
+                  //   addcount = addcount + 1;
+                  //   print("jnfjovnaol");
+                  // }
                   print(addcount.toString() + "addcount");
                   if (moods == null) {
                     SharedPreferences prefs =
@@ -851,6 +874,7 @@ if(login_count==null){
           print(value),
           if (value)
             {
+              counter=0,
               showToast("Đã thêm ghi chú thành công"),
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DashboardScreen()))
@@ -907,7 +931,10 @@ if(login_count==null){
       child: Text("Đăng ký"),
       onPressed: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+            context,
+            MaterialPageRoute(
+            builder: (context) =>
+            PinRegisterScreen()));
       },
     );
     Widget deny = FlatButton(

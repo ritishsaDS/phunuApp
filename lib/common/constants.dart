@@ -53,10 +53,11 @@ OutlineInputBorder outlineInputBorder() {
 void showToast(String message) {
   Fluttertoast.showToast(
       msg: message,
-      toastLength: Toast.LENGTH_SHORT,
+      toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
+      timeInSecForIosWeb: 8,
       backgroundColor: Colors.grey,
       textColor: Colors.white,
       fontSize: 16.0);
 }
+var counter=0;

@@ -39,6 +39,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   var getdays = " ??     ";
   var periodno = "  ? ";
   var fcmtoken;
+
   FirebaseMessaging messaging;
   DateTime selectedDate = DateTime.now();
 bool pressAttention = false;
@@ -117,7 +118,7 @@ bool pressAttention = false;
                       HeightBox(getProportionateScreenHeight(10)),
                       BodyContent(
                         title: 'Ngày bắt đầu màu mỡ',
-                        date: "${getdays.toString()+"/"+ getfertile .split("-")[1]
+                        date: "${getfertile.split("-")[2].toString()+"/"+ getfertile .split("-")[1]
         .toString(
     )
   }"
@@ -187,7 +188,7 @@ bool pressAttention = false;
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "bo",
+          "Bỏ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -756,10 +757,10 @@ setState(() {
         print(nextfromserver);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         if (prefs.getString("nextdate") == null) {
-          prefs.setString(
-              "nextdate", nextfromserver['data']['next_period_date']);
-          prefs.setString(
-              "fertilewindow", settingfromserver['fertile_window_starts']);
+          // prefs.setString(
+          //     "nextdate", nextfromserver['data']['next_period_date']);
+          // prefs.setString(
+          //     "fertilewindow", settingfromserver['fertile_window_starts']);
 
           getdaytext();
           //  getDay();
@@ -826,12 +827,15 @@ setState(() {
         prefs.setString("nextperiod", getalldays['data']['next_period_date']);
         prefs.setString(
             "fertilewindow", getalldays['data']['fertile_window_starts']);
+      setState(() {
         prefs.setBool("buttonvisibility", getalldays['button']);
+      });
+      print("klnen"+prefs.getBool("buttonvisibility").toString());
         prefs.setString("buttontext", getalldays['text']);
         prefs.setInt("totaldays", getalldays['days']);
         getnext = prefs.getString("nextperiod");
         getfertile = prefs.getString("fertilewindow");
-        getdays=(DateTime.parse(getfertile).day-5).toString();
+        getdays=(DateTime.parse(getfertile).day).toString();
         print("jhebieri"+getdays);
         periodno = prefs.getInt("totaldays").toString();
         prefs.setString("daystext", getalldays['days_text']);
@@ -842,7 +846,13 @@ setState(() {
         } else {
           prefs.setString("buttontext", getalldays['text']);
         }
+        counter=counter+1;
+if(counter==1){
+  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
+}
+else{
 
+}
         // loginasguest(deviceid);
         // showToast("");
         // savedata(deviceid);

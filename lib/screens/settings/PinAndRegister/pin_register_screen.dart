@@ -257,7 +257,7 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                "bỏ",
+                                "Bỏ",
                                 style: TextStyle(
                                   color: Colors.white,
                                 ),
@@ -574,29 +574,22 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
   }
   dynamic loginwithserver= new List();
   signin() async {
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.getString("device_id");
-   // print("osnanl" + usernameString);
+    print("osnanl" );
    //// bool isvalid = EmailValidator.validate(usernameString);
-    if (signInKey.currentState.validate()) {
-      signInKey.currentState.save();
+
       setState(() {
         isLoading = true;
       });
 
-      if (!_validateEmail(email)) {
-        showToast("Phụ Nữ Việt Says .....Địa chỉ email");
-        setState(() {
-          isLoading = false;
-        });
-      } else if (pass.length != 4) {
-        showToast("Phụ Nữ Việt Says .....Số PIN");
-      } else {
+
         try {
           final response = await http.post(regsiter, body: {
-            "user_name": emailcontroller.text,
+            "user_name": email,
             "name": "name",
-            "pin": passcontroller.text,
+            "pin": pass,
             "mobile_number": "99599595",
             "email": email,
             "device_id": prefs.getString("deviceid")
@@ -608,9 +601,16 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
 
             loginwithserver = responseJson;
             // print(loginwithserver['data']['email']);
+            Navigator.pop(context);
             print(loginwithserver);
             if(loginwithserver["error"]!=null){
-              showToast(loginwithserver["error"]);
+
+              if(loginwithserver['error']=="This Email Already Exists"){
+                showToast("Người khác đã dùng địa chỉ email này");
+              }
+              else{
+                showToast(loginwithserver["error"]);
+              }
             }
             else{
 
@@ -640,8 +640,8 @@ class _PinRegisterScreenState extends State<PinRegisterScreen> {
           });
         }
       }
-    }
-  }
+
+
   Future<void> savedata() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 

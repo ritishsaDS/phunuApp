@@ -98,7 +98,7 @@ class _HeaderState extends State<Header> {
   String token;
   bool isError;
   var getnext = "       ";
-  var periodno = "3";
+  var periodno = " ";
   DateTime selectedDate = DateTime.now();
 
   DateTime end;
@@ -131,7 +131,7 @@ class _HeaderState extends State<Header> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$daystext',
+                  daystext==null?"Số ngày đến kỳ kinh tới":'$daystext',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: getProportionateScreenHeight(24),
@@ -237,7 +237,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "bỏ",
+          "Bỏ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -252,7 +252,7 @@ class _HeaderState extends State<Header> {
       //  backgroundColor: kPrimaryColor,
 
       title: Text("Thời gian đèn đỏ của bạn đã kết thúc"),
-      actions: [okButton, NoBUtton],
+      actions: [NoBUtton,okButton],
     );
 
     // show the dialog
@@ -295,7 +295,7 @@ class _HeaderState extends State<Header> {
           color: kPrimaryColor),
       child: FlatButton(
         child: Text(
-          "bỏ",
+          "Bỏ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
@@ -527,27 +527,34 @@ class _HeaderState extends State<Header> {
   Future<void> gettoken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString("token");
-    daystext = prefs.getString("daystext");
-    if (daystext == null) {
-      daystext = "Ngày nguyệt san";
-    } else {
+    setState(() {
       daystext = prefs.getString("daystext");
-      print("jhh;jlkl"+daystext);
-      daystext = "Số ngày đến kỳ kinh tới";
-    }
-
-    if (prefs.getString("buttontext") == null ||
-        prefs.getBool("buttonvisibility") == null) {
-      buttontext = "Bạn bắt đầu kinh chưa?";
-      visible = true;
-    } else {
-      buttontext = prefs.getString("buttontext");
-      visible = prefs.getBool("buttonvisibility");
-      if (buttontext == "Has your period ended yet") {
-        buttontext = " Bạn hết kinh chưa?";
+      if (daystext == null) {
+        daystext = "Ngày nguyệt san";
       } else {
-        buttontext = "Bạn bắt đầu kinh chưa?";
+        daystext = prefs.getString("daystext");
+        print("jhh;jlkl"+daystext);
+        daystext = "Số ngày đến kỳ kinh tới";
       }
+
+      if (prefs.getString("buttontext") == null ||
+          prefs.getBool("buttonvisibility") == null) {
+        buttontext = "Bạn bắt đầu kinh chưa?";
+        visible = true;
+      } else {
+       setState(() {
+         buttontext = prefs.getString("buttontext");
+         visible = prefs.getBool("buttonvisibility");
+       });
+        if (buttontext == "Has your period ended yet") {
+          buttontext = " Bạn hết kinh chưa?";
+        } else {
+          buttontext = "Bạn bắt đầu kinh chưa?";
+        }
+    }});
+
+
+
     }
 
     //   setState(() {
@@ -588,4 +595,4 @@ class _HeaderState extends State<Header> {
     //   });
     // }
   }
-}
+

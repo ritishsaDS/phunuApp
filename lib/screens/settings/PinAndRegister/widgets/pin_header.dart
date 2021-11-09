@@ -15,7 +15,7 @@ class PinHeaderBar extends StatelessWidget {
             color: kSecondaryColor.withOpacity(0.2),
             child: Center(
               child: Text(
-                'Dung PIN dé khoa app Phu NO Viét',
+                'Dùng PIN để khóa app Phụ Nữ Việt',
                 style: TextStyle(
                   color: kPrimaryLightColor,
                   fontWeight: FontWeight.w600,

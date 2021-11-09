@@ -582,7 +582,7 @@ class _SettingScreenState extends State<SettingScreen> {
           Navigator.pop(context);
         },
         child: Text(
-          "bỏ",
+          "Bỏ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -598,7 +598,7 @@ class _SettingScreenState extends State<SettingScreen> {
       child: FlatButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+              context, MaterialPageRoute(builder: (context) => PinRegisterScreen()));
         },
         child: Text(
           "Đăng ký",
@@ -771,7 +771,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
         backuplist = responseJson;
         print(backuplist);
-        showToast("Đã cập nhật BackUp thành công");
+        showToast("Đã lưu thông tin thành công!");
         Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingScreen()));
         setState(() {
           isError = false;
@@ -817,6 +817,7 @@ class _SettingScreenState extends State<SettingScreen> {
        prefs.remove("fertilewindow");
        prefs.remove("startdate");
        prefs.remove("enddate");
+      // prefs.remove("periodlength");
         print("erase");
         Navigator.pushReplacement(
             context,

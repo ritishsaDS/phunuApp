@@ -286,7 +286,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CommonButton(
-                title: 'bỏ',
+                title: 'Bỏ',
                 onTap: () => Navigator.of(context).pop(text.toString()),
               ),
               CommonButton(
@@ -336,7 +336,7 @@ class _CycleLenghtAlertState extends State<CycleLenghtAlert> {
       }, body: {
         "is_pregnency": "false",
         "period_length": text.toString(),
-        "menstural_period": "4"
+        "menstural_period": prefs.getString("periodlength")==null?"4":prefs.getString("periodlength")
       });
       print(response.statusCode.toString());
      // print(perioddate.toString());

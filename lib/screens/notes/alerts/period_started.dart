@@ -133,7 +133,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${DateTime.parse(formattedDate).day.toString()+"/"+DateTime.parse(formattedDate).month.toString()+"/"+DateTime.parse(formattedDate).year.toString()}',
+                DateTime.parse(formattedDate).day==null?"":   '${DateTime.parse(formattedDate).day.toString()+"/"+DateTime.parse(formattedDate).month.toString()+"/"+DateTime.parse(formattedDate).year.toString()}',
                   style: date,
                 ),
                 AlertIcon(
@@ -177,7 +177,7 @@ class _PeriodStartedAlertState extends State<PeriodStartedAlert> {
       context: context,
       initialDate: DateTime.parse(formattedDate),
       firstDate: DateTime(2021, 4),
-      lastDate: DateTime(2021, 10),
+      lastDate: DateTime(2025, 10),
       builder: (BuildContext context, Widget child) {
         return Theme(
           data: ThemeData.light().copyWith(
